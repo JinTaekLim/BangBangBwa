@@ -33,9 +33,6 @@ dependencies {
     // MyBatis
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
 
-    // Spring Data JPA
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-
     // MySQL
     runtimeOnly 'com.mysql:mysql-connector-j'
 
