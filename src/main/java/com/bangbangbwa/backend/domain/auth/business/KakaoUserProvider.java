@@ -19,8 +19,8 @@ public class KakaoUserProvider {
   KakaoUserProvider(
       KakaoTokenClient kakaoTokenClient,
       KakaoUserClient kakaoUserClient,
-      @Value("${oauth2.client.registration.naver.client-id}") String clientId,
-      @Value("${oauth2.client.registration.naver.client-secret}") String clientSecret,
+      @Value("${oauth2.client.registration.kakao.client-id}") String clientId,
+      @Value("${oauth2.client.registration.kakao.client-secret}") String clientSecret,
       @Value("http://localhost:8080/test/kakao") String redirectUri,
       @Value("authorization_code") String grantType
   ) {
