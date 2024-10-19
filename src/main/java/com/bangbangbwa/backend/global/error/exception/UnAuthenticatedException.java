@@ -9,16 +9,14 @@ public class UnAuthenticatedException extends RuntimeException {
   private final String code;
 
   public UnAuthenticatedException() {
-    super(ApiErrorType.UNAUTHENTICATED.getMessage());
-    this.code = ApiErrorType.UNAUTHENTICATED.name();
+    this(ApiErrorType.UNAUTHENTICATED.getMessage());
   }
 
   public UnAuthenticatedException(final String message) {
-    super(message);
-    this.code = ApiErrorType.UNAUTHENTICATED.name();
+    this(message, ApiErrorType.UNAUTHENTICATED.name());
   }
 
-  public UnAuthenticatedException(final String code, final String message) {
+  public UnAuthenticatedException(final String message, final String code) {
     super(message);
     this.code = code;
   }
