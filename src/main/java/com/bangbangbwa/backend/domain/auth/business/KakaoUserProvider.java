@@ -12,10 +12,10 @@ public class KakaoUserProvider {
 
   private final KakaoTokenClient kakaoTokenClient;
   private final KakaoUserClient kakaoUserClient;
-  private final String NAVER_CLIENT_ID;
-  private final String NAVER_CLIENT_SECRET;
-  private final String NAVER_REDIRECT_URI;
-  private final String NAVER_GRANT_TYPE;
+  private final String KAKAO_CLIENT_ID;
+  private final String KAKAO_CLIENT_SECRET;
+  private final String KAKAO_REDIRECT_URI;
+  private final String KAKAO_GRANT_TYPE;
   KakaoUserProvider(
       KakaoTokenClient kakaoTokenClient,
       KakaoUserClient kakaoUserClient,
@@ -26,10 +26,10 @@ public class KakaoUserProvider {
   ) {
     this.kakaoTokenClient = kakaoTokenClient;
     this.kakaoUserClient = kakaoUserClient;
-    this.NAVER_CLIENT_ID = clientId;
-    this.NAVER_CLIENT_SECRET = clientSecret;
-    this.NAVER_REDIRECT_URI = redirectUri;
-    this.NAVER_GRANT_TYPE = grantType;
+    this.KAKAO_CLIENT_ID = clientId;
+    this.KAKAO_CLIENT_SECRET = clientSecret;
+    this.KAKAO_REDIRECT_URI = redirectUri;
+    this.KAKAO_GRANT_TYPE = grantType;
   }
 
 
@@ -40,10 +40,10 @@ public class KakaoUserProvider {
 
     return kakaoTokenClient.getAccessToken(
         authCode,
-        NAVER_CLIENT_ID,
-        NAVER_CLIENT_SECRET,
-        NAVER_REDIRECT_URI,
-        NAVER_GRANT_TYPE
+        KAKAO_CLIENT_ID,
+        KAKAO_CLIENT_SECRET,
+        KAKAO_REDIRECT_URI,
+        KAKAO_GRANT_TYPE
     );
   }
 
