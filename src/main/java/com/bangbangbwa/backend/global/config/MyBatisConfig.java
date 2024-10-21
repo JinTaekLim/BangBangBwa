@@ -28,7 +28,7 @@ public class MyBatisConfig {
         "classpath:mybatis/map/*.xml");
     sqlSessionFactoryBean.setConfigLocation(configLocation);
     sqlSessionFactoryBean.setMapperLocations(mapperLocations);
-    sqlSessionFactoryBean.setTypeAliasesPackage("com.ggb.graduationgoodbye.domain");
+    sqlSessionFactoryBean.setTypeAliasesPackage("com.bangbangbwa.backend.domain");
 
     return sqlSessionFactoryBean.getObject();
   }
