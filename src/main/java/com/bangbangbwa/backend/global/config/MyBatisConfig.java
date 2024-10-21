@@ -1,4 +1,4 @@
-package com.bangbangbwa.backend.global;
+package com.bangbangbwa.backend.global.config;
 
 import javax.sql.DataSource;
 import lombok.RequiredArgsConstructor;

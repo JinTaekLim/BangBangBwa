@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping
-public class BasicController {
+public class BasicController implements BasicApi{
 
   @GetMapping("/health-check")
   public ApiResponse<?> healthCheck() {
