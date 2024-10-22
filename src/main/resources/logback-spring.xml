@@ -24,7 +24,7 @@
   </appender>
 
   <springProfile name="local">
-    <logger name="com.ggb" level="DEBUG"/>
+    <logger name="com.bangbangbwa" level="DEBUG"/>
     <root level="INFO">
       <appender-ref ref="CONSOLE"/>
     </root>
