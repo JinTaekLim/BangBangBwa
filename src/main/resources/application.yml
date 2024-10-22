@@ -3,6 +3,11 @@ spring:
     active: local
   config:
     import: classpath:application-secret.yml
+  servlet:
+    multipart:
+      enabled: true
+      max-request-size: 20MB
+      max-file-size: 20MB
 
 springdoc:
   swagger-ui:

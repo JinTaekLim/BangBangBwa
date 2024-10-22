@@ -27,6 +27,8 @@ public class Member {
 
   private String nickname;
 
+  private String profile;
+
 //  private List<Interest> interests;
 
   private Role role;
@@ -34,5 +36,9 @@ public class Member {
   public void addOAuthInfo(OAuthInfoDto oAuthInfo) {
     this.snsId = oAuthInfo.getSnsId();
     this.email = oAuthInfo.getEmail();
+  }
+
+  public void updateProfile(String profile) {
+    this.profile = profile;
   }
 }
