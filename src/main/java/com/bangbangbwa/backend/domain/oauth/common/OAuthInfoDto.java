@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OAuthInfoDto {
 
-  private String oauthId;
+  private String snsId;
   private String email;
 }

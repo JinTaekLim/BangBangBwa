@@ -21,7 +21,7 @@ public class Member {
 
   private Long id;
 
-  private String oauthId;
+  private String snsId;
 
   private String email;
 
@@ -32,7 +32,7 @@ public class Member {
   private Role role;
 
   public void addOAuthInfo(OAuthInfoDto oAuthInfo) {
-    this.oauthId = oAuthInfo.getOauthId();
+    this.snsId = oAuthInfo.getSnsId();
     this.email = oAuthInfo.getEmail();
   }
 }
