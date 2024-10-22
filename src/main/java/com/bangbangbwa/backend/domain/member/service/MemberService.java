@@ -5,6 +5,7 @@ import com.bangbangbwa.backend.domain.oauth.common.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.token.common.TokenDto;
 import com.bangbangbwa.backend.domain.token.service.TokenService;
 import com.bangbangbwa.backend.global.util.S3Manager;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,9 +18,11 @@ public class MemberService {
   private final TokenService tokenService;
 
   public TokenDto signup(OAuthInfoDto oAuthInfo, Member member, MultipartFile profileFile) {
-    String profile = s3Manager.upload(profileFile);
+    if (Objects.nonNull(profileFile)) {
+      String profile = s3Manager.upload(profileFile);
+      member.updateProfile(profile);
+    }
     member.addOAuthInfo(oAuthInfo);
-    member.updateProfile(profile);
     return tokenService.getToken(member);
   }
 }

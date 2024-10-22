@@ -1,14 +1,15 @@
 package com.bangbangbwa.backend.domain.member.common;
 
 import com.bangbangbwa.backend.domain.oauth.common.OAuthInfoDto;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Member {
 
   @Builder
