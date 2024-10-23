@@ -12,19 +12,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class GoogleInfoProvider {
 
-  private final GoogleInfoFeign googleInfoFeign;
+  private final GoogleFeign googleFeign;
   private final String GOOGLE_CLIENT_ID;
   private final String GOOGLE_CLIENT_SECRET;
   private final String GOOGLE_REDIRECT_URI;
   private final String GOOGLE_GRANT_TYPE;
 
   GoogleInfoProvider(
-      GoogleInfoFeign googleInfoFeign,
+      GoogleFeign googleFeign,
       @Value("${oauth.client.google.client-id}") String googleClientId,
       @Value("${oauth.client.google.client-secret}") String googleClientSecret,
       @Value("${oauth.client.google.redirect-url}") String googleRedirectUri
   ) {
-    this.googleInfoFeign = googleInfoFeign;
+    this.googleFeign = googleFeign;
     this.GOOGLE_CLIENT_ID = googleClientId;
     this.GOOGLE_CLIENT_SECRET = googleClientSecret;
     this.GOOGLE_REDIRECT_URI = googleRedirectUri;
@@ -32,6 +32,6 @@ public class GoogleInfoProvider {
   }
 
   public GoogleInfoDto getInfo(String oauthToken) throws FeignException {
-    return googleInfoFeign.requestInfo(BEARER + oauthToken, CONTENT_TYPE);
+    return googleFeign.requestInfo(BEARER + oauthToken, CONTENT_TYPE);
   }
 }

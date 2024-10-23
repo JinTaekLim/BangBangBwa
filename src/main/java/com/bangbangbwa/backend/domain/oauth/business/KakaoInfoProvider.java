@@ -9,18 +9,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class KakaoInfoProvider {
 
-  private final KakaoInfoFeign kakaoInfoFeign;
+  private final KakaoFeign kakaoFeign;
   private final String KAKAO_CLIENT_ID;
   private final String KAKAO_CLIENT_SECRET;
   private final String KAKAO_REDIRECT_URI;
   private final String KAKAO_GRANT_TYPE;
 
   KakaoInfoProvider(
-      KakaoInfoFeign kakaoInfoFeign,
+      KakaoFeign kakaoFeign,
       @Value("${oauth.client.kakao.client-id}") String kakaoClientId,
       @Value("${oauth.client.kakao.client-secret}") String kakaoClientSecret,
       @Value("${oauth.client.kakao.redirect-url}") String kakaoRedirectUri) {
-    this.kakaoInfoFeign = kakaoInfoFeign;
+    this.kakaoFeign = kakaoFeign;
     this.KAKAO_CLIENT_ID = kakaoClientId;
     this.KAKAO_CLIENT_SECRET = kakaoClientSecret;
     this.KAKAO_REDIRECT_URI = kakaoRedirectUri;

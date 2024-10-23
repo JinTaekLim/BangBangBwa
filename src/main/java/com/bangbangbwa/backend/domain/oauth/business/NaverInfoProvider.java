@@ -9,19 +9,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class NaverInfoProvider {
 
-  private final NaverInfoFeign naverInfoFeign;
+  private final NaverFeign naverFeign;
   private final String NAVER_CLIENT_ID;
   private final String NAVER_CLIENT_SECRET;
   private final String NAVER_REDIRECT_URI;
   private final String NAVER_GRANT_TYPE;
 
   NaverInfoProvider(
-      NaverInfoFeign naverInfoFeign,
+      NaverFeign naverFeign,
       @Value("${oauth.client.naver.client-id}") String naverClientId,
       @Value("${oauth.client.naver.client-secret}") String naverClientSecret,
       @Value("${oauth.client.naver.redirect-url}") String naverRedirectUri
   ) {
-    this.naverInfoFeign = naverInfoFeign;
+    this.naverFeign = naverFeign;
     this.NAVER_CLIENT_ID = naverClientId;
     this.NAVER_CLIENT_SECRET = naverClientSecret;
     this.NAVER_REDIRECT_URI = naverRedirectUri;
