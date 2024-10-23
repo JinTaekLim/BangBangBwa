@@ -7,6 +7,7 @@ import com.bangbangbwa.backend.domain.token.common.TokenDto;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import java.lang.reflect.Field;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils.Null;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +24,7 @@ public class TestController {
   private final MemberService memberService;
 
   @PostMapping(value = "/file/upload", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-  public ApiResponse<?> fileUpload(@RequestPart("file") MultipartFile file) {
+  public ApiResponse<Null> fileUpload(@RequestPart("file") MultipartFile file) {
     OAuthInfoDto oAuthInfoDto = new OAuthInfoDto();
     Member member = Member.builder().build();
     memberService.signup(oAuthInfoDto, member, file);
@@ -31,7 +32,7 @@ public class TestController {
   }
 
   @GetMapping("/getToken")
-  public ApiResponse<?> getToken() throws IllegalAccessException, NoSuchFieldException {
+  public ApiResponse<TokenDto> getToken() throws IllegalAccessException, NoSuchFieldException {
     OAuthInfoDto oAuthInfoDto = new OAuthInfoDto();
     Member member = Member.builder().build();
     Field idField = Member.class.getDeclaredField("id");

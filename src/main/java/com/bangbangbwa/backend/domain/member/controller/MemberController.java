@@ -29,7 +29,7 @@ public class MemberController {
   private final MemberValidator memberValidator;
 
   @PostMapping(value = "/{snsType}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-  public ApiResponse<?> signup(
+  public ApiResponse<TokenDto> signup(
       @PathVariable("snsType") String snsType,
       @RequestPart(value = "file", required = false) MultipartFile file,
       @RequestPart @Valid MemberSignupDto.Request request
