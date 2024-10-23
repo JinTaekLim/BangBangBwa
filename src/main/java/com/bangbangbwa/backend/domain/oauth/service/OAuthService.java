@@ -12,7 +12,7 @@ public class OAuthService {
 
   private final OAuthInfoProvider oAuthInfoProvider;
 
-  public OAuthInfoDto getInfoByToken(String snsType, String oauthToken) {
-    return oAuthInfoProvider.getInfo(SnsType.valueOf(snsType.toUpperCase()), oauthToken);
+  public OAuthInfoDto getInfoByToken(SnsType snsType, String oauthToken) {
+    return oAuthInfoProvider.getInfo(snsType, oauthToken);
   }
 }

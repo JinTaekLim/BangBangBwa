@@ -4,10 +4,11 @@ import com.bangbangbwa.backend.domain.member.common.Member;
 import com.bangbangbwa.backend.domain.member.common.MemberMapper;
 import com.bangbangbwa.backend.domain.member.common.MemberSignupDto;
 import com.bangbangbwa.backend.domain.member.service.MemberService;
-import com.bangbangbwa.backend.domain.member.service.MemberValidator;
 import com.bangbangbwa.backend.domain.oauth.common.OAuthInfoDto;
+import com.bangbangbwa.backend.domain.oauth.common.SnsType;
 import com.bangbangbwa.backend.domain.oauth.service.OAuthService;
 import com.bangbangbwa.backend.domain.token.common.TokenDto;
+import com.bangbangbwa.backend.global.annotation.validation.ValidEnum;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,15 +27,13 @@ public class MemberController {
 
   private final OAuthService oAuthService;
   private final MemberService memberService;
-  private final MemberValidator memberValidator;
 
   @PostMapping(value = "/{snsType}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   public ApiResponse<TokenDto> signup(
-      @PathVariable("snsType") String snsType,
+      @PathVariable("snsType") @ValidEnum(enumClass = SnsType.class, message = "지원하지 않는 SNS 타입입니다.") SnsType snsType,
       @RequestPart(value = "file", required = false) MultipartFile file,
       @RequestPart @Valid MemberSignupDto.Request request
   ) {
-    memberValidator.validate(request, snsType);
     String oauthToken = request.oauthToken();
     OAuthInfoDto oAuthInfo = oAuthService.getInfoByToken(snsType, oauthToken);
     Member member = MemberMapper.INSTANCE.dtoToEntity(request);

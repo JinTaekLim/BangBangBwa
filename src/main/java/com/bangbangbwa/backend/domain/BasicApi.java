@@ -1,6 +1,6 @@
 package com.bangbangbwa.backend.domain;
 
-import com.bangbangbwa.backend.global.annotation.ApiCommonResponse;
+import com.bangbangbwa.backend.global.annotation.swagger.ApiCommonResponse;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
