@@ -1,4 +1,4 @@
-package com.bangbangbwa.backend.domain.member.exception;
+package com.bangbangbwa.backend.domain.member.exception.type;
 
 import lombok.Getter;
 

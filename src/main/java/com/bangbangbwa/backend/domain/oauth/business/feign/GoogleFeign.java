@@ -1,6 +1,6 @@
-package com.bangbangbwa.backend.domain.oauth.business;
+package com.bangbangbwa.backend.domain.oauth.business.feign;
 
-import com.bangbangbwa.backend.domain.oauth.common.GoogleInfoDto;
+import com.bangbangbwa.backend.domain.oauth.common.dto.GoogleInfoDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.GetMapping;

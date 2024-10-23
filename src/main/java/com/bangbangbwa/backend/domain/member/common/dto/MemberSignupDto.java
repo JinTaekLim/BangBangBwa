@@ -1,4 +1,4 @@
-package com.bangbangbwa.backend.domain.member.common;
+package com.bangbangbwa.backend.domain.member.common.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;

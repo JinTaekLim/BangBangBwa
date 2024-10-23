@@ -2,7 +2,8 @@ package com.bangbangbwa.backend.domain.oauth.business;
 
 import static com.bangbangbwa.backend.domain.oauth.business.OAuthFeignManager.GRANT_TYPE;
 
-import com.bangbangbwa.backend.domain.oauth.common.KakaoInfoDto;
+import com.bangbangbwa.backend.domain.oauth.business.feign.KakaoFeign;
+import com.bangbangbwa.backend.domain.oauth.common.dto.KakaoInfoDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

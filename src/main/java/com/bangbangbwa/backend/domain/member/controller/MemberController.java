@@ -1,9 +1,9 @@
 package com.bangbangbwa.backend.domain.member.controller;
 
-import com.bangbangbwa.backend.domain.member.common.MemberSignupDto;
+import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
 import com.bangbangbwa.backend.domain.member.service.MemberService;
-import com.bangbangbwa.backend.domain.oauth.common.OAuthInfoDto;
-import com.bangbangbwa.backend.domain.oauth.common.SnsType;
+import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
+import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import com.bangbangbwa.backend.domain.oauth.service.OAuthService;
 import com.bangbangbwa.backend.domain.token.common.TokenDto;
 import com.bangbangbwa.backend.global.annotation.validation.ValidEnum;

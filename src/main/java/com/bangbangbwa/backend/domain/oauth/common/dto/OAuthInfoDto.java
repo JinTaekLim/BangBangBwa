@@ -1,4 +1,4 @@
-package com.bangbangbwa.backend.domain.oauth.common;
+package com.bangbangbwa.backend.domain.oauth.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

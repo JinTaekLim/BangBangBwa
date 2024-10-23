@@ -2,9 +2,9 @@ package com.bangbangbwa.backend.domain.member.service;
 
 import com.bangbangbwa.backend.domain.member.business.MemberParser;
 import com.bangbangbwa.backend.domain.member.business.MemberUpdater;
-import com.bangbangbwa.backend.domain.member.common.Member;
-import com.bangbangbwa.backend.domain.member.common.MemberSignupDto;
-import com.bangbangbwa.backend.domain.oauth.common.OAuthInfoDto;
+import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
+import com.bangbangbwa.backend.domain.member.common.entity.Member;
+import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.token.business.AuthenticationProvider;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
 import com.bangbangbwa.backend.domain.token.common.TokenDto;

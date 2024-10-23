@@ -1,8 +1,8 @@
 package com.bangbangbwa.backend.domain.member.business;
 
-import com.bangbangbwa.backend.domain.member.common.Member;
-import com.bangbangbwa.backend.domain.member.common.MemberMapper;
-import com.bangbangbwa.backend.domain.member.common.MemberSignupDto;
+import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
+import com.bangbangbwa.backend.domain.member.common.entity.Member;
+import com.bangbangbwa.backend.domain.member.common.mapper.MemberMapper;
 import org.springframework.stereotype.Component;
 
 @Component

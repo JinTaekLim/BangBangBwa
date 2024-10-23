@@ -4,7 +4,8 @@ import static com.bangbangbwa.backend.domain.oauth.business.OAuthFeignManager.BE
 import static com.bangbangbwa.backend.domain.oauth.business.OAuthFeignManager.CONTENT_TYPE;
 import static com.bangbangbwa.backend.domain.oauth.business.OAuthFeignManager.GRANT_TYPE;
 
-import com.bangbangbwa.backend.domain.oauth.common.GoogleInfoDto;
+import com.bangbangbwa.backend.domain.oauth.business.feign.GoogleFeign;
+import com.bangbangbwa.backend.domain.oauth.common.dto.GoogleInfoDto;
 import feign.FeignException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

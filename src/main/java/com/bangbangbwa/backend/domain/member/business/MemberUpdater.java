@@ -1,7 +1,7 @@
 package com.bangbangbwa.backend.domain.member.business;
 
-import com.bangbangbwa.backend.domain.member.common.Member;
-import com.bangbangbwa.backend.domain.oauth.common.OAuthInfoDto;
+import com.bangbangbwa.backend.domain.member.common.entity.Member;
+import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.global.util.S3Manager;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;

@@ -1,8 +1,8 @@
 package com.bangbangbwa.backend.domain.oauth.business;
 
 import com.bangbangbwa.backend.domain.member.exception.InvalidSnsTypeException;
-import com.bangbangbwa.backend.domain.oauth.common.OAuthInfoDto;
-import com.bangbangbwa.backend.domain.oauth.common.SnsType;
+import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
+import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import com.bangbangbwa.backend.global.error.exception.ServerException;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;

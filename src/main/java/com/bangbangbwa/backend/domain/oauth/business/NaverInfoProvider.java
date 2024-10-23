@@ -2,7 +2,8 @@ package com.bangbangbwa.backend.domain.oauth.business;
 
 import static com.bangbangbwa.backend.domain.oauth.business.OAuthFeignManager.GRANT_TYPE;
 
-import com.bangbangbwa.backend.domain.oauth.common.NaverInfoDto;
+import com.bangbangbwa.backend.domain.oauth.business.feign.NaverFeign;
+import com.bangbangbwa.backend.domain.oauth.common.dto.NaverInfoDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

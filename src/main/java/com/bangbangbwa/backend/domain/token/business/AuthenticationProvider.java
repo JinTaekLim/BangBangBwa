@@ -1,6 +1,6 @@
 package com.bangbangbwa.backend.domain.token.business;
 
-import com.bangbangbwa.backend.domain.member.common.Member;
+import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import java.util.Collections;
 import java.util.List;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

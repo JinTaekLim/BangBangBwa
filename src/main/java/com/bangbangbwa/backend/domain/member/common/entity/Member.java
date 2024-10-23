@@ -1,6 +1,7 @@
-package com.bangbangbwa.backend.domain.member.common;
+package com.bangbangbwa.backend.domain.member.common.entity;
 
-import com.bangbangbwa.backend.domain.oauth.common.OAuthInfoDto;
+import com.bangbangbwa.backend.domain.member.common.enums.Role;
+import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
