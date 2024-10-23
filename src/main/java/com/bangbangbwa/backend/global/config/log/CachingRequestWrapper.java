@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequestWrapper;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 import org.springframework.util.StreamUtils;
 
 public class CachingRequestWrapper extends HttpServletRequestWrapper {
@@ -16,7 +15,6 @@ public class CachingRequestWrapper extends HttpServletRequestWrapper {
 
   public CachingRequestWrapper(HttpServletRequest request) throws IOException {
     super(request);
-    Map<String, String[]> parameterMap = request.getParameterMap();
     this.cachedContent = StreamUtils.copyToByteArray(request.getInputStream());
   }
 
