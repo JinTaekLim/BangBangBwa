@@ -1,7 +1,5 @@
 package com.bangbangbwa.backend.domain.member.controller;
 
-import com.bangbangbwa.backend.domain.member.common.Member;
-import com.bangbangbwa.backend.domain.member.common.MemberMapper;
 import com.bangbangbwa.backend.domain.member.common.MemberSignupDto;
 import com.bangbangbwa.backend.domain.member.service.MemberService;
 import com.bangbangbwa.backend.domain.oauth.common.OAuthInfoDto;
@@ -36,8 +34,7 @@ public class MemberController {
   ) {
     String oauthToken = request.oauthToken();
     OAuthInfoDto oAuthInfo = oAuthService.getInfoByToken(snsType, oauthToken);
-    Member member = MemberMapper.INSTANCE.dtoToEntity(request);
-    TokenDto token = memberService.signup(oAuthInfo, member, file);
+    TokenDto token = memberService.signup(oAuthInfo, request, file);
     return ApiResponse.ok(token);
   }
 }
