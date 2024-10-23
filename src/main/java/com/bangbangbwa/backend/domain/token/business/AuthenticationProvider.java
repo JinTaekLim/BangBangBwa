@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AuthProvider {
+public class AuthenticationProvider {
 
   public Authentication getAuthentication(Member member) {
     List<SimpleGrantedAuthority> authorities = getAuthorities(member);
