@@ -6,10 +6,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-@FeignClient(name = "GoogleInfo")
+@FeignClient(name = "GoogleInfo", url = "https://")
 public interface GoogleFeign {
 
-  @GetMapping("https://www.googleapis.com/oauth2/v3/userinfo")
+  @GetMapping("www.googleapis.com/oauth2/v3/userinfo")
   GoogleInfoDto requestInfo(
       @RequestHeader(HttpHeaders.AUTHORIZATION) String accessToken,
       @RequestHeader(HttpHeaders.CONTENT_TYPE) String contentType
