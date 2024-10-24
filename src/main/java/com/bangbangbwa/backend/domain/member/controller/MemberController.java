@@ -6,7 +6,6 @@ import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import com.bangbangbwa.backend.domain.oauth.service.OAuthService;
 import com.bangbangbwa.backend.domain.token.common.TokenDto;
-import com.bangbangbwa.backend.global.annotation.validation.ValidEnum;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +27,8 @@ public class MemberController {
 
   @PostMapping(value = "/{snsType}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   public ApiResponse<TokenDto> signup(
-      @PathVariable("snsType") @ValidEnum(enumClass = SnsType.class, message = "지원하지 않는 SNS 타입입니다.") SnsType snsType,
+//      @ValidEnum(enumClass = SnsType.class, message = "지원하지 않는 SNS 타입입니다.") todo : 추가 로직 수정 필요. -> 현재 오류 발생함.
+      @PathVariable("snsType") SnsType snsType,
       @RequestPart(value = "file", required = false) MultipartFile file,
       @RequestPart @Valid MemberSignupDto.Request request
   ) {
