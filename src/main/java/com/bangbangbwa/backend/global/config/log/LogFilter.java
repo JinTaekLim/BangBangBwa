@@ -1,7 +1,5 @@
 package com.bangbangbwa.backend.global.config.log;
 
-import static org.springframework.web.multipart.support.MultipartResolutionDelegate.isMultipartRequest;
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +17,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
+import static org.springframework.web.multipart.support.MultipartResolutionDelegate.isMultipartRequest;
+
 
 @Slf4j
 public class LogFilter extends OncePerRequestFilter {
@@ -28,21 +28,15 @@ public class LogFilter extends OncePerRequestFilter {
       FilterChain filterChain)
       throws ServletException, IOException {
 
+    CachingRequestWrapper requestWrapper = new CachingRequestWrapper(request);
     ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(response);
     final UUID uuid = UUID.randomUUID();
 
     long startTime = System.currentTimeMillis();
     try {
       MDC.put("uuid", uuid.toString()); // 로그 별 ID 값 추가
-
-      if (isMultipartRequest(request)) {
-        logMultipartRequest(request);
-        filterChain.doFilter(request, responseWrapper);
-      } else {
-        CachingRequestWrapper requestWrapper = new CachingRequestWrapper(request);
-        logRequest(requestWrapper);
-        filterChain.doFilter(requestWrapper, responseWrapper);
-      }
+      logRequest(requestWrapper);
+      filterChain.doFilter(requestWrapper, responseWrapper);
     } finally {
       logResponse(responseWrapper, startTime);
       responseWrapper.copyBodyToResponse();
@@ -61,17 +55,13 @@ public class LogFilter extends OncePerRequestFilter {
         queryString == null ? request.getRequestURI() : request.getRequestURI() + "?" + queryString
         , request.getContentType()
         , body);
+
+    if (isMultipartRequest(request)) {
+      logMultipartRequest(request);
+    }
   }
 
-  private void logMultipartRequest(HttpServletRequest request) {
-    log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-    log.info("Request : {} uri=[{}] content-type=[{}]"
-        , request.getMethod()
-        , request.getQueryString() == null ?
-            request.getRequestURI() :
-            request.getRequestURI() + "?" + request.getQueryString()
-        , request.getContentType());
-
+  private void logMultipartRequest(HttpServletRequestWrapper request) {
     try {
       StandardServletMultipartResolver multipartResolver = new StandardServletMultipartResolver();
       MultipartHttpServletRequest multipartRequest = multipartResolver.resolveMultipart(request);
@@ -79,17 +69,17 @@ public class LogFilter extends OncePerRequestFilter {
       // 파일 정보 로깅
       multipartRequest.getFileMap().forEach((paramName, file) -> {
         log.info("File Parameter Name: {}, Original File Name: {}, Size: {} bytes"
-            , paramName
-            , file.getOriginalFilename()
-            , file.getSize());
+                , paramName
+                , file.getOriginalFilename()
+                , file.getSize());
       });
 
       // 일반 폼 파라미터 로깅
       multipartRequest.getParameterMap().forEach((paramName, values) -> {
         for (String value : values) {
           log.info("Form Field - Name: {}, Value: {}"
-              , paramName
-              , value);
+                  , paramName
+                  , value);
         }
       });
 
