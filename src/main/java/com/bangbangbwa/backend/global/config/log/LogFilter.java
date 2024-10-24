@@ -3,12 +3,7 @@ package com.bangbangbwa.backend.global.config.log;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.util.StreamUtils;
@@ -16,6 +11,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.util.ContentCachingResponseWrapper;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 import static org.springframework.web.multipart.support.MultipartResolutionDelegate.isMultipartRequest;
 
@@ -44,7 +44,7 @@ public class LogFilter extends OncePerRequestFilter {
     }
   }
 
-  private void logRequest(HttpServletRequestWrapper request) throws IOException {
+  private void logRequest(HttpServletRequest request) throws IOException {
     String queryString = request.getQueryString();
     String body = getBody(request.getInputStream());
 
@@ -61,31 +61,21 @@ public class LogFilter extends OncePerRequestFilter {
     }
   }
 
-  private void logMultipartRequest(HttpServletRequestWrapper request) {
-    try {
-      StandardServletMultipartResolver multipartResolver = new StandardServletMultipartResolver();
-      MultipartHttpServletRequest multipartRequest = multipartResolver.resolveMultipart(request);
+  private void logMultipartRequest(HttpServletRequest request) {
+    StandardServletMultipartResolver multipartResolver = new StandardServletMultipartResolver();
+    MultipartHttpServletRequest multipart = multipartResolver.resolveMultipart(request);
+    multipart.getFileMap().forEach((paramName, file) -> {
+      log.info("File Parameter Name: {}, Original File Name: {}, Size: {} bytes",
+              paramName,
+              file.getOriginalFilename(),
+              file.getSize());
+    });
 
-      // 파일 정보 로깅
-      multipartRequest.getFileMap().forEach((paramName, file) -> {
-        log.info("File Parameter Name: {}, Original File Name: {}, Size: {} bytes"
-                , paramName
-                , file.getOriginalFilename()
-                , file.getSize());
-      });
-
-      // 일반 폼 파라미터 로깅
-      multipartRequest.getParameterMap().forEach((paramName, values) -> {
-        for (String value : values) {
-          log.info("Form Field - Name: {}, Value: {}"
-                  , paramName
-                  , value);
-        }
-      });
-
-    } catch (Exception e) {
-      log.warn("Failed to log multipart request details", e);
-    }
+    multipart.getParameterMap().forEach((paramName, value) -> {
+      log.info("Form Field - Name: {}, Value: {}",
+              paramName,
+              value);
+    });
   }
 
   private void logResponse(ContentCachingResponseWrapper response, long startTime)
