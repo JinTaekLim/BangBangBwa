@@ -1,5 +1,6 @@
 package com.bangbangbwa.backend.domain.member.controller;
 
+import com.bangbangbwa.backend.domain.member.common.dto.MemberLoginDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
 import com.bangbangbwa.backend.domain.member.service.MemberService;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,6 +40,17 @@ public class MemberController implements MemberApi {
 //    OAuthInfoDto oAuthInfo = OAuthInfoDto.builder()
 //        .snsType(SnsType.GOOGLE).snsId("").email("").build();
     TokenDto token = memberService.signup(oAuthInfo, request, file);
+    return ApiResponse.ok(token);
+  }
+
+  @PostMapping("/login/{snsType}")
+  public ApiResponse<TokenDto> login(
+      @PathVariable SnsType snsType,
+      @RequestBody @Valid MemberLoginDto.Request request
+  ) {
+    String authCode = request.authCode();
+    OAuthInfoDto oAuthInfo = oAuthService.getInfoByCode(authCode);
+    TokenDto token = memberService.login(oAuthInfo);
     return ApiResponse.ok(token);
   }
 }
