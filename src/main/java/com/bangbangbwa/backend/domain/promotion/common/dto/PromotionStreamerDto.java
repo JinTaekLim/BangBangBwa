@@ -5,7 +5,7 @@ import java.util.List;
 
 public class PromotionStreamerDto {
 
-  @Schema(name = "PromotionStreamerResponse", description = "홍보 스트리머 DTO")
+  @Schema(name = "PromotionStreamerResponse", description = "홍보 스트리머 응답")
   public record Response(
       @Schema(description = "스트리머 목록")
       List<PromotionStreamerResponseStreamer> streamerList

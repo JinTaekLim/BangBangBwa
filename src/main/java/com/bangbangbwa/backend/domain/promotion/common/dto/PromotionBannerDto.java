@@ -5,7 +5,7 @@ import java.util.List;
 
 public class PromotionBannerDto {
 
-  @Schema(name = "PromotionBannerResponse", description = "홍보 배너 DTO")
+  @Schema(name = "PromotionBannerResponse", description = "홍보 배너 응답")
   public record Response(
       @Schema(description = "배너 목록")
       List<PromotionBannerResponseBanner> bannerList
