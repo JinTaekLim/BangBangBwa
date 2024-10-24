@@ -4,13 +4,14 @@ import jakarta.servlet.ReadListener;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
-import org.springframework.http.MediaType;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import static org.springframework.web.multipart.support.MultipartResolutionDelegate.isMultipartRequest;
 
 public class CachingRequestWrapper extends HttpServletRequestWrapper {
 
@@ -19,7 +20,7 @@ public class CachingRequestWrapper extends HttpServletRequestWrapper {
   public CachingRequestWrapper(HttpServletRequest request) throws IOException {
     super(request);
 
-    if (isMultipartContent(request)) {
+    if (isMultipartRequest(request)) {
       StandardServletMultipartResolver multipartResolver = new StandardServletMultipartResolver();
       multipartResolver.resolveMultipart(request);
     }
@@ -27,45 +28,35 @@ public class CachingRequestWrapper extends HttpServletRequestWrapper {
     this.cachedContent = StreamUtils.copyToByteArray(request.getInputStream());
   }
 
-  private boolean isMultipartContent(HttpServletRequest request) {
-    String contentType = request.getContentType();
-    return contentType != null && contentType.startsWith(MediaType.MULTIPART_FORM_DATA_VALUE);
-  }
-
   @Override
   public ServletInputStream getInputStream() {
-    return new CachedServletInputStream(cachedContent);
-  }
+    return new ServletInputStream() {
+      private final InputStream cachedBodyInputStream = new ByteArrayInputStream(cachedContent);
 
-  private static class CachedServletInputStream extends ServletInputStream {
-    private final InputStream cachedBodyInputStream;
+      @Override
+      public boolean isFinished() {
+        try {
+          return cachedBodyInputStream.available() == 0;
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+        return false;
+      }
 
-    public CachedServletInputStream(byte[] cachedBody) {
-      this.cachedBodyInputStream = new ByteArrayInputStream(cachedBody);
-    }
-
-    @Override
-    public boolean isFinished() {
-      try {
-        return cachedBodyInputStream.available() == 0;
-      } catch (IOException e) {
+      @Override
+      public boolean isReady() {
         return true;
       }
-    }
 
-    @Override
-    public boolean isReady() {
-      return true;
-    }
+      @Override
+      public void setReadListener(ReadListener readListener) {
+        throw new UnsupportedOperationException();
+      }
 
-    @Override
-    public void setReadListener(ReadListener listener) {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public int read() throws IOException {
-      return cachedBodyInputStream.read();
-    }
+      @Override
+      public int read() throws IOException {
+        return cachedBodyInputStream.read();
+      }
+    };
   }
 }
