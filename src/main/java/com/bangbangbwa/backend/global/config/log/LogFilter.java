@@ -3,17 +3,21 @@ package com.bangbangbwa.backend.global.config.log;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.util.ContentCachingResponseWrapper;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
+
+import static org.springframework.web.multipart.support.MultipartResolutionDelegate.isMultipartRequest;
 
 
 @Slf4j
@@ -40,7 +44,7 @@ public class LogFilter extends OncePerRequestFilter {
     }
   }
 
-  private void logRequest(HttpServletRequestWrapper request) throws IOException {
+  private void logRequest(HttpServletRequest request) throws IOException {
     String queryString = request.getQueryString();
     String body = getBody(request.getInputStream());
 
@@ -51,6 +55,27 @@ public class LogFilter extends OncePerRequestFilter {
         queryString == null ? request.getRequestURI() : request.getRequestURI() + "?" + queryString
         , request.getContentType()
         , body);
+
+    if (isMultipartRequest(request)) {
+      logMultipartRequest(request);
+    }
+  }
+
+  private void logMultipartRequest(HttpServletRequest request) {
+    StandardServletMultipartResolver multipartResolver = new StandardServletMultipartResolver();
+    MultipartHttpServletRequest multipart = multipartResolver.resolveMultipart(request);
+    multipart.getFileMap().forEach((paramName, file) -> {
+      log.info("File Parameter Name: {}, Original File Name: {}, Size: {} bytes",
+              paramName,
+              file.getOriginalFilename(),
+              file.getSize());
+    });
+
+    multipart.getParameterMap().forEach((paramName, value) -> {
+      log.info("Form Field - Name: {}, Value: {}",
+              paramName,
+              value);
+    });
   }
 
   private void logResponse(ContentCachingResponseWrapper response, long startTime)

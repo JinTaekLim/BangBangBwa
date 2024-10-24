@@ -4,11 +4,14 @@ import jakarta.servlet.ReadListener;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
+import org.springframework.util.StreamUtils;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
-import org.springframework.util.StreamUtils;
+
+import static org.springframework.web.multipart.support.MultipartResolutionDelegate.isMultipartRequest;
 
 public class CachingRequestWrapper extends HttpServletRequestWrapper {
 
@@ -16,7 +19,12 @@ public class CachingRequestWrapper extends HttpServletRequestWrapper {
 
   public CachingRequestWrapper(HttpServletRequest request) throws IOException {
     super(request);
-    Map<String, String[]> parameterMap = request.getParameterMap();
+
+    if (isMultipartRequest(request)) {
+      StandardServletMultipartResolver multipartResolver = new StandardServletMultipartResolver();
+      multipartResolver.resolveMultipart(request);
+    }
+
     this.cachedContent = StreamUtils.copyToByteArray(request.getInputStream());
   }
 
