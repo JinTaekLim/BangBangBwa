@@ -20,7 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/v1/members")
 @RequiredArgsConstructor
-public class MemberController {
+public class MemberController implements MemberApi {
 
   private final OAuthService oAuthService;
   private final MemberService memberService;
