@@ -1,11 +1,9 @@
 package com.bangbangbwa.backend.domain.member.controller;
 
-import com.bangbangbwa.backend.domain.member.common.Member;
-import com.bangbangbwa.backend.domain.member.common.MemberMapper;
-import com.bangbangbwa.backend.domain.member.common.MemberSignupDto;
+import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
 import com.bangbangbwa.backend.domain.member.service.MemberService;
-import com.bangbangbwa.backend.domain.member.service.MemberValidator;
-import com.bangbangbwa.backend.domain.oauth.common.OAuthInfoDto;
+import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
+import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import com.bangbangbwa.backend.domain.oauth.service.OAuthService;
 import com.bangbangbwa.backend.domain.token.common.TokenDto;
 import com.bangbangbwa.backend.global.response.ApiResponse;
@@ -22,23 +20,24 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/v1/members")
 @RequiredArgsConstructor
-public class MemberController {
+public class MemberController implements MemberApi {
 
   private final OAuthService oAuthService;
   private final MemberService memberService;
-  private final MemberValidator memberValidator;
 
   @PostMapping(value = "/{snsType}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-  public ApiResponse<?> signup(
-      @PathVariable("snsType") String snsType,
+  public ApiResponse<TokenDto> signup(
+//      @ValidEnum(enumClass = SnsType.class, message = "지원하지 않는 SNS 타입입니다.") todo : 추가 로직 수정 필요. -> 현재 오류 발생함.
+      @PathVariable("snsType") SnsType snsType,
       @RequestPart(value = "file", required = false) MultipartFile file,
       @RequestPart @Valid MemberSignupDto.Request request
   ) {
-    memberValidator.validate(request, snsType);
     String oauthToken = request.oauthToken();
     OAuthInfoDto oAuthInfo = oAuthService.getInfoByToken(snsType, oauthToken);
-    Member member = MemberMapper.INSTANCE.dtoToEntity(request);
-    TokenDto token = memberService.signup(oAuthInfo, member, file);
+//    note : 테스트를 위한 코드 추후 삭제 예정
+//    OAuthInfoDto oAuthInfo = OAuthInfoDto.builder()
+//        .snsType(SnsType.GOOGLE).snsId("").email("").build();
+    TokenDto token = memberService.signup(oAuthInfo, request, file);
     return ApiResponse.ok(token);
   }
 }

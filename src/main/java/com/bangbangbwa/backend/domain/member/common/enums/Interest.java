@@ -1,4 +1,4 @@
-package com.bangbangbwa.backend.domain.member.common;
+package com.bangbangbwa.backend.domain.member.common.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,5 +1,6 @@
-package com.bangbangbwa.backend.domain.oauth.common;
+package com.bangbangbwa.backend.domain.oauth.common.dto;
 
+import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,5 +13,6 @@ import lombok.NoArgsConstructor;
 public class OAuthInfoDto {
 
   private String snsId;
+  private SnsType snsType;
   private String email;
 }

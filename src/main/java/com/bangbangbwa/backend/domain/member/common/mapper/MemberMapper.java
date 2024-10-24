@@ -1,6 +1,7 @@
-package com.bangbangbwa.backend.domain.member.common;
+package com.bangbangbwa.backend.domain.member.common.mapper;
 
-import com.bangbangbwa.backend.domain.member.common.MemberSignupDto.Request;
+import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto.Request;
+import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

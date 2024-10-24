@@ -1,11 +1,12 @@
 package com.bangbangbwa.backend.domain.member.service;
 
-import com.bangbangbwa.backend.domain.member.common.Member;
-import com.bangbangbwa.backend.domain.oauth.common.OAuthInfoDto;
+import com.bangbangbwa.backend.domain.member.business.MemberCreator;
+import com.bangbangbwa.backend.domain.member.business.MemberGenerator;
+import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
+import com.bangbangbwa.backend.domain.member.common.entity.Member;
+import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
+import com.bangbangbwa.backend.domain.token.business.TokenProvider;
 import com.bangbangbwa.backend.domain.token.common.TokenDto;
-import com.bangbangbwa.backend.domain.token.service.TokenService;
-import com.bangbangbwa.backend.global.util.S3Manager;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,15 +15,14 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class MemberService {
 
-  private final S3Manager s3Manager;
-  private final TokenService tokenService;
+  private final MemberGenerator memberGenerator;
+  private final TokenProvider tokenProvider;
+  private final MemberCreator memberCreator;
 
-  public TokenDto signup(OAuthInfoDto oAuthInfo, Member member, MultipartFile profileFile) {
-    if (Objects.nonNull(profileFile)) {
-      String profile = s3Manager.upload(profileFile);
-      member.updateProfile(profile);
-    }
-    member.addOAuthInfo(oAuthInfo);
-    return tokenService.getToken(member);
+  public TokenDto signup(OAuthInfoDto oAuthInfo, MemberSignupDto.Request request,
+      MultipartFile profileFile) {
+    Member member = memberGenerator.generate(oAuthInfo, request, profileFile);
+    memberCreator.save(member);
+    return tokenProvider.getToken(member);
   }
 }

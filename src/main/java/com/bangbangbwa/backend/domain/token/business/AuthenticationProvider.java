@@ -1,6 +1,6 @@
 package com.bangbangbwa.backend.domain.token.business;
 
-import com.bangbangbwa.backend.domain.member.common.Member;
+import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import java.util.Collections;
 import java.util.List;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AuthProvider {
+public class AuthenticationProvider {
 
   public Authentication getAuthentication(Member member) {
     List<SimpleGrantedAuthority> authorities = getAuthorities(member);
