@@ -18,7 +18,7 @@ public class MemberSignupDto {
       @Schema(description = "닉네임", examples = "nick")
 
       @NotBlank(message = "닉네임을 입력해주세요.")
-      @Size(max = 12, message = "{max}자 이하로 입력해주세요.")
+      @Size(max = 12, message = "최대 {max}자 이하로 입력해주세요.")
       @Pattern(regexp = "^[A-Za-z가-힣0-9()\\-_]+$", message = "한글,영문,숫자, 특수문자('(',')','-','_')만 사용 가능합니다.")
       String nickname
 

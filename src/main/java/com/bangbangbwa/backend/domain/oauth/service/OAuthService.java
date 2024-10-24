@@ -15,4 +15,8 @@ public class OAuthService {
   public OAuthInfoDto getInfoByToken(SnsType snsType, String oauthToken) {
     return oAuthInfoProvider.getInfo(snsType, oauthToken);
   }
+
+  public OAuthInfoDto getInfoByCode(String authCode) {
+    return OAuthInfoDto.builder().build();
+  }
 }

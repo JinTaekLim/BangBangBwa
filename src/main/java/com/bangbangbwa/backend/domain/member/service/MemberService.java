@@ -25,4 +25,8 @@ public class MemberService {
     memberCreator.save(member);
     return tokenProvider.getToken(member);
   }
+
+  public TokenDto login(OAuthInfoDto oAuthInfo) {
+    return TokenDto.builder().build();
+  }
 }
