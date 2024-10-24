@@ -4,6 +4,7 @@ import com.bangbangbwa.backend.domain.oauth.common.dto.GoogleInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.dto.KakaoInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.dto.NaverInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
+import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,7 @@ public class OAuthFeignManager {
     return OAuthInfoDto.builder()
         .snsId(googleInfo.sub())
         .email(googleInfo.email())
+        .snsType(SnsType.GOOGLE)
         .build();
   }
 

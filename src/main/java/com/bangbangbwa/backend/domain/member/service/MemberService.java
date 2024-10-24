@@ -1,15 +1,13 @@
 package com.bangbangbwa.backend.domain.member.service;
 
-import com.bangbangbwa.backend.domain.member.business.MemberParser;
-import com.bangbangbwa.backend.domain.member.business.MemberUpdater;
+import com.bangbangbwa.backend.domain.member.business.MemberCreator;
+import com.bangbangbwa.backend.domain.member.business.MemberGenerator;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
-import com.bangbangbwa.backend.domain.token.business.AuthenticationProvider;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
 import com.bangbangbwa.backend.domain.token.common.TokenDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,17 +15,14 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class MemberService {
 
-  private final MemberUpdater memberUpdater;
-  private final MemberParser memberParser;
+  private final MemberGenerator memberGenerator;
   private final TokenProvider tokenProvider;
-  private final AuthenticationProvider authProvider;
+  private final MemberCreator memberCreator;
 
   public TokenDto signup(OAuthInfoDto oAuthInfo, MemberSignupDto.Request request,
       MultipartFile profileFile) {
-    Member member = memberParser.requestToEntity(request);
-    memberUpdater.updateProfile(member, profileFile);
-    memberUpdater.updateOAuthInfo(member, oAuthInfo);
-    Authentication authentication = authProvider.getAuthentication(member);
-    return tokenProvider.getToken(authentication);
+    Member member = memberGenerator.generate(oAuthInfo, request, profileFile);
+    memberCreator.save(member);
+    return tokenProvider.getToken(member);
   }
 }
