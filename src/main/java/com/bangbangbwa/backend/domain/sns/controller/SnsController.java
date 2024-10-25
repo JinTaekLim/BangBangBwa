@@ -67,7 +67,7 @@ public class SnsController {
   }
 
   @GetMapping("/getPostDetails/{postId}")
-  public ApiResponse<?> getPostDetails(@PathVariable Long postId) {
+  public ApiResponse<GetPostDetailsDto.Response> getPostDetails(@PathVariable Long postId) {
 
     GetPostDetailsDto.Response response = new GetPostDetailsDto.Response(
         RandomValue.getRandomLong(0,9999),
