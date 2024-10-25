@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/sns")
 @RequiredArgsConstructor
-public class SnsController {
+public class SnsController implements SnsApi{
 
 
   @GetMapping("/getFollowedLatestPosts")
