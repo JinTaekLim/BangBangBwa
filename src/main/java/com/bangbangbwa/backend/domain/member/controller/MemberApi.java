@@ -126,7 +126,7 @@ public interface MemberApi {
                   examples = @ExampleObject(
                       value = """
                           {
-                          "code" : "NICKNAME_DUPLICATED_ERROR",
+                          "code" : "DUPLICATED_NICKNAME_ERROR",
                           "message" : "이미 사용중인 닉네임 입니다.",
                           "data" : null
                           }
@@ -137,7 +137,7 @@ public interface MemberApi {
       }
   )
   @ApiResponse200
-  ApiResponse<Null> nickname(String nickname);
+  ApiResponse<Null> dupCheck(String nickname);
 
   @Operation(
       tags = {"MemberAPI"},

@@ -4,6 +4,7 @@ import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSession;
@@ -24,5 +25,10 @@ public class MemberRepository {
     params.put("snsId", snsId);
     params.put("snsType", snsType);
     return Optional.ofNullable(mysql.selectOne("MemberMapper.findBySns", params));
+  }
+
+  public boolean isExistsNickname(String nickname) {
+    Member member = mysql.selectOne("MemberMapper.findByNickname", nickname);
+    return Objects.nonNull(member);
   }
 }

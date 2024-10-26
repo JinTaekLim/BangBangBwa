@@ -1,8 +1,7 @@
 package com.bangbangbwa.backend.domain.member.business;
 
-import com.bangbangbwa.backend.domain.member.common.entity.Member;
-import com.bangbangbwa.backend.domain.member.exception.NotSignupMemberException;
-import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
+import com.bangbangbwa.backend.domain.member.exception.type.DuplicatedNicknameException;
+import com.bangbangbwa.backend.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -10,11 +9,12 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class MemberValidator {
 
-  private final MemberReader memberReader;
+  private final MemberRepository memberRepository;
 
-  public Member validate(OAuthInfoDto oAuthInfo) {
-    return memberReader.findBySns(oAuthInfo).orElseThrow(
-        () -> new NotSignupMemberException(oAuthInfo.getOAuthToken())
-    );
+  public void validateNicknameDuplication(String nickname) {
+    boolean isExists = memberRepository.isExistsNickname(nickname);
+    if (isExists) {
+      throw new DuplicatedNicknameException();
+    }
   }
 }
