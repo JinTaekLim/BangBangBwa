@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS members;
+DROP TABLE IF EXISTS tags;
 
 CREATE TABLE members
 (
@@ -16,3 +17,14 @@ CREATE TABLE members
     updated_at DATETIME NULL COMMENT '수정일시(null)',
     PRIMARY KEY (id)
 );
+
+CREATE TABLE tags
+(
+    id         BIGINT AUTO_INCREMENT NOT NULL COMMENT '태그_ID',
+    name       VARCHAR(30)           NOT NULL COMMENT '태그명',
+    created_at DATETIME     NOT NULL COMMENT '생성일시',
+    created_id VARCHAR(255) NOT NULL COMMENT '생성자',
+    updated_id VARCHAR(255) NULL COMMENT '수정자(null)',
+    updated_at DATETIME NULL COMMENT '수정일시(null)',
+    PRIMARY KEY (id)
+)
