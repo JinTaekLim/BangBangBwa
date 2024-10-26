@@ -2,6 +2,7 @@ package com.bangbangbwa.backend.domain.member.service;
 
 import com.bangbangbwa.backend.domain.member.business.MemberCreator;
 import com.bangbangbwa.backend.domain.member.business.MemberGenerator;
+import com.bangbangbwa.backend.domain.member.business.MemberReader;
 import com.bangbangbwa.backend.domain.member.business.MemberValidator;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
@@ -20,6 +21,7 @@ public class MemberService {
   private final MemberGenerator memberGenerator;
   private final MemberValidator memberValidator;
   private final MemberCreator memberCreator;
+  private final MemberReader memberReader;
   private final TokenProvider tokenProvider;
 
   @Transactional
@@ -31,7 +33,11 @@ public class MemberService {
   }
 
   public TokenDto login(OAuthInfoDto oAuthInfo) {
-    Member member = memberValidator.validate(oAuthInfo);
+    Member member = memberReader.findBySns(oAuthInfo);
     return tokenProvider.getToken(member);
+  }
+
+  public void checkNickname(String nickname) {
+    memberValidator.validateNicknameDuplication(nickname);
   }
 }

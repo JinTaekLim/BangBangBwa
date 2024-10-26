@@ -63,7 +63,8 @@ public class MemberController implements MemberApi {
   }
 
   @GetMapping("/check/{nickname}")
-  public ApiResponse<Null> nickname(@PathVariable("nickname") String nickname) {
+  public ApiResponse<Null> dupCheck(@PathVariable("nickname") String nickname) {
+    memberService.checkNickname(nickname);
     return ApiResponse.ok();
   }
 
