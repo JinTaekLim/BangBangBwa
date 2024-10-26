@@ -3,7 +3,7 @@ package com.bangbangbwa.backend.domain.member.controller;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberLoginDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
-import com.bangbangbwa.backend.global.annotation.swagger.ApiCommonResponse;
+import com.bangbangbwa.backend.global.annotation.swagger.ApiResponse500;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -17,7 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "MemberAPI", description = "회원 API")
-@ApiCommonResponse
+@ApiResponse500
 public interface MemberApi {
 
   @Operation(summary = "회원가입", tags = {"MemberAPI"})

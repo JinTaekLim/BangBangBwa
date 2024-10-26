@@ -1,6 +1,6 @@
 package com.bangbangbwa.backend.domain;
 
-import com.bangbangbwa.backend.global.annotation.swagger.ApiCommonResponse;
+import com.bangbangbwa.backend.global.annotation.swagger.ApiResponse500;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.ObjectUtils.Null;
 
 @Tag(name = "Basic (기본) API", description = "기본 제공 API")
-@ApiCommonResponse
+@ApiResponse500
 public interface BasicApi {
 
   @Operation(summary = "서비스 정상 여부 확인", tags = {"Basic (기본) API"})
