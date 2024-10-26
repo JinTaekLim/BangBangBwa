@@ -1,6 +1,7 @@
 package com.bangbangbwa.backend.domain.member.controller;
 
 import com.bangbangbwa.backend.domain.member.common.dto.MemberLoginDto;
+import com.bangbangbwa.backend.domain.member.common.dto.MemberNicknameDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
 import com.bangbangbwa.backend.domain.member.common.mapper.MemberMapper;
 import com.bangbangbwa.backend.domain.member.service.MemberService;
@@ -10,8 +11,12 @@ import com.bangbangbwa.backend.domain.oauth.service.OAuthService;
 import com.bangbangbwa.backend.domain.token.common.TokenDto;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import jakarta.validation.Valid;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils.Null;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,6 +59,21 @@ public class MemberController implements MemberApi {
     OAuthInfoDto oAuthInfo = oAuthService.getInfoByCode(snsType, authCode);
     TokenDto token = memberService.login(oAuthInfo);
     MemberLoginDto.Response response = MemberMapper.INSTANCE.dtoToLoginResponse(token);
+    return ApiResponse.ok(response);
+  }
+
+  @GetMapping("/check/{nickname}")
+  public ApiResponse<Null> nickname(@PathVariable("nickname") String nickname) {
+    return ApiResponse.ok();
+  }
+
+  @GetMapping("/nicknames")
+  public ApiResponse<MemberNicknameDto.Response> randomNicknames() {
+    Set<String> nicknames = new HashSet<>();
+    nicknames.add("차가운하마");
+    nicknames.add("뜨거운감자");
+    nicknames.add("행복한고구마");
+    MemberNicknameDto.Response response = new MemberNicknameDto.Response(nicknames);
     return ApiResponse.ok(response);
   }
 }
