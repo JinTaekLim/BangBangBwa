@@ -7,14 +7,17 @@ import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import com.bangbangbwa.backend.domain.oauth.service.OAuthService;
 import com.bangbangbwa.backend.domain.token.common.TokenDto;
+import com.bangbangbwa.backend.domain.token.service.TokenService;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,6 +29,7 @@ public class MemberController implements MemberApi {
 
   private final OAuthService oAuthService;
   private final MemberService memberService;
+  private final TokenService tokenService;
 
   @PostMapping(value = "/{snsType}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   public ApiResponse<TokenDto> signup(
@@ -52,5 +56,11 @@ public class MemberController implements MemberApi {
     OAuthInfoDto oAuthInfo = oAuthService.getInfoByCode(authCode);
     TokenDto token = memberService.login(oAuthInfo);
     return ApiResponse.ok(token);
+  }
+
+  @GetMapping("/reissueToken")
+  public ApiResponse<TokenDto> reissueToken(@RequestParam String refreshToken) {
+    TokenDto tokenDto = tokenService.reissueToken(refreshToken);
+    return ApiResponse.ok(tokenDto);
   }
 }
