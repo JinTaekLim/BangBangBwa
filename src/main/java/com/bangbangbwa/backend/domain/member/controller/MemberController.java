@@ -1,7 +1,9 @@
 package com.bangbangbwa.backend.domain.member.controller;
 
 import com.bangbangbwa.backend.domain.member.common.dto.MemberLoginDto;
+import com.bangbangbwa.backend.domain.member.common.dto.MemberNicknameDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
+import com.bangbangbwa.backend.domain.member.common.mapper.MemberMapper;
 import com.bangbangbwa.backend.domain.member.service.MemberService;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
@@ -10,7 +12,10 @@ import com.bangbangbwa.backend.domain.token.common.TokenDto;
 import com.bangbangbwa.backend.domain.token.service.TokenService;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import jakarta.validation.Valid;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils.Null;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,7 +37,7 @@ public class MemberController implements MemberApi {
   private final TokenService tokenService;
 
   @PostMapping(value = "/{snsType}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-  public ApiResponse<TokenDto> signup(
+  public ApiResponse<MemberSignupDto.Response> signup(
 //      @ValidEnum(enumClass = SnsType.class, message = "지원하지 않는 SNS 타입입니다.") todo : 추가 로직 수정 필요. -> 현재 오류 발생함.
       @PathVariable("snsType") SnsType snsType,
       @RequestPart(value = "file", required = false) MultipartFile file,
@@ -44,18 +49,36 @@ public class MemberController implements MemberApi {
 //    OAuthInfoDto oAuthInfo = OAuthInfoDto.builder()
 //        .snsType(SnsType.GOOGLE).snsId("").email("").build();
     TokenDto token = memberService.signup(oAuthInfo, request, file);
-    return ApiResponse.ok(token);
+    MemberSignupDto.Response response = MemberMapper.INSTANCE.dtoToSignupResponse(token);
+    return ApiResponse.ok(response);
   }
 
   @PostMapping("/login/{snsType}")
-  public ApiResponse<TokenDto> login(
+  public ApiResponse<MemberLoginDto.Response> login(
       @PathVariable SnsType snsType,
       @RequestBody @Valid MemberLoginDto.Request request
   ) {
     String authCode = request.authCode();
-    OAuthInfoDto oAuthInfo = oAuthService.getInfoByCode(authCode);
+    OAuthInfoDto oAuthInfo = oAuthService.getInfoByCode(snsType, authCode);
     TokenDto token = memberService.login(oAuthInfo);
-    return ApiResponse.ok(token);
+    MemberLoginDto.Response response = MemberMapper.INSTANCE.dtoToLoginResponse(token);
+    return ApiResponse.ok(response);
+  }
+
+  @GetMapping("/check/{nickname}")
+  public ApiResponse<Null> dupCheck(@PathVariable("nickname") String nickname) {
+    memberService.checkNickname(nickname);
+    return ApiResponse.ok();
+  }
+
+  @GetMapping("/nicknames")
+  public ApiResponse<MemberNicknameDto.Response> randomNicknames() {
+    Set<String> nicknames = new HashSet<>();
+    nicknames.add("차가운하마");
+    nicknames.add("뜨거운감자");
+    nicknames.add("행복한고구마");
+    MemberNicknameDto.Response response = new MemberNicknameDto.Response(nicknames);
+    return ApiResponse.ok(response);
   }
 
   @GetMapping("/reissueToken")

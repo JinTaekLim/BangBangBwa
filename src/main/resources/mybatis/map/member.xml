@@ -10,6 +10,14 @@
     #{deletedAt}, #{createdId}, #{createdAt}, #{updatedId}, #{updatedAt})
   </insert>
 
+  <select id="findBySns" parameterType="HashMap" resultType="member">
+    SELECT * FROM members WHERE sns_id = #{snsId} AND sns_type = #{snsType};
+  </select>
+
+  <select id="findByNickname" parameterType="String" resultType="member">
+    SELECT * FROM members WHERE nickname = #{nickname};
+  </select>
+
   <select id="findById" parameterType="Long" resultType="member">
     SELECT * FROM members WHERE id = #{id};
   </select>
