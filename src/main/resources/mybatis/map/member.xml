@@ -9,4 +9,8 @@
     VALUES (#{snsType}, #{snsId}, #{email}, #{nickname}, #{profile}, #{role},
     #{deletedAt}, #{createdId}, #{createdAt}, #{updatedId}, #{updatedAt})
   </insert>
+
+  <select id="findById" parameterType="Long" resultType="member">
+    SELECT * FROM members WHERE id = #{id};
+  </select>
 </mapper>
