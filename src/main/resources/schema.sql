@@ -19,6 +19,7 @@ CREATE TABLE members
     PRIMARY KEY (id)
 );
 
+
 CREATE TABLE tags
 (
     id         BIGINT AUTO_INCREMENT NOT NULL COMMENT '태그_ID',
@@ -28,7 +29,7 @@ CREATE TABLE tags
     updated_id VARCHAR(255) NULL COMMENT '수정자(null)',
     updated_at DATETIME NULL COMMENT '수정일시(null)',
     PRIMARY KEY (id)
-)
+);
 
 CREATE TABLE tokens
 (
