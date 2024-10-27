@@ -10,16 +10,14 @@ public class ForbiddenException extends AccessDeniedException {
   private final String code;
 
   public ForbiddenException() {
-    super(ApiErrorType.FORBIDDEN.getMessage());
-    this.code = ApiErrorType.FORBIDDEN.name();
+    this(ApiErrorType.FORBIDDEN.getMessage());
   }
 
   public ForbiddenException(final String message) {
-    super(message);
-    this.code = ApiErrorType.FORBIDDEN.name();
+    this(message, ApiErrorType.FORBIDDEN.name());
   }
 
-  public ForbiddenException(final String code, final String message) {
+  public ForbiddenException(final String message, final String code) {
     super(message);
     this.code = code;
   }
