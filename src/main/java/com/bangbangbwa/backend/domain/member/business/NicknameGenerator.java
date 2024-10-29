@@ -19,7 +19,7 @@ public class NicknameGenerator {
   private String randomLowers(final int count) {
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < count; i++) {
-      sb.append((char) (random.nextInt(26) + 97));
+      sb.append((char) (random.nextInt(26) + 'a'));
     }
     return sb.toString();
   }
@@ -27,7 +27,7 @@ public class NicknameGenerator {
   private String randomUppers(final int count) {
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < count; i++) {
-      sb.append((char) (random.nextInt(26) + 65));
+      sb.append((char) (random.nextInt(26) + 'A'));
     }
     return sb.toString();
   }

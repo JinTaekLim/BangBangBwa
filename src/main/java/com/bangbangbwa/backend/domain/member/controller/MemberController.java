@@ -70,7 +70,7 @@ public class MemberController implements MemberApi {
 
   @GetMapping("/nicknames")
   public ApiResponse<MemberNicknameDto.Response> randomNicknames(
-      @RequestParam("count") Integer count
+      @RequestParam("count") int count
   ) {
     Set<String> nicknames = memberService.serveRandomNicknames(count);
     MemberNicknameDto.Response response = new MemberNicknameDto.Response(nicknames);

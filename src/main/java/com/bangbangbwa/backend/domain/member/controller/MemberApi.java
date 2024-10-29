@@ -154,5 +154,5 @@ public interface MemberApi {
           )
       }
   )
-  ApiResponse<MemberNicknameDto.Response> randomNicknames(@Parameter Integer count);
+  ApiResponse<MemberNicknameDto.Response> randomNicknames(@Parameter int count);
 }
