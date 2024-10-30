@@ -9,12 +9,16 @@ public class PromotionBannerDto {
   public record Response(
       @Schema(description = "배너 목록")
       List<PromotionBannerResponseBanner> bannerList
-  ) {}
+  ) {
 
-  public record PromotionBannerResponseBanner (
-    @Schema(description = "배너 URL")
-    String url,
-    @Schema(description = "배너 백그라운드 컬러", examples = "#FFFFFFF")
-    String bgColor
-  ) {}
+  }
+
+  public record PromotionBannerResponseBanner(
+      @Schema(description = "배너 이미지 URL")
+      String url,
+      @Schema(description = "배너 배경색", example = "#FFFFFFF")
+      String bgColor
+  ) {
+
+  }
 }
