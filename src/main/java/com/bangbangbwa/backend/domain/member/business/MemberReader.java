@@ -22,8 +22,12 @@ public class MemberReader {
         () -> new NotSignupMemberException(oAuthInfo.getOAuthToken())
     );
   }
-
+  
   public Member findById(Long memberId) {
     return memberRepository.findById(memberId).orElseThrow(NotFoundMemberException::new);
+  }
+
+  public boolean existsByNickname(String nickname) {
+    return memberRepository.isExistsNickname(nickname);
   }
 }

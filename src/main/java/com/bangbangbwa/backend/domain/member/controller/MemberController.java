@@ -12,7 +12,6 @@ import com.bangbangbwa.backend.domain.token.common.TokenDto;
 import com.bangbangbwa.backend.domain.token.service.TokenService;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import jakarta.validation.Valid;
-import java.util.HashSet;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils.Null;
@@ -72,11 +71,10 @@ public class MemberController implements MemberApi {
   }
 
   @GetMapping("/nicknames")
-  public ApiResponse<MemberNicknameDto.Response> randomNicknames() {
-    Set<String> nicknames = new HashSet<>();
-    nicknames.add("차가운하마");
-    nicknames.add("뜨거운감자");
-    nicknames.add("행복한고구마");
+  public ApiResponse<MemberNicknameDto.Response> randomNicknames(
+      @RequestParam("count") int count
+  ) {
+    Set<String> nicknames = memberService.serveRandomNicknames(count);
     MemberNicknameDto.Response response = new MemberNicknameDto.Response(nicknames);
     return ApiResponse.ok(response);
   }
