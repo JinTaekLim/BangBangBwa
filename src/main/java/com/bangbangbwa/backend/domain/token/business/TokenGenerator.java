@@ -35,6 +35,8 @@ public class TokenGenerator {
     this.REFRESH_EXP = refreshExp;
   }
 
+  protected long getRefreshExp(){ return REFRESH_EXP; }
+
   public String generateAccessToken(Authentication authentication) {
     return createToken(authentication, ACCESS_SECRET, ACCESS_EXP);
   }

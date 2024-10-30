@@ -5,6 +5,7 @@ import com.bangbangbwa.backend.domain.member.exception.NotSignupMemberException;
 import com.bangbangbwa.backend.domain.member.repository.MemberRepository;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
+import com.bangbangbwa.backend.domain.member.exception.NotFoundMemberException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +21,10 @@ public class MemberReader {
     return memberRepository.findBySns(snsId, snsType).orElseThrow(
         () -> new NotSignupMemberException(oAuthInfo.getOAuthToken())
     );
+  }
+  
+  public Member findById(Long memberId) {
+    return memberRepository.findById(memberId).orElseThrow(NotFoundMemberException::new);
   }
 
   public boolean existsByNickname(String nickname) {

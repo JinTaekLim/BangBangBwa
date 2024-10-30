@@ -9,6 +9,7 @@ import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import com.bangbangbwa.backend.domain.oauth.service.OAuthService;
 import com.bangbangbwa.backend.domain.token.common.TokenDto;
+import com.bangbangbwa.backend.domain.token.service.TokenService;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import jakarta.validation.Valid;
 import java.util.Set;
@@ -32,6 +33,7 @@ public class MemberController implements MemberApi {
 
   private final OAuthService oAuthService;
   private final MemberService memberService;
+  private final TokenService tokenService;
 
   @PostMapping(value = "/{snsType}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   public ApiResponse<MemberSignupDto.Response> signup(
@@ -75,5 +77,11 @@ public class MemberController implements MemberApi {
     Set<String> nicknames = memberService.serveRandomNicknames(count);
     MemberNicknameDto.Response response = new MemberNicknameDto.Response(nicknames);
     return ApiResponse.ok(response);
+  }
+
+  @PostMapping("/reissueToken")
+  public ApiResponse<TokenDto> reissueToken(@RequestParam String refreshToken) {
+    TokenDto tokenDto = tokenService.reissueToken(refreshToken);
+    return ApiResponse.ok(tokenDto);
   }
 }

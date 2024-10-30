@@ -1,7 +1,10 @@
 package com.bangbangbwa.backend.global.config;
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,19 +17,18 @@ public class SwaggerConfig {
     info.title("BangBangBwa Api Documentation").description("방방봐의 API 문서입니다.")
         .version("1.0.0");
 
-//    todo : 인증/인가 로직 구현 후 활성화 예정
-//    SecurityScheme jwtSecurityScheme = new SecurityScheme().type(SecurityScheme.Type.HTTP)
-//        .scheme("bearer")
-//        .bearerFormat("JWT")
-//        .in(SecurityScheme.In.HEADER)
-//        .name("Authorization");
+    SecurityScheme jwtSecurityScheme = new SecurityScheme().type(SecurityScheme.Type.HTTP)
+        .scheme("bearer")
+        .bearerFormat("JWT")
+        .in(SecurityScheme.In.HEADER)
+        .name("Authorization");
 
-//    SecurityRequirement schemaRequirement = new SecurityRequirement()
-//        .addList("jwt");
+    SecurityRequirement schemaRequirement = new SecurityRequirement()
+        .addList("jwt");
 
     return new OpenAPI()
-//        .components(new Components().addSecuritySchemes("jwt", jwtSecurityScheme))
-//        .addSecurityItem(schemaRequirement)
+        .components(new Components().addSecuritySchemes("jwt", jwtSecurityScheme))
+        .addSecurityItem(schemaRequirement)
         .info(info);
   }
 }

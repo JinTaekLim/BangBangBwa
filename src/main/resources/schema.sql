@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS tokens;
 DROP TABLE IF EXISTS members;
 DROP TABLE IF EXISTS tags;
 
@@ -18,6 +19,7 @@ CREATE TABLE members
     PRIMARY KEY (id)
 );
 
+
 CREATE TABLE tags
 (
     id         BIGINT AUTO_INCREMENT NOT NULL COMMENT '태그_ID',
@@ -27,4 +29,14 @@ CREATE TABLE tags
     updated_id VARCHAR(255) NULL COMMENT '수정자(null)',
     updated_at DATETIME NULL COMMENT '수정일시(null)',
     PRIMARY KEY (id)
-)
+);
+
+CREATE TABLE tokens
+(
+    id              BIGINT AUTO_INCREMENT             NOT NULL COMMENT '토큰_ID',
+    member_id       BIGINT                            NOT NULL COMMENT '멤버_ID',
+    refresh_token   VARCHAR(255)            UNIQUE    NOT NULL COMMENT '리프레쉬_토큰',
+    expiration_time DATETIME                          NOT NULL COMMENT '만료_시간',
+    PRIMARY KEY (id),
+    FOREIGN KEY (member_id) REFERENCES members(id)
+);

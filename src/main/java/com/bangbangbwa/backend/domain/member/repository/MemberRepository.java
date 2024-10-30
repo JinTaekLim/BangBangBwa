@@ -27,8 +27,13 @@ public class MemberRepository {
     return Optional.ofNullable(mysql.selectOne("MemberMapper.findBySns", params));
   }
 
+  public Optional<Member> findById(Long memberId) {
+    return Optional.ofNullable(mysql.selectOne("MemberMapper.findById", memberId));
+  }
+
   public boolean isExistsNickname(String nickname) {
     Member member = mysql.selectOne("MemberMapper.findByNickname", nickname);
     return Objects.nonNull(member);
   }
+
 }
