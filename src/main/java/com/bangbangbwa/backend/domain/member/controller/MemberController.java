@@ -81,7 +81,7 @@ public class MemberController implements MemberApi {
     return ApiResponse.ok(response);
   }
 
-  @GetMapping("/reissueToken")
+  @PostMapping("/reissueToken")
   public ApiResponse<TokenDto> reissueToken(@RequestParam String refreshToken) {
     TokenDto tokenDto = tokenService.reissueToken(refreshToken);
     return ApiResponse.ok(tokenDto);
