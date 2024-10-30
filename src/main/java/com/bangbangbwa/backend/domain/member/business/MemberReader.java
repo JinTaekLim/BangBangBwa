@@ -21,4 +21,8 @@ public class MemberReader {
         () -> new NotSignupMemberException(oAuthInfo.getOAuthToken())
     );
   }
+
+  public boolean existsByNickname(String nickname) {
+    return memberRepository.isExistsNickname(nickname);
+  }
 }

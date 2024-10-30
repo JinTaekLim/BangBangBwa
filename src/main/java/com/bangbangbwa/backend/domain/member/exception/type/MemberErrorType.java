@@ -4,6 +4,9 @@ import lombok.Getter;
 
 @Getter
 public enum MemberErrorType {
+  NOT_EXISTS_REMAIN_NICKNAME("닉네임을 직접 입력 바랍니다."),
+  NEGATIVE_NICKNAME_COUNT("음수를 사용할 수 없습니다."),
+  MAX_NICKNAME_COUNT_EXCEEDED("닉네임 추천 가능 갯수를 초과했습니다."),
   INVALID_SNS_TYPE_ERROR("지원하지 않는 SNS 타입입니다."),
   INVALID_INTEREST_ERROR("지원하지 않는 관심 태그입니다."),
   NOT_FOUND_MEMBER("존재하지 않는 회원입니다."),
