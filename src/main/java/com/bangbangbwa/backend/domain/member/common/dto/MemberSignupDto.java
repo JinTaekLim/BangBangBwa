@@ -10,12 +10,12 @@ public class MemberSignupDto {
   @Schema(name = "SignupRequest", description = "회원가입 요청 DTO")
   public record Request(
 
-      @Schema(description = "OAuth 토큰", examples = "AV)$M@LC>D>GM12)c(faEF")
+      @Schema(description = "OAuth 토큰", example = "AV)$M@LC>D>GM12)c(faEF")
 
       @NotBlank(message = "oauth 토큰을 입력해주세요.")
       String oauthToken,
 
-      @Schema(description = "닉네임", examples = "nick")
+      @Schema(description = "닉네임", example = "nick")
 
       @NotBlank(message = "닉네임을 입력해주세요.")
       @Size(max = 12, message = "최대 {max}자 이하로 입력해주세요.")
@@ -30,9 +30,9 @@ public class MemberSignupDto {
 
   @Schema(name = "SignupResponse", description = "회원가입 응답 DTO")
   public record Response(
-      @Schema(description = "액세스 토큰", examples = "xxx.xxx.xxx")
+      @Schema(description = "액세스 토큰", example = "xxx.xxx.xxx")
       String accessToken,
-      @Schema(description = "리프레쉬 토큰", examples = "xxx.xxx.xxx")
+      @Schema(description = "리프레쉬 토큰", example = "xxx.xxx.xxx")
       String refreshToken
   ) {
 

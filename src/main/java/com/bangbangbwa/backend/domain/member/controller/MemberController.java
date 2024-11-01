@@ -44,9 +44,6 @@ public class MemberController implements MemberApi {
   ) {
     String oauthToken = request.oauthToken();
     OAuthInfoDto oAuthInfo = oAuthService.getInfoByToken(snsType, oauthToken);
-//    note : 테스트를 위한 코드 추후 삭제 예정
-//    OAuthInfoDto oAuthInfo = OAuthInfoDto.builder()
-//        .snsType(SnsType.GOOGLE).snsId("").email("").build();
     TokenDto token = memberService.signup(oAuthInfo, request, file);
     MemberSignupDto.Response response = MemberMapper.INSTANCE.dtoToSignupResponse(token);
     return ApiResponse.ok(response);
