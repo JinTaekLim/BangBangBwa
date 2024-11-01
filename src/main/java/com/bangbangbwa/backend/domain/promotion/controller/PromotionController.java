@@ -5,6 +5,8 @@ import com.bangbangbwa.backend.domain.promotion.common.dto.PromotionBannerDto.Pr
 import com.bangbangbwa.backend.domain.promotion.common.dto.PromotionStreamerDto;
 import com.bangbangbwa.backend.domain.promotion.common.dto.PromotionStreamerDto.PromotionStreamerResponseStreamer;
 import com.bangbangbwa.backend.domain.promotion.common.dto.PromotionStreamerDto.PromotionStreamerResponseStreamerInterested;
+import com.bangbangbwa.backend.domain.promotion.common.dto.PromotionStreamerDto.PromotionStreamerResponseStreamerPlatform;
+import com.bangbangbwa.backend.domain.promotion.common.enums.Platform;
 import com.bangbangbwa.backend.domain.promotion.service.BannerService;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import java.util.ArrayList;
@@ -51,16 +53,32 @@ public class PromotionController implements PromotionApi {
     List<PromotionStreamerResponseStreamer> streamerList = new ArrayList<>();
     PromotionStreamerResponseStreamer streamer;
     List<PromotionStreamerResponseStreamerInterested> interestedList;
+    List<PromotionStreamerResponseStreamerPlatform> platformList;
 
     interestedList = new LinkedList<>();
     interestedList.add(new PromotionStreamerResponseStreamerInterested(true, "음악"));
     interestedList.add(new PromotionStreamerResponseStreamerInterested(true, "영화"));
     interestedList.add(new PromotionStreamerResponseStreamerInterested(false, "게임"));
+    platformList = new LinkedList<>();
+    platformList.add(new PromotionStreamerResponseStreamerPlatform(
+        Platform.SOOP,
+        "https://nimage.g-enews.com/phpwas/restmb_allidxmake.php?idx=5&simg=2024032909554105611c5fa75ef8612254575.jpg",
+        "https://ch.sooplive.co.kr/rrvv17"));
+    platformList.add(new PromotionStreamerResponseStreamerPlatform(
+        Platform.YOUTUBE,
+        "https://yt3.googleusercontent.com/ytc/AIdro_mjPOB8h-cMEZq3ctWbl3AHfCcNiO_vgr5Gym-NJAlDXJ4=s900-c-k-c0x00ffffff-no-rj",
+        "https://www.youtube.com/@ksttv"));
+    platformList.add(new PromotionStreamerResponseStreamerPlatform(
+        Platform.CHZZK,
+        "https://api.brandb.net/api/v2/common/image/?fileId=15004",
+        "https://chzzk.naver.com/b8263cd74372864eacb2d5bd16551882"));
     streamer = new PromotionStreamerResponseStreamer(
+        "한마디",
+        "안녕하세요 이번에 새로 시작하게된 스트리머 이수연 입니다.",
         "http://res.heraldm.com/phpwas/restmb_idxmake.php?idx=640&simg=/content/image/2024/04/02/20240402050018_0.jpg",
-        "/streamers/profiles/1",
         interestedList,
-        "정해인"
+        platformList,
+        "이수연"
     );
     streamerList.add(streamer);
 
@@ -69,11 +87,36 @@ public class PromotionController implements PromotionApi {
     interestedList.add(new PromotionStreamerResponseStreamerInterested(false, "개그"));
     interestedList.add(new PromotionStreamerResponseStreamerInterested(false, "공부"));
     interestedList.add(new PromotionStreamerResponseStreamerInterested(false, "독서"));
+    platformList = new LinkedList<>();
+    platformList.add(new PromotionStreamerResponseStreamerPlatform(
+        Platform.SOOP,
+        "https://nimage.g-enews.com/phpwas/restmb_allidxmake.php?idx=5&simg=2024032909554105611c5fa75ef8612254575.jpg",
+        "https://ch.sooplive.co.kr/poos69"));
+    platformList.add(new PromotionStreamerResponseStreamerPlatform(
+        Platform.YOUTUBE,
+        "https://yt3.googleusercontent.com/ytc/AIdro_mjPOB8h-cMEZq3ctWbl3AHfCcNiO_vgr5Gym-NJAlDXJ4=s900-c-k-c0x00ffffff-no-rj",
+        "https://www.youtube.com/@%EC%A7%80%EB%AC%B4%EB%B9%84"));
+    platformList.add(new PromotionStreamerResponseStreamerPlatform(
+        Platform.CHZZK,
+        "https://api.brandb.net/api/v2/common/image/?fileId=15004",
+        "https://chzzk.naver.com/c100f81959d1c17044be0541eed56f5b"));
     streamer = new PromotionStreamerResponseStreamer(
-        "https://www.paxetv.com/news/photo/202202/137816_111215_445.jpg",
-        "/streamers/profiles/2",
+        "한마디",
+        "안녕하세요 이번에 새로 시작하게된 스트리머 손지영 입니다.",
+        "http://res.heraldm.com/phpwas/restmb_idxmake.php?idx=640&simg=/content/image/2024/04/02/20240402050018_0.jpg",
         interestedList,
-        "잘생김"
+        platformList,
+        "손지영"
+    );
+    streamerList.add(streamer);
+
+    streamer = new PromotionStreamerResponseStreamer(
+        "두마디",
+        "안녕하세요 이번에 새로 시작하게된 스트리머 손지영 입니다.",
+        "http://res.heraldm.com/phpwas/restmb_idxmake.php?idx=640&simg=/content/image/2024/04/02/20240402050018_0.jpg",
+        interestedList,
+        platformList,
+        "이수연"
     );
     streamerList.add(streamer);
 
@@ -81,23 +124,26 @@ public class PromotionController implements PromotionApi {
     interestedList.add(new PromotionStreamerResponseStreamerInterested(true, "토크"));
     interestedList.add(new PromotionStreamerResponseStreamerInterested(true, "여행"));
     interestedList.add(new PromotionStreamerResponseStreamerInterested(false, "등산"));
+    platformList = new LinkedList<>();
+    platformList.add(new PromotionStreamerResponseStreamerPlatform(
+        Platform.SOOP,
+        "https://nimage.g-enews.com/phpwas/restmb_allidxmake.php?idx=5&simg=2024032909554105611c5fa75ef8612254575.jpg",
+        "https://ch.sooplive.co.kr/lovely5959"));
+    platformList.add(new PromotionStreamerResponseStreamerPlatform(
+        Platform.YOUTUBE,
+        "https://yt3.googleusercontent.com/ytc/AIdro_mjPOB8h-cMEZq3ctWbl3AHfCcNiO_vgr5Gym-NJAlDXJ4=s900-c-k-c0x00ffffff-no-rj",
+        "https://www.youtube.com/@sangho_full"));
+    platformList.add(new PromotionStreamerResponseStreamerPlatform(
+        Platform.CHZZK,
+        "https://api.brandb.net/api/v2/common/image/?fileId=15004",
+        "https://chzzk.naver.com/0dad8baf12a436f722faa8e5001c5011"));
     streamer = new PromotionStreamerResponseStreamer(
-        "https://i.namu.wiki/i/dSNY8iAyQ5BJLLeorpoQkaF_X3Hi1ewKaHxWb8I7rJPj8mq4ho_R9SmpMibUn-AwoK9vpdc7WlgcbKxIwEOj1m6XUbAa-8q8qM-byMZVrtQhrQVmC-sQiv8t8jPcrhz2pXo9lbsnTZDlD3FG7ZviyQ.webp",
-        "/streamers/profiles/3",
+        "세마디",
+        "안녕하세요 이번에 새로 시작하게된 스트리머 김철수 입니다.",
+        "http://res.heraldm.com/phpwas/restmb_idxmake.php?idx=640&simg=/content/image/2024/04/02/20240402050018_0.jpg",
         interestedList,
-        "차은우"
-    );
-    streamerList.add(streamer);
-
-    interestedList = new LinkedList<>();
-    interestedList.add(new PromotionStreamerResponseStreamerInterested(true, "영화"));
-    interestedList.add(new PromotionStreamerResponseStreamerInterested(true, "토크"));
-    interestedList.add(new PromotionStreamerResponseStreamerInterested(false, "개그"));
-    streamer = new PromotionStreamerResponseStreamer(
-        "https://image.news1.kr/system/photos/2024/2/24/6498986/high.jpg/dims/optimize",
-        "/streamers/profiles/4",
-        interestedList,
-        "멋있다"
+        platformList,
+        "김철수"
     );
     streamerList.add(streamer);
 
