@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="StreamerMapper">
+  <resultMap id="streamerMap"
+    type="com.bangbangbwa.backend.domain.promotion.common.vo.StreamerVo">
+    <id property="id" column="id"/>
+    <result property="todayComment" column="streamer_today_comment"/>
+    <result property="selfIntroduction" column="streamer_self_introduction"/>
+    <result property="imageUrl" column="streamer_image_url"/>
+    <result property="name" column="streamer_name"/>
+    <collection property="interestedList" resultMap="streamerInterestedMap"/>
+    <collection property="platformList" resultMap="streamerPlatformMap"/>
+  </resultMap>
+
+  <resultMap id="streamerInterestedMap"
+    type="com.bangbangbwa.backend.domain.promotion.common.vo.StreamerInterestedVo">
+    <id property="id" column="id"/>
+    <result property="streamerId" column="streamer_id"/>
+    <result property="name" column="streamer_interest_name"/>
+  </resultMap>
+
+  <resultMap id="streamerPlatformMap"
+    type="com.bangbangbwa.backend.domain.promotion.common.vo.StreamerPlatformVo">
+    <id property="id" column="id"/>
+    <result property="streamerId" column="streamer_id"/>
+    <result property="name" column="streamer_platform_name"/>
+    <result property="imageUrl" column="streamer_platform_image_url"/>
+    <result property="profileUrl" column="streamer_platform_profile_url"/>
+  </resultMap>
+
+  <select id="selectAll" resultMap="streamerMap">
+    SELECT * FROM streamers S
+    JOIN streamers_interests SI ON S.id = SI.streamer_id
+    JOIN streamers_platforms SP ON S.id = SP.streamer_id
+    ORDER BY S.id DESC;
+  </select>
+</mapper>

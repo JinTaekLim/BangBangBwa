@@ -2,6 +2,9 @@ DROP TABLE IF EXISTS tokens;
 DROP TABLE IF EXISTS members;
 DROP TABLE IF EXISTS tags;
 DROP TABLE IF EXISTS banners;
+DROP TABLE IF EXISTS streamers;
+DROP TABLE IF EXISTS streamers_interests;
+DROP TABLE IF EXISTS streamers_platforms;
 
 CREATE TABLE members
 (
@@ -47,5 +50,33 @@ CREATE TABLE banners
     id       BIGINT AUTO_INCREMENT NOT NULL COMMENT '배너_ID',
     url      LONGTEXT   NOT NULL COMMENT '배너_이미지_URL',
     bg_color VARCHAR(8) NOT NULL COMMENT '배너_배경색',
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE streamers
+(
+    id                         BIGINT AUTO_INCREMENT NOT NULL COMMENT '스트리머_ID',
+    streamer_today_comment     VARCHAR(20) NULL COMMENT '스트리머_오늘의_한마디',
+    streamer_self_introduction VARCHAR(100) NOT NULL COMMENT '스트리머_자기_소개',
+    streamer_image_url         LONGTEXT     NOT NULL COMMENT '스트리머_이미지_URL',
+    streamer_name              VARCHAR(10)  NOT NULL COMMENT '스트리머_이름',
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE streamers_interests
+(
+    id                     BIGINT AUTO_INCREMENT NOT NULL COMMENT '스트리머_관심_분야_ID',
+    streamer_id            BIGINT      NOT NULL COMMENT '스트리머_ID',
+    streamer_interest_name VARCHAR(10) NOT NULL COMMENT '스트리머_관심_분야_이름',
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE streamers_platforms
+(
+    id                            BIGINT AUTO_INCREMENT NOT NULL COMMENT '스트리머_플랫폼_ID',
+    streamer_id                   BIGINT     NOT NULL COMMENT '스트리머_ID',
+    streamer_platform_name        VARCHAR(8) NOT NULL COMMENT '스트리머_플랫폼_이름',
+    streamer_platform_image_url   LONGTEXT   NOT NULL COMMENT '스트리머_플랫폼_로고_URL',
+    streamer_platform_profile_url LONGTEXT   NOT NULL COMMENT '스트리머_플랫폼_프로필_URL',
     PRIMARY KEY (id)
 );

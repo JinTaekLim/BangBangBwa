@@ -1,6 +1,5 @@
 package com.bangbangbwa.backend.domain.promotion.common.dto;
 
-import com.bangbangbwa.backend.domain.promotion.common.enums.Platform;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
@@ -21,12 +20,12 @@ public class PromotionStreamerDto {
       String selfIntroduction,
       @Schema(description = "스트리머 사진 URL", example = "이미지 URL")
       String imageUrl,
+      @Schema(description = "스트리머 이름", example = "이수연")
+      String name,
       @Schema(description = "스트리머 관심분야 목록")
       List<PromotionStreamerResponseStreamerInterested> interestedList,
       @Schema(description = "스트리머 플랫폼 목록")
-      List<PromotionStreamerResponseStreamerPlatform> platformList,
-      @Schema(description = "스트리머 이름", example = "이수연")
-      String name
+      List<PromotionStreamerResponseStreamerPlatform> platformList
   ) {
 
   }
@@ -42,7 +41,7 @@ public class PromotionStreamerDto {
 
   public record PromotionStreamerResponseStreamerPlatform(
       @Schema(description = "플랫폼 종류", allowableValues = {"SOOP", "YOUTUBE", "CHZZK"})
-      Platform platform,
+      String name,
       @Schema(description = "플랫폼 로고 사진 URL", example = "플랫폼 로고 사진 URL")
       String imageUrl,
       @Schema(description = "플랫폼 프로필 URL", example = "플랫폼 프로필 URL")
