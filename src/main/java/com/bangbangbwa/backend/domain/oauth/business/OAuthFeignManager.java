@@ -5,6 +5,7 @@ import com.bangbangbwa.backend.domain.oauth.common.dto.GoogleTokenDto;
 import com.bangbangbwa.backend.domain.oauth.common.dto.KakaoInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.dto.KakaoTokenDto;
 import com.bangbangbwa.backend.domain.oauth.common.dto.NaverInfoDto;
+import com.bangbangbwa.backend.domain.oauth.common.dto.NaverTokenDto;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import com.bangbangbwa.backend.global.util.Base64Util;
@@ -47,7 +48,12 @@ public class OAuthFeignManager {
 
   public OAuthInfoDto getNaverInfo(String oauthToken) throws FeignException {
     NaverInfoDto naverInfo = naverInfoProvider.getInfo(oauthToken);
-    return OAuthInfoDto.builder().build();
+    return OAuthInfoDto.builder()
+        .email(naverInfo.response().email())
+        .snsId(naverInfo.response().id())
+        .snsType(SnsType.NAVER)
+        .oAuthToken(oauthToken)
+        .build();
   }
 
   public OAuthInfoDto getGoogleInfoByCode(String authCode) throws FeignException {
@@ -73,7 +79,14 @@ public class OAuthFeignManager {
   }
 
   public OAuthInfoDto getNaverInfoByCode(String authCode) throws FeignException {
-    return null;
+    NaverTokenDto naverToken = naverInfoProvider.getInfoByCode(authCode);
+    NaverInfoDto naverInfo = naverInfoProvider.getInfo(naverToken.accessToken());
+    return OAuthInfoDto.builder()
+        .email(naverInfo.response().email())
+        .snsId(naverInfo.response().id())
+        .snsType(SnsType.NAVER)
+        .oAuthToken(naverToken.accessToken())
+        .build();
   }
 
   private GoogleInfoDto parseIdToken(String idToken) {
