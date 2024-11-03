@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS posts;
 DROP TABLE IF EXISTS tokens;
 DROP TABLE IF EXISTS members;
 DROP TABLE IF EXISTS tags;
@@ -48,4 +49,20 @@ CREATE TABLE banners
     url      LONGTEXT   NOT NULL COMMENT '배너_이미지_URL',
     bg_color VARCHAR(8) NOT NULL COMMENT '배너_배경색',
     PRIMARY KEY (id)
+);
+
+CREATE TABLE posts
+(
+    id       BIGINT AUTO_INCREMENT NOT NULL COMMENT '게시글_ID',
+    member_id       BIGINT              NOT NULL COMMENT '작성자_ID',
+    post_type   VARCHAR(100) NOT NULL COMMENT 'MEMBER, STREAMER',
+    title VARCHAR(100) NOT NULL COMMENT '제목',
+    content VARCHAR(1000) NOT NULL COMMENT '내용',
+    created_at DATETIME     NOT NULL COMMENT '생성 일시',
+    created_id VARCHAR(255) NOT NULL COMMENT '생성자',
+    updated_id VARCHAR(255) NULL COMMENT '수정자(null)',
+    updated_at DATETIME NULL COMMENT '수정 일시(null)',
+    deleted_at DATETIME NULL COMMENT '삭제 일시(null)',
+    PRIMARY KEY (id),
+    FOREIGN KEY (member_id) REFERENCES members (id)
 );
