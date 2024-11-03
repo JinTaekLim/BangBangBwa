@@ -11,7 +11,12 @@ public enum MemberErrorType {
   INVALID_INTEREST_ERROR("지원하지 않는 관심 태그입니다."),
   NOT_FOUND_MEMBER("존재하지 않는 회원입니다."),
   NOT_SIGN_UP_MEMBER("가입되지 않은 회원입니다."),
-  DUPLICATED_NICKNAME_ERROR("이미 사용중인 닉네임 입니다.");
+  DUPLICATED_NICKNAME_ERROR("이미 사용중인 닉네임 입니다."),
+
+  AUTHENTICATION_NULL_ERROR("Authentication 이 NULL 입니다."),
+  AUTHENTICATION_NAME_NULL_ERROR("Authentication name 이 NULL 입니다."),
+  NOT_PARSED_VALUE_ERROR("파싱되지 않는 값입니다.");
+
 
   private final String message;
 
