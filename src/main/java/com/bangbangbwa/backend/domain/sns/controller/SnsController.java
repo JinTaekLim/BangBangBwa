@@ -1,5 +1,8 @@
 package com.bangbangbwa.backend.domain.sns.controller;
 
+import com.bangbangbwa.backend.domain.sns.common.dto.CreateCommentDto;
+import com.bangbangbwa.backend.domain.sns.common.entity.Comment;
+import com.bangbangbwa.backend.domain.sns.common.mapper.CommentMapper;
 import com.bangbangbwa.backend.domain.sns.common.mapper.PostMapper;
 import com.bangbangbwa.backend.domain.sns.service.SnsService;
 import com.bangbangbwa.backend.domain.sns.common.dto.CreatePostDto;
@@ -92,13 +95,23 @@ public class SnsController implements SnsApi{
     return ApiResponse.ok(response);
   }
 
-  @PostMapping("createPost")
+  @PostMapping("/createPost")
   @PreAuthorize("hasAuthority('MEMBER')")
   public ApiResponse<CreatePostDto.Response> createPost(
       @RequestBody @Valid CreatePostDto.Request request
   ) {
     Post post = snsService.createPost(request);
     CreatePostDto.Response response = PostMapper.INSTANCE.dtoToCreatePostResponse(post);
+    return ApiResponse.ok(response);
+  }
+
+  @PostMapping("/createComment")
+  @PreAuthorize("hasAuthority('MEMBER')")
+  public ApiResponse<CreateCommentDto.Response> createComment(
+      @RequestBody @Valid CreateCommentDto.Request request
+  ) {
+    Comment comment = snsService.createComment(request);
+    CreateCommentDto.Response response = CommentMapper.INSTANCE.dtoToCreateCommentResponse(comment);
     return ApiResponse.ok(response);
   }
 }
