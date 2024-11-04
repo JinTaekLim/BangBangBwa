@@ -57,7 +57,7 @@ CREATE TABLE posts
     member_id       BIGINT              NOT NULL COMMENT '작성자_ID',
     post_type   VARCHAR(100) NOT NULL COMMENT 'MEMBER, STREAMER',
     title VARCHAR(100) NOT NULL COMMENT '제목',
-    content VARCHAR(1000) NOT NULL COMMENT '내용',
+    content VARCHAR(4000) NOT NULL COMMENT '내용',
     created_at DATETIME     NOT NULL COMMENT '생성 일시',
     created_id VARCHAR(255) NOT NULL COMMENT '생성자',
     updated_id VARCHAR(255) NULL COMMENT '수정자(null)',
