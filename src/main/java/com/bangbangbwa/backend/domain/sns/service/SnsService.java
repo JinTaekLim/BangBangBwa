@@ -26,8 +26,7 @@ public class SnsService {
 
 
   public Post createPost(CreatePostDto.Request request) {
-    Long memberId = memberProvider.getCurrentMemberId();
-    Member member = memberReader.findById(memberId);
+    Member member = memberProvider.getCurrentMember();
     PostType postType = request.postType();
     memberValidator.validateRole(member.getRole(), postType);
 
