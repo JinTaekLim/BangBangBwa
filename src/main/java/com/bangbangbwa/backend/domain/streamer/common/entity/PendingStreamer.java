@@ -25,7 +25,7 @@ public class PendingStreamer {
   private LocalDateTime updatedAt;
 
   @Builder
-  public PendingStreamer(Long id, Long memberId, Long admin_id, String platformUrl) {
+  public PendingStreamer(Long id, Long memberId, Long adminId, String platformUrl) {
     this.id = id;
     this.memberId = memberId;
     this.adminId = adminId;
