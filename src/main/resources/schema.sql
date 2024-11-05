@@ -66,3 +66,18 @@ CREATE TABLE posts
     PRIMARY KEY (id),
     FOREIGN KEY (member_id) REFERENCES members (id)
 );
+
+CREATE TABLE comments
+(
+    post_id         BIGINT              NOT NULL COMMENT '게시물_ID',
+    member_id       BIGINT              NOT NULL COMMENT '작성자_ID',
+    content         VARCHAR(500)        NOT NULL COMMENT '내용',
+    created_at      DATETIME            NOT NULL COMMENT '생성 일시',
+    created_id      VARCHAR(255)        NOT NULL COMMENT '생성자',
+    updated_id      VARCHAR(255)        NULL COMMENT '수정자(null)',
+    updated_at      DATETIME            NULL COMMENT '수정 일시(null)',
+    deleted_at      DATETIME            NULL COMMENT '삭제 일시(null)',
+    PRIMARY KEY (post_id, member_id),
+    FOREIGN KEY (post_id) REFERENCES posts (id),
+    FOREIGN KEY (member_id) REFERENCES members (id)
+)

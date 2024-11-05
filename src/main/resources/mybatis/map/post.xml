@@ -9,4 +9,8 @@
     VALUES (#{postType}, #{memberId}, #{title}, #{content}, #{createdId}, #{createdAt})
   </insert>
 
+  <select id="findById" parameterType="Long" resultType="post">
+    SELECT * FROM posts WHERE id = #{id};
+  </select>
+
 </mapper>

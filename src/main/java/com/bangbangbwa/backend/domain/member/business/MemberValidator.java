@@ -4,7 +4,7 @@ import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.member.exception.DuplicatedNicknameException;
 import com.bangbangbwa.backend.domain.member.repository.MemberRepository;
 import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
-import com.bangbangbwa.backend.domain.sns.exception.NoPostPermission;
+import com.bangbangbwa.backend.domain.sns.exception.NoPostPermissionException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +25,7 @@ public class MemberValidator {
     boolean hasPermission = (snsType == PostType.MEMBER && memberType == Role.MEMBER) ||
         (snsType == PostType.STREAMER && (memberType == Role.STREAMER || memberType == Role.ADMIN));
     if (!hasPermission) {
-      throw new NoPostPermission();
+      throw new NoPostPermissionException();
     }
   }
 }
