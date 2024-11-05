@@ -20,4 +20,8 @@ public class DailyMessage {
     this.message = message;
     this.expirationTime = 24L;
   }
+
+  public void updateStreamerId(Long streamerId) {
+    this.streamerId = streamerId;
+  }
 }
