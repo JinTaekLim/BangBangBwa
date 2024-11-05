@@ -3,11 +3,15 @@ package com.bangbangbwa.backend.domain.member.controller;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberLoginDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberNicknameDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
+import com.bangbangbwa.backend.domain.member.common.dto.PromoteStreamerDto;
 import com.bangbangbwa.backend.domain.member.common.mapper.MemberMapper;
 import com.bangbangbwa.backend.domain.member.service.MemberService;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import com.bangbangbwa.backend.domain.oauth.service.OAuthService;
+import com.bangbangbwa.backend.domain.streamer.common.entity.PendingStreamer;
+import com.bangbangbwa.backend.domain.streamer.common.mapper.PendingStreamerMapper;
+import com.bangbangbwa.backend.domain.streamer.service.PendingStreamerService;
 import com.bangbangbwa.backend.domain.token.common.TokenDto;
 import com.bangbangbwa.backend.domain.token.service.TokenService;
 import com.bangbangbwa.backend.global.response.ApiResponse;
@@ -16,6 +20,7 @@ import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils.Null;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,6 +39,7 @@ public class MemberController implements MemberApi {
   private final OAuthService oAuthService;
   private final MemberService memberService;
   private final TokenService tokenService;
+  private final PendingStreamerService pendingStreamerService;
 
   @PostMapping(value = "/{snsType}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   public ApiResponse<MemberSignupDto.Response> signup(
@@ -83,5 +89,18 @@ public class MemberController implements MemberApi {
   public ApiResponse<TokenDto> reissueToken(@RequestParam String refreshToken) {
     TokenDto tokenDto = tokenService.reissueToken(refreshToken);
     return ApiResponse.ok(tokenDto);
+  }
+
+  @PostMapping("/promoteStreamer")
+  @PreAuthorize("hasAuthority('MEMBER')")
+  public ApiResponse<PromoteStreamerDto.Response> promoteStreamer(
+      @RequestBody @Valid PromoteStreamerDto.Request request
+  ) {
+    PendingStreamer pendingStreamer = pendingStreamerService.promoteStreamer(request);
+    PromoteStreamerDto.Response response = PendingStreamerMapper
+        .INSTANCE
+        .dtoToPromoteStreamerResponse(pendingStreamer);
+
+    return ApiResponse.ok(response);
   }
 }
