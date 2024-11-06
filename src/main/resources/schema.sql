@@ -98,6 +98,7 @@ CREATE TABLE pending_streamer
     member_id       BIGINT              NOT NULL COMMENT '멤버_ID',
     admin_id       BIGINT              NULL COMMENT '승인자_ID',
     platformUrl     VARCHAR(255)       NOT NULL COMMENT '플랫폼 URL',
+    status          ENUM('APPROVAL', 'PENDING', 'REJECTION') NOT NULL DEFAULT 'PENDING',
     created_at      DATETIME            NOT NULL COMMENT '생성 일시',
     created_id      VARCHAR(255)        NOT NULL COMMENT '생성자',
     updated_id      VARCHAR(255)        NULL COMMENT '수정자(null)',
