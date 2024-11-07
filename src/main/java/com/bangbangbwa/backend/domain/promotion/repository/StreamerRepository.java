@@ -1,6 +1,6 @@
 package com.bangbangbwa.backend.domain.promotion.repository;
 
-import com.bangbangbwa.backend.domain.promotion.common.vo.StreamerVo;
+import com.bangbangbwa.backend.domain.promotion.common.entity.Streamer;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSession;
@@ -12,7 +12,7 @@ public class StreamerRepository {
 
   private final SqlSession mysql;
 
-  public List<StreamerVo> findAll() {
+  public List<Streamer> findAll() {
     return mysql.selectList("StreamerMapper.selectAll");
   }
 }

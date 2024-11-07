@@ -2,13 +2,14 @@ package com.bangbangbwa.backend.domain.promotion.common.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
+import java.util.Set;
 
 public class PromotionStreamerDto {
 
   @Schema(name = "PromotionStreamerResponse", description = "홍보 스트리머 응답")
   public record Response(
       @Schema(description = "스트리머 목록")
-      List<PromotionStreamerResponseStreamer> streamerList
+      Set<PromotionStreamerResponseStreamer> streamerList
   ) {
 
   }
@@ -23,7 +24,7 @@ public class PromotionStreamerDto {
       @Schema(description = "스트리머 이름", example = "이수연")
       String name,
       @Schema(description = "스트리머 관심분야 목록")
-      List<PromotionStreamerResponseStreamerInterested> interestedList,
+      List<PromotionStreamerResponseStreamerInterested> tagList,
       @Schema(description = "스트리머 플랫폼 목록")
       List<PromotionStreamerResponseStreamerPlatform> platformList
   ) {

@@ -2,33 +2,28 @@ package com.bangbangbwa.backend.domain.promotion.common.entity;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.ibatis.type.Alias;
 
-@Alias("streamer_platform")
+@Alias("platform")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class StreamerPlatform {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class Platform {
 
   private Long id;
-  private Long streamerId;
   private String name;
   private String imageUrl;
   private String profileUrl;
 
-  public StreamerPlatform(
+  @Builder
+  public Platform(
       String name,
-      String imageUrl,
-      String profileUrl
+      String imageUrl
   ) {
     this.name = name;
     this.imageUrl = imageUrl;
-    this.profileUrl = profileUrl;
-  }
-
-  public void updateParent(Long streamerId) {
-    this.streamerId = streamerId;
   }
 }

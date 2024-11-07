@@ -1,23 +1,27 @@
 package com.bangbangbwa.backend.domain.promotion.common.mapper;
 
 import com.bangbangbwa.backend.domain.promotion.common.dto.PromotionStreamerDto.PromotionStreamerResponseStreamerInterested;
-import com.bangbangbwa.backend.domain.promotion.common.vo.StreamerInterestedVo;
+import com.bangbangbwa.backend.domain.tag.common.entity.Tag;
 import java.util.ArrayList;
 import java.util.List;
 
 public class StreamerInterestedListMapper {
 
   public List<PromotionStreamerResponseStreamerInterested> asDtoList(
-      List<StreamerInterestedVo> voList) {
-    List<PromotionStreamerResponseStreamerInterested> returnLit = new ArrayList<>();
-    for (StreamerInterestedVo vo : voList) {
+      List<Tag> tags) {
+    List<PromotionStreamerResponseStreamerInterested> returnList = new ArrayList<>();
+    for (Tag tag : tags) {
       PromotionStreamerResponseStreamerInterested dto
           = new PromotionStreamerResponseStreamerInterested(
-          false, // TODO : 회원 관심 분야 기능 추가 후 수정 예정
-          vo.getName()
+          checkInterestedIn(), // TODO : 회원 관심 분야 기능 추가 후 수정 예정
+          tag.getName()
       );
-      returnLit.add(dto);
+      returnList.add(dto);
     }
-    return returnLit;
+    return returnList;
+  }
+
+  private boolean checkInterestedIn() {
+    return false;
   }
 }

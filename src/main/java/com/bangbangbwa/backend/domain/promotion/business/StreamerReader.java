@@ -1,6 +1,6 @@
 package com.bangbangbwa.backend.domain.promotion.business;
 
-import com.bangbangbwa.backend.domain.promotion.common.vo.StreamerVo;
+import com.bangbangbwa.backend.domain.promotion.common.entity.Streamer;
 import com.bangbangbwa.backend.domain.promotion.repository.StreamerRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,7 @@ public class StreamerReader {
 
   private final StreamerRepository streamerRepository;
 
-  public List<StreamerVo> readAllStreamers() {
+  public List<Streamer> readAllStreamers() {
     return streamerRepository.findAll();
   }
 }
