@@ -1,3 +1,6 @@
+DROP TABLE IF EXISTS pending_streamer;
+DROP TABLE IF EXISTS admins;
+DROP TABLE IF EXISTS comments;
 DROP TABLE IF EXISTS posts;
 DROP TABLE IF EXISTS tokens;
 DROP TABLE IF EXISTS members;
@@ -80,4 +83,27 @@ CREATE TABLE comments
     PRIMARY KEY (post_id, member_id),
     FOREIGN KEY (post_id) REFERENCES posts (id),
     FOREIGN KEY (member_id) REFERENCES members (id)
-)
+);
+
+CREATE TABLE admins
+(
+    id       BIGINT AUTO_INCREMENT NOT NULL COMMENT '관리자_ID',
+    PRIMARY KEY (id)
+);
+
+
+CREATE TABLE pending_streamer
+(
+    id       BIGINT AUTO_INCREMENT NOT NULL COMMENT '스트리머 승인 대기_ID',
+    member_id       BIGINT              NOT NULL COMMENT '멤버_ID',
+    admin_id       BIGINT              NULL COMMENT '승인자_ID',
+    platformUrl     VARCHAR(255)       NOT NULL COMMENT '플랫폼 URL',
+    status          ENUM('APPROVAL', 'PENDING', 'REJECTION') NOT NULL DEFAULT 'PENDING',
+    created_at      DATETIME            NOT NULL COMMENT '생성 일시',
+    created_id      VARCHAR(255)        NOT NULL COMMENT '생성자',
+    updated_id      VARCHAR(255)        NULL COMMENT '수정자(null)',
+    updated_at      DATETIME            NULL COMMENT '수정 일시(null)',
+    PRIMARY KEY (id),
+    FOREIGN KEY (admin_id) REFERENCES admins (id),
+    FOREIGN KEY (member_id) REFERENCES members (id)
+);
