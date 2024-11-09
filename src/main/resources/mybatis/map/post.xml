@@ -7,6 +7,8 @@
   <insert id="save" parameterType="Post" keyProperty="id" useGeneratedKeys="true">
     INSERT INTO posts (post_type, member_id, title, content, created_id, created_at)
     VALUES (#{postType}, #{memberId}, #{title}, #{content}, #{createdId}, #{createdAt})
+    INSERT INTO posts (member_id, status, created_id, created_at)
+    VALUES (#{memberId}, #{status}, #{createdId}, #{createdAt})
   </insert>
 
   <select id="findById" parameterType="Long" resultType="post">
