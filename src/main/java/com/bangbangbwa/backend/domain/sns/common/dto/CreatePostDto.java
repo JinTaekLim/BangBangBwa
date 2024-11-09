@@ -11,7 +11,7 @@ public class CreatePostDto {
   @Schema(name = "CreatePostRequest", description = "글 작성 요청 DTO")
   public record Request(
       @Schema(description = "게시글 타입", examples = "MEMBER")
-      @NotNull(message = "게시글 타입을 입력해주세요. ")
+      @NotNull(message = "게시글 타입을 입력해주세요.")
       PostType postType,
 
       @Schema(description = "제목", examples = "title")
