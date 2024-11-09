@@ -16,6 +16,7 @@ public interface PendingStreamerMapper {
   PendingStreamer dtoToEntity(PromoteStreamerDto.Request request);
 
   @Mapping(target = "id", source = "pendingStreamerId")
+  @Mapping(target = "status", source = "status")
   PendingStreamer dtoToEntity(ApproveStreamerDto.Request request);
 
   @Mapping(target = "platformUrl", source = "platformUrl")
