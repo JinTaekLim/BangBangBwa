@@ -8,9 +8,12 @@ public class ApproveStreamerDto {
   @Schema(name = "ApproveStreamerRequest", description = "계정 등업 승인 요청 DTO")
   public record Request(
 
-      @Schema(description = "승인 대기 ID")
+      @Schema(description = "승인 대기 ID", examples = "1")
       @NotNull(message = "승인 대기 ID를 입력헤주세요.")
-      Long pendingStreamerId
+      Long pendingStreamerId,
+      @Schema(description = "상태 값", examples = "APPROVAL, REJECTION")
+      @NotNull(message = "상태 값을 입력헤주세요.")
+      String status
   ) {
 
   }
