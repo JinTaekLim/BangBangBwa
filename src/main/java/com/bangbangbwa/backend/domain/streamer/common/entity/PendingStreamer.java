@@ -27,12 +27,18 @@ public class PendingStreamer {
   private LocalDateTime updatedAt;
 
   @Builder
-  public PendingStreamer(Long id, Long memberId, Long adminId, String platformUrl) {
+  public PendingStreamer(
+      Long id,
+      Long memberId,
+      Long adminId,
+      String platformUrl,
+      PendingType status
+  ) {
     this.id = id;
     this.memberId = memberId;
     this.adminId = adminId;
     this.platformUrl = platformUrl;
-    this.status = PendingType.PENDING;
+    this.status = (status != null) ? status : PendingType.PENDING;
     this.createdId = SELF;
     this.createdAt = LocalDateTime.now();
   }
@@ -45,6 +51,5 @@ public class PendingStreamer {
     this.adminId = adminId;
     this.updatedId = adminId.toString();
     this.updatedAt = LocalDateTime.now();
-
   }
 }
