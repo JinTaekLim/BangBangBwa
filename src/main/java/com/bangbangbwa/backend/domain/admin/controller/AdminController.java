@@ -21,12 +21,12 @@ public class AdminController {
 
   private final AdminService adminService;
 
-  @PostMapping("/approveStreamer")
+  @PostMapping("/updatePendingStatus")
   @PreAuthorize("hasAuthority('ADMIN')")
-  public ApiResponse<ApproveStreamerDto.Response> approveStreamer(
+  public ApiResponse<ApproveStreamerDto.Response> updatePendingStatus(
       @RequestBody @Valid ApproveStreamerDto.Request request
   ){
-    PendingStreamer pendingStreamer = adminService.approveStreamer(request);
+    PendingStreamer pendingStreamer = adminService.updatePendingStatus(request);
     ApproveStreamerDto.Response response = PendingStreamerMapper
         .INSTANCE
         .dtoToApproveStreamerResponse(pendingStreamer);
