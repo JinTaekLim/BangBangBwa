@@ -11,5 +11,7 @@ public class PostCreator {
 
   private final PostRepository postRepository;
 
-  public void save(Post post) { postRepository.savePost(post); }
+  public void save(Post post) { postRepository.save(post); }
+
+  public void update(Post post) { postRepository.update(post); }
 }
