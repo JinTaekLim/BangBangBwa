@@ -15,7 +15,7 @@
     admin_id = #{adminId},
     updated_at = #{updatedAt},
     updated_id = #{updatedId}
-    WHERE id = #{pendingStreamerId}
+    WHERE id = #{id}
   </update>
 
 
