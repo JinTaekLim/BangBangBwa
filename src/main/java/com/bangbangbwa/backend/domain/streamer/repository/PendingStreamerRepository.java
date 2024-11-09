@@ -15,7 +15,7 @@ public class PendingStreamerRepository {
     mysql.insert("PendingStreamerMapper.save", pendingStreamer);
   }
 
-  public void updateAdminId(PendingStreamer pendingStreamer) {
-    mysql.insert("PendingStreamerMapper.updateAdminId",pendingStreamer);
+  public void updateStatus(PendingStreamer pendingStreamer) {
+    mysql.insert("PendingStreamerMapper.updateStatus",pendingStreamer);
   }
 }

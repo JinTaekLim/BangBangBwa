@@ -12,7 +12,7 @@ public class PendingStreamerUpdater {
   private final PendingStreamerRepository pendingStreamerRepository;
 
   public void updateAdminId(PendingStreamer pendingStreamer) {
-    pendingStreamerRepository.updateAdminId(pendingStreamer);
+    pendingStreamerRepository.updateStatus(pendingStreamer);
   }
 
 }
