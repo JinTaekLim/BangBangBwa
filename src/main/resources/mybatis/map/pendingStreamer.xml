@@ -9,10 +9,11 @@
     VALUES (#{memberId}, #{platformUrl}, #{createdId}, #{createdAt})
   </insert>
 
-  <update id="updateAdminId" parameterType="PendingStreamer">
+  <update id="updateStatus" parameterType="PendingStreamer">
     UPDATE pending_streamer
     SET
     admin_id = #{adminId},
+    status = #{status},
     updated_at = #{updatedAt},
     updated_id = #{updatedId}
     WHERE id = #{id}
