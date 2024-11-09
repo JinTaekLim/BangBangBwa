@@ -1,5 +1,6 @@
 package com.bangbangbwa.backend.domain.streamer.common.entity;
 
+import com.bangbangbwa.backend.domain.streamer.common.enums.PendingType;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +20,7 @@ public class PendingStreamer {
   private Long memberId;
   private Long adminId;
   private String platformUrl;
+  private PendingType status;
   private String createdId;
   private LocalDateTime createdAt;
   private String updatedId;
@@ -30,6 +32,7 @@ public class PendingStreamer {
     this.memberId = memberId;
     this.adminId = adminId;
     this.platformUrl = platformUrl;
+    this.status = PendingType.PENDING;
     this.createdId = SELF;
     this.createdAt = LocalDateTime.now();
   }

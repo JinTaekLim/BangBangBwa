@@ -65,16 +65,12 @@ public class SnsController implements SnsApi{
   public ApiResponse<List<GetPostListDto.Response>> getPostList() {
 
     List<GetPostListDto.Response> response = new ArrayList<>();
-    int randomInt = RandomValue.getInt(15);
 
-    for(int i=0; i<randomInt; i++) {
-      response.add(
-          new GetPostListDto.Response(
-              RandomValue.getRandomLong(0, 9999),
-              RandomValue.string(1,20).setNullable(false).get()
-          )
-      );
-    }
+    response.add(new GetPostListDto.Response(1L, "오늘의 컨텐츠는 무엇일까요"));
+    response.add(new GetPostListDto.Response(2L, "요즘 이게 그렇게 유명하다면서요?"));
+    response.add(new GetPostListDto.Response(3L, "진짜 이게 말이 되는 걸까요?"));
+    response.add(new GetPostListDto.Response(4L, "제목을 무엇으로 해야 좋을까요"));
+    response.add(new GetPostListDto.Response(5L, "오늘의 방송은 5시 부터 합니다!"));
 
     return ApiResponse.ok(response);
   }
