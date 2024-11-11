@@ -1,6 +1,10 @@
 DROP TABLE IF EXISTS streamers_tags;
 DROP TABLE IF EXISTS streamers_platforms;
 
+DROP TABLE IF EXISTS pending_streamer;
+DROP TABLE IF EXISTS admins;
+DROP TABLE IF EXISTS comments;
+DROP TABLE IF EXISTS posts;
 DROP TABLE IF EXISTS tokens;
 DROP TABLE IF EXISTS members;
 DROP TABLE IF EXISTS tags;
@@ -52,6 +56,60 @@ CREATE TABLE banners
     url      LONGTEXT   NOT NULL COMMENT '배너_이미지_URL',
     bg_color VARCHAR(8) NOT NULL COMMENT '배너_배경색',
     PRIMARY KEY (id)
+);
+
+CREATE TABLE posts
+(
+    id       BIGINT AUTO_INCREMENT NOT NULL COMMENT '게시글_ID',
+    member_id       BIGINT              NOT NULL COMMENT '작성자_ID',
+    post_type   VARCHAR(100) NOT NULL COMMENT 'MEMBER, STREAMER',
+    title VARCHAR(100) NOT NULL COMMENT '제목',
+    content VARCHAR(4000) NOT NULL COMMENT '내용',
+    created_at DATETIME     NOT NULL COMMENT '생성 일시',
+    created_id VARCHAR(255) NOT NULL COMMENT '생성자',
+    updated_id VARCHAR(255) NULL COMMENT '수정자(null)',
+    updated_at DATETIME NULL COMMENT '수정 일시(null)',
+    deleted_at DATETIME NULL COMMENT '삭제 일시(null)',
+    PRIMARY KEY (id),
+    FOREIGN KEY (member_id) REFERENCES members (id)
+);
+
+CREATE TABLE comments
+(
+    post_id         BIGINT              NOT NULL COMMENT '게시물_ID',
+    member_id       BIGINT              NOT NULL COMMENT '작성자_ID',
+    content         VARCHAR(500)        NOT NULL COMMENT '내용',
+    created_at      DATETIME            NOT NULL COMMENT '생성 일시',
+    created_id      VARCHAR(255)        NOT NULL COMMENT '생성자',
+    updated_id      VARCHAR(255)        NULL COMMENT '수정자(null)',
+    updated_at      DATETIME            NULL COMMENT '수정 일시(null)',
+    deleted_at      DATETIME            NULL COMMENT '삭제 일시(null)',
+    PRIMARY KEY (post_id, member_id),
+    FOREIGN KEY (post_id) REFERENCES posts (id),
+    FOREIGN KEY (member_id) REFERENCES members (id)
+);
+
+CREATE TABLE admins
+(
+    id       BIGINT AUTO_INCREMENT NOT NULL COMMENT '관리자_ID',
+    PRIMARY KEY (id)
+);
+
+
+CREATE TABLE pending_streamer
+(
+    id       BIGINT AUTO_INCREMENT NOT NULL COMMENT '스트리머 승인 대기_ID',
+    member_id       BIGINT              NOT NULL COMMENT '멤버_ID',
+    admin_id       BIGINT              NULL COMMENT '승인자_ID',
+    platformUrl     VARCHAR(255)       NOT NULL COMMENT '플랫폼 URL',
+    status          ENUM('APPROVAL', 'PENDING', 'REJECTION') NOT NULL DEFAULT 'PENDING',
+    created_at      DATETIME            NOT NULL COMMENT '생성 일시',
+    created_id      VARCHAR(255)        NOT NULL COMMENT '생성자',
+    updated_id      VARCHAR(255)        NULL COMMENT '수정자(null)',
+    updated_at      DATETIME            NULL COMMENT '수정 일시(null)',
+    PRIMARY KEY (id),
+    FOREIGN KEY (admin_id) REFERENCES admins (id),
+    FOREIGN KEY (member_id) REFERENCES members (id)
 );
 
 CREATE TABLE streamers

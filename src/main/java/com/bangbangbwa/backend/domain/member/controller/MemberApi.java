@@ -4,6 +4,7 @@ import com.bangbangbwa.backend.domain.member.common.dto.MemberLoginDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberNicknameDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
+import com.bangbangbwa.backend.domain.token.common.TokenDto;
 import com.bangbangbwa.backend.global.annotation.swagger.ApiResponse200;
 import com.bangbangbwa.backend.global.annotation.swagger.ApiResponse500;
 import com.bangbangbwa.backend.global.response.ApiResponse;
@@ -18,6 +19,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.ObjectUtils.Null;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "MemberAPI", description = "회원 API")
@@ -155,4 +157,42 @@ public interface MemberApi {
       }
   )
   ApiResponse<MemberNicknameDto.Response> randomNicknames(@Parameter int count);
+
+
+
+  @Operation(summary = "토큰 재발급", tags = {"MemberAPI"})
+  @ApiResponses(value = {
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(
+          responseCode = "200", description = "OK",
+          content = @Content(
+              mediaType = "application/json",
+              schema = @Schema(implementation = TokenDto.class)
+          )
+      ),
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(
+          responseCode = "400",
+          description = "유효하지 않은 토큰입니다.",
+          content = @Content(
+              mediaType = "application/json",
+              array = @ArraySchema(schema = @Schema(implementation = ApiResponse.class)),
+              examples = {
+                  @ExampleObject(
+                      value = """
+                      {
+                      "code": "BAD_REQUEST",
+                      "message": "유효하지 않은 토큰입니다.",
+                      "data" : [
+                        "refreshToken 토큰을 입력해주세요."
+                      ]
+                      }
+                      """
+                  )
+              }
+          )
+      )
+  })
+  ApiResponse<TokenDto> reissueToken(
+      @RequestParam String refreshToken
+  );
+
 }
