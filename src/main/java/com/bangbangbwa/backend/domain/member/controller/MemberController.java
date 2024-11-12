@@ -21,7 +21,6 @@ import com.bangbangbwa.backend.domain.token.common.TokenDto;
 import com.bangbangbwa.backend.domain.token.service.TokenService;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import jakarta.validation.Valid;
-import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils.Null;
@@ -123,20 +122,20 @@ public class MemberController implements MemberApi {
   }
 
   @GetMapping("/posts/{memberId}")
-  public ApiResponse<List<PostDto.Response>> getPosts(@PathVariable("memberId") String memberId) {
-    List<PostDto.Response> response = null;
+  public ApiResponse<PostDto.Response> getPosts(@PathVariable("memberId") String memberId) {
+    PostDto.Response response = null;
     return ApiResponse.ok(response);
   }
 
   @GetMapping("/comments/{memberId}")
-  public ApiResponse<List<CommentDto.Response>> getComments(@PathVariable("memberId") String memberId) {
-    List<CommentDto.Response> response = null;
+  public ApiResponse<CommentDto.Response> getComments(@PathVariable("memberId") String memberId) {
+    CommentDto.Response response = null;
     return ApiResponse.ok(response);
   }
 
   @GetMapping("/followers/{memberId}")
-  public ApiResponse<List<FollowerDto.Response>> getFollowers(@PathVariable("memberId") String memberId) {
-    List<FollowerDto.Response> response = null;
+  public ApiResponse<FollowerDto.Response> getFollowers(@PathVariable("memberId") String memberId) {
+    FollowerDto.Response response = null;
     return ApiResponse.ok(response);
   }
 }

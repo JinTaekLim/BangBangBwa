@@ -22,7 +22,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
 import org.apache.commons.lang3.ObjectUtils.Null;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -201,10 +200,89 @@ public interface MemberApi {
       @RequestParam String refreshToken
   );
 
+  @Operation(
+      tags = {"MemberAPI"},
+      summary = "마이페이지 > 프로필 정보 조회",
+      description = "프로필 정보를 조회합니다.",
+      responses = {
+          @io.swagger.v3.oas.annotations.responses.ApiResponse(
+              responseCode = "200",
+              description = "OK",
+              content = @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ProfileDto.Response.class)
+              )
+          ),
+      }
+  )
   ApiResponse<ProfileDto.Response> getProfile(String memberId);
+
+  @Operation(
+      tags = {"MemberAPI"},
+      summary = "마이페이지 > 프로필 요약 조회",
+      description = "프로필 요약을 조회합니다.",
+      responses = {
+          @io.swagger.v3.oas.annotations.responses.ApiResponse(
+              responseCode = "200",
+              description = "OK",
+              content = @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = SummaryDto.Response.class)
+              )
+          ),
+      }
+  )
   ApiResponse<SummaryDto.Response> getSummary(String memberId);
-  ApiResponse<List<PostDto.Response>> getPosts(String memberId);
-  ApiResponse<List<CommentDto.Response>> getComments(String memberId);
-  ApiResponse<List<FollowerDto.Response>> getFollowers(String memberId);
+
+  @Operation(
+      tags = {"MemberAPI"},
+      summary = "마이페이지 > 게시글 목록 조회",
+      description = "게시글 목록을 조회합니다.",
+      responses = {
+          @io.swagger.v3.oas.annotations.responses.ApiResponse(
+              responseCode = "200",
+              description = "OK",
+              content = @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = PostDto.Response.class)
+              )
+          ),
+      }
+  )
+  ApiResponse<PostDto.Response> getPosts(String memberId);
+
+  @Operation(
+      tags = {"MemberAPI"},
+      summary = "마이페이지 > 댓글 목록 조회",
+      description = "댓글 목록을 조회합니다.",
+      responses = {
+          @io.swagger.v3.oas.annotations.responses.ApiResponse(
+              responseCode = "200",
+              description = "OK",
+              content = @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = CommentDto.Response.class)
+              )
+          ),
+      }
+  )
+  ApiResponse<CommentDto.Response> getComments(String memberId);
+
+  @Operation(
+      tags = {"MemberAPI"},
+      summary = "마이페이지 > 팔로워 목록 조회",
+      description = "팔로워 목록을 조회합니다.",
+      responses = {
+          @io.swagger.v3.oas.annotations.responses.ApiResponse(
+              responseCode = "200",
+              description = "OK",
+              content = @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = FollowerDto.Response.class)
+              )
+          ),
+      }
+  )
+  ApiResponse<FollowerDto.Response> getFollowers(String memberId);
 
 }
