@@ -13,6 +13,7 @@ public class PromotionBannerDto {
 
   }
 
+  @Schema(description = "홍보 배너 응답 - 배너 목록")
   public record PromotionBannerResponseBanner(
       @Schema(description = "배너 이미지 URL")
       String url,
