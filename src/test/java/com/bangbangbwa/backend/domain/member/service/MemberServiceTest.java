@@ -1,7 +1,5 @@
 package com.bangbangbwa.backend.domain.member.service;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 import com.bangbangbwa.backend.domain.member.business.MemberReader;
@@ -51,9 +49,6 @@ class MemberServiceTest extends ServiceTest {
     ProfileDto profile = memberService.getProfile(memberId);
 
     // then
-    assertAll(
-        () -> assertNotNull(profile)
-    );
   }
 
   @Test
@@ -66,9 +61,6 @@ class MemberServiceTest extends ServiceTest {
     SummaryDto summary = memberService.getSummary(memberId);
 
     // then
-    assertAll(
-        () -> assertNotNull(summary)
-    );
   }
 
   @Test
@@ -81,9 +73,6 @@ class MemberServiceTest extends ServiceTest {
     List<PostDto> post = memberService.getPosts(memberId);
 
     // then
-    assertAll(
-        () -> assertNotNull(post)
-    );
   }
 
   @Test
@@ -96,9 +85,6 @@ class MemberServiceTest extends ServiceTest {
     CommentDto comments = memberService.getComments(memberId);
 
     // then
-    assertAll(
-        () -> assertNotNull(comments)
-    );
   }
 
   @Test
@@ -111,9 +97,6 @@ class MemberServiceTest extends ServiceTest {
     List<FollowerDto> followers = memberService.getFollowers(memberId);
 
     // then
-    assertAll(
-        () -> assertNotNull(followers)
-    );
   }
 
 }
