@@ -19,6 +19,9 @@ public class RandomStreamerProvider {
 
   public Set<PromotionStreamerResponseStreamer> getStreamers() {
     List<Streamer> streamers = streamerReader.readAllStreamers();
+    if (streamers.isEmpty()) {
+      return new HashSet<>();
+    }
     Set<Streamer> randomStreamers = getRandomStreamers(streamers, 5);
     List<Streamer> interestedStreamers =
         new ArrayList<>(getInterestedStreamers(streamers, 0));// TODO: 회원 관심분야 작업 선행 필요!
@@ -32,9 +35,6 @@ public class RandomStreamerProvider {
 
   private Set<Streamer> getRandomStreamers(List<Streamer> streamers, int count) {
     Set<Streamer> randomStreamers = new HashSet<>();
-    if (streamers.isEmpty()) {
-      return randomStreamers;
-    }
     Random random = new Random();
     for (int cnt = 0; cnt < 100 && randomStreamers.size() < count; cnt++) {
       int randomIdx = random.nextInt(streamers.size()); // 0 ~ size-1 범위로 수정
