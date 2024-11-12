@@ -1,8 +1,13 @@
 package com.bangbangbwa.backend.domain.member.controller;
 
+import com.bangbangbwa.backend.domain.member.common.dto.CommentDto;
+import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberLoginDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberNicknameDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
+import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
+import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
+import com.bangbangbwa.backend.domain.member.common.dto.SummaryDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import com.bangbangbwa.backend.domain.token.common.TokenDto;
 import com.bangbangbwa.backend.global.annotation.swagger.ApiResponse200;
@@ -17,6 +22,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import org.apache.commons.lang3.ObjectUtils.Null;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -194,5 +200,11 @@ public interface MemberApi {
   ApiResponse<TokenDto> reissueToken(
       @RequestParam String refreshToken
   );
+
+  ApiResponse<ProfileDto.Response> getProfile(String memberId);
+  ApiResponse<SummaryDto.Response> getSummary(String memberId);
+  ApiResponse<List<PostDto.Response>> getPosts(String memberId);
+  ApiResponse<List<CommentDto.Response>> getComments(String memberId);
+  ApiResponse<List<FollowerDto.Response>> getFollowers(String memberId);
 
 }

@@ -1,9 +1,14 @@
 package com.bangbangbwa.backend.domain.member.controller;
 
+import com.bangbangbwa.backend.domain.member.common.dto.CommentDto;
+import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberLoginDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberNicknameDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
+import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
+import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
 import com.bangbangbwa.backend.domain.member.common.dto.PromoteStreamerDto;
+import com.bangbangbwa.backend.domain.member.common.dto.SummaryDto;
 import com.bangbangbwa.backend.domain.member.common.mapper.MemberMapper;
 import com.bangbangbwa.backend.domain.member.service.MemberService;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
@@ -16,6 +21,7 @@ import com.bangbangbwa.backend.domain.token.common.TokenDto;
 import com.bangbangbwa.backend.domain.token.service.TokenService;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import jakarta.validation.Valid;
+import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils.Null;
@@ -102,5 +108,30 @@ public class MemberController implements MemberApi {
         .dtoToPromoteStreamerResponse(pendingStreamer);
 
     return ApiResponse.ok(response);
+  }
+
+  @GetMapping("/profile/{memberId}")
+  public ApiResponse<ProfileDto.Response> getProfile(@PathVariable("memberId") String memberId) {
+    return null;
+  }
+
+  @GetMapping("/summary/{memberId}")
+  public ApiResponse<SummaryDto.Response> getSummary(@PathVariable("memberId") String memberId) {
+    return null;
+  }
+
+  @GetMapping("/posts/{memberId}")
+  public ApiResponse<List<PostDto.Response>> getPosts(@PathVariable("memberId") String memberId) {
+    return null;
+  }
+
+  @GetMapping("/comments/{memberId}")
+  public ApiResponse<List<CommentDto.Response>> getComments(@PathVariable("memberId") String memberId) {
+    return null;
+  }
+
+  @GetMapping("/followers/{memberId}")
+  public ApiResponse<List<FollowerDto.Response>> getFollowers(@PathVariable("memberId") String memberId) {
+    return null;
   }
 }

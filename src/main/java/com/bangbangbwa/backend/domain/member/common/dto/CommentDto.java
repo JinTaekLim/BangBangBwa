@@ -1,26 +1,28 @@
 package com.bangbangbwa.backend.domain.member.common.dto;
 
-import lombok.Getter;
-
-@Getter
 public class CommentDto {
-  // Post Info
-  private Long postId;
-  private Long memberId;
-  private String creatorName;
-  private String creatorImage;
-  private String title;
-  private boolean hasImage;
-  private boolean hasVideo;
+  public record Response (
+    CommentResponsePostInfo postInfo,
+    CommentResponseCommentInfo commentInfo
+  ) {
+  }
 
-  // Comment Info
-  private CommentInfo commentInfo;
+  public record CommentResponsePostInfo (
+      Long postId,
+      String title,
+      Long memberId,
+      String memberName,
+      String memberImageUrl,
+      boolean hasImage,
+      boolean hasVideo
+  ) {
+  }
 
-  @Getter
-  public static class CommentInfo {
-    private Long memberId;
-    private Long commentId;
-    private String content;
-    private String replyContent;
+  public record CommentResponseCommentInfo (
+      Long commentId,
+      String content,
+      Long replyCommentId,
+      String replyContent
+  ) {
   }
 }

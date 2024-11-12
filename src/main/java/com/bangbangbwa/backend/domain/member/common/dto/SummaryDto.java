@@ -1,11 +1,16 @@
 package com.bangbangbwa.backend.domain.member.common.dto;
 
-import lombok.Getter;
+import com.bangbangbwa.backend.domain.promotion.common.enums.Platform;
+import java.util.List;
 
-@Getter
 public class SummaryDto {
-  private Long memberId;
-  private Long followerCount;
-  private Long followingCount;
-  private Long postCount;
+  public record Response(
+    Long followerCount,
+    Long followingCount,
+    Long postCount,
+    boolean isStreamer,
+    boolean isSubmittedToStreamer,
+    List<Platform> platforms
+  ) {
+  }
 }
