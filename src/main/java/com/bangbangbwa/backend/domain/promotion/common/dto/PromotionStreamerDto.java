@@ -14,7 +14,7 @@ public class PromotionStreamerDto {
 
   }
 
-  @Schema(name = "PromotionStreamerResponseStreamer", description = "홍보 스트리머 응답")
+  @Schema(name = "PromotionStreamerResponseStreamer")
   public record PromotionStreamer(
       @Schema(description = "스트리머 오늘의 한마디", example = "한마디")
       String todayComment,
@@ -32,7 +32,7 @@ public class PromotionStreamerDto {
 
   }
 
-  @Schema(name = "PromotionStreamerResponseStreamerInterested", description = "홍보 스트리머 응답 - 스트리머 관심분야 목록")
+  @Schema(name = "PromotionStreamerResponseStreamerInterested")
   public record PromotionStreamerInterested(
       @Schema(description = "관심 여부", example = "true")
       boolean isInterested,
@@ -42,7 +42,7 @@ public class PromotionStreamerDto {
 
   }
 
-  @Schema(name = "PromotionStreamerResponseStreamerPlatform", description = "홍보 스트리머 응답 - 스트리머 플랫폼 목록")
+  @Schema(name = "PromotionStreamerResponseStreamerPlatform")
   public record PromotionStreamerPlatform(
       @Schema(description = "플랫폼 종류", allowableValues = {"SOOP", "YOUTUBE", "CHZZK"})
       Platform platform,

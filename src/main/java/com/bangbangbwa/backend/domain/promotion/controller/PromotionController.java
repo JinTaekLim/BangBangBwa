@@ -1,7 +1,7 @@
 package com.bangbangbwa.backend.domain.promotion.controller;
 
 import com.bangbangbwa.backend.domain.promotion.common.dto.PromotionBannerDto;
-import com.bangbangbwa.backend.domain.promotion.common.dto.PromotionBannerDto.PromotionBannerResponseBanner;
+import com.bangbangbwa.backend.domain.promotion.common.dto.PromotionBannerDto.PromotionBanner;
 import com.bangbangbwa.backend.domain.promotion.common.dto.PromotionStreamerDto;
 import com.bangbangbwa.backend.domain.promotion.common.dto.PromotionStreamerDto.PromotionStreamer;
 import com.bangbangbwa.backend.domain.promotion.common.dto.PromotionStreamerDto.PromotionStreamerInterested;
@@ -26,7 +26,7 @@ public class PromotionController implements PromotionApi {
 
   @GetMapping("/banners")
   public ApiResponse<PromotionBannerDto.Response> getBanners() {
-    List<PromotionBannerResponseBanner> banners = bannerService.getBanners();
+    List<PromotionBanner> banners = bannerService.getBanners();
 //    List<PromotionBannerResponseBanner> banners = new ArrayList<>();
 //    banners.add(
 //        new PromotionBannerDto.PromotionBannerResponseBanner(
