@@ -112,26 +112,31 @@ public class MemberController implements MemberApi {
 
   @GetMapping("/profile/{memberId}")
   public ApiResponse<ProfileDto.Response> getProfile(@PathVariable("memberId") String memberId) {
-    return null;
+    ProfileDto.Response response = null;
+    return ApiResponse.ok(response);
   }
 
   @GetMapping("/summary/{memberId}")
   public ApiResponse<SummaryDto.Response> getSummary(@PathVariable("memberId") String memberId) {
-    return null;
+    SummaryDto.Response response = null;
+    return ApiResponse.ok(response);
   }
 
   @GetMapping("/posts/{memberId}")
   public ApiResponse<List<PostDto.Response>> getPosts(@PathVariable("memberId") String memberId) {
-    return null;
+    List<PostDto.Response> response = null;
+    return ApiResponse.ok(response);
   }
 
   @GetMapping("/comments/{memberId}")
   public ApiResponse<List<CommentDto.Response>> getComments(@PathVariable("memberId") String memberId) {
-    return null;
+    List<CommentDto.Response> response = null;
+    return ApiResponse.ok(response);
   }
 
   @GetMapping("/followers/{memberId}")
   public ApiResponse<List<FollowerDto.Response>> getFollowers(@PathVariable("memberId") String memberId) {
-    return null;
+    List<FollowerDto.Response> response = null;
+    return ApiResponse.ok(response);
   }
 }
