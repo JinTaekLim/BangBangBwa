@@ -46,18 +46,6 @@ public class SnsService {
     return post;
   }
 
-  public Post updatePost(CreatePostDto.Request request) {
-    Post post = postReader.findById(request.postId());
-    Member member = memberProvider.getCurrentMember();
-    PostType postType = request.postType();
-    memberValidator.validateRole(member.getRole(), postType);
-
-    Post newPost = postGenerator.update(request, post.getId());
-    postCreator.update(newPost);
-
-    return newPost;
-  }
-
   public String uploadPostMedia(MultipartFile file) {
     Member member = memberProvider.getCurrentMember();
     String url = s3Manager.upload(file);

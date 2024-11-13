@@ -3,7 +3,6 @@ package com.bangbangbwa.backend.domain.sns.business;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.sns.common.dto.CreatePostDto;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
-import com.bangbangbwa.backend.domain.sns.common.enums.PostStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -23,13 +22,6 @@ public class PostGenerator {
   public Post generate(Member member) {
     Post post = Post.builder().build();
     postUpdater.updateMemberId(post, member);
-    return post;
-  }
-
-  public Post update(CreatePostDto.Request request, Long postId) {
-    Post post = postParser.requestToEntity(request);
-    postUpdater.updateId(post, postId);
-    postUpdater.updateStatus(post, PostStatus.PUBLISHED);
     return post;
   }
 }

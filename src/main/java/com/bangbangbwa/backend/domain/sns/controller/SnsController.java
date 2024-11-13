@@ -100,9 +100,7 @@ public class SnsController implements SnsApi{
   public ApiResponse<CreatePostDto.Response> createPost(
       @RequestBody @Valid CreatePostDto.Request request
   ) {
-    Post post = request.postId() == null ?
-        snsService.createPost(request): snsService.updatePost(request);
-
+    Post post = snsService.createPost(request);
     CreatePostDto.Response response = PostMapper.INSTANCE.dtoToCreatePostResponse(post);
     return ApiResponse.ok(response);
   }

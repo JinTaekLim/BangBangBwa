@@ -9,18 +9,6 @@
     VALUES (#{memberId}, #{status}, #{createdId}, #{createdAt})
   </insert>
 
-  <update id="update" parameterType="Post">
-    UPDATE posts
-    SET
-    post_type = #{postType},
-    title = #{title},
-    content = #{content},
-    status = #{status},
-    created_id = #{createdId},
-    created_at = #{createdAt}
-    WHERE id = #{id}
-  </update>
-
   <select id="findById" parameterType="Long" resultType="post">
     SELECT * FROM posts WHERE id = #{id};
   </select>

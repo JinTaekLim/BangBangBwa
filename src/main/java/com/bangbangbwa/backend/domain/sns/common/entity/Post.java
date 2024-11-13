@@ -51,12 +51,4 @@ public class Post {
     this.memberId = memberId;
   }
 
-  public void updateId(Long id) {
-    this.id = id;
-  }
-
-  public void updatedStatus(PostStatus status) {
-    this.status = status;
-  }
-
 }

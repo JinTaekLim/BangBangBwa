@@ -13,5 +13,4 @@ public class PostCreator {
 
   public void save(Post post) { postRepository.save(post); }
 
-  public void update(Post post) { postRepository.update(post); }
 }

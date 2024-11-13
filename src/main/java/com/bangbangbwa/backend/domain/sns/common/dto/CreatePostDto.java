@@ -10,8 +10,6 @@ public class CreatePostDto {
 
   @Schema(name = "CreatePostRequest", description = "글 작성 요청 DTO")
   public record Request(
-      @Schema(description = "게시글 타입", examples = "1 (uploadPostMedia에서 전달 받은 값) 없으면 공백 유지")
-      Long postId,
 
       @Schema(description = "게시글 타입", examples = "MEMBER")
       @NotNull(message = "게시글 타입을 입력해주세요. ")
