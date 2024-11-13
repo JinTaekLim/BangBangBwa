@@ -35,6 +35,9 @@ public class SnsService {
   private final CommentGenerator commentGenerator;
   private final CommentCreator commentCreator;
 
+
+  // note : publicMembers, privateMembers 함께 전달 불가하도록 수정 필요
+  // 게시글 저장 전, content에서 url을 추출 후 redis 값 삭제하는 과정 필요
   public Post createPost(CreatePostDto.Request request) {
     Member member = memberProvider.getCurrentMember();
     PostType postType = request.postType();
