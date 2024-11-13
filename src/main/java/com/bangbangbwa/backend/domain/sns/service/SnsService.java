@@ -5,9 +5,7 @@ import com.bangbangbwa.backend.domain.member.business.MemberValidator;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.sns.business.CommentCreator;
 import com.bangbangbwa.backend.domain.sns.business.CommentGenerator;
-import com.bangbangbwa.backend.domain.sns.business.PostCreator;
 import com.bangbangbwa.backend.domain.sns.business.PostGenerator;
-import com.bangbangbwa.backend.domain.sns.business.PostMediaCreator;
 import com.bangbangbwa.backend.domain.sns.business.PostReader;
 import com.bangbangbwa.backend.domain.sns.common.dto.CreateCommentDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.CreatePostDto;
@@ -28,10 +26,8 @@ public class SnsService {
   private final MemberProvider memberProvider;
   private final MemberValidator memberValidator;
   private final PostGenerator postGenerator;
-  private final PostCreator postCreator;
   private final PostReader postReader;
   private final S3Manager s3Manager;
-  private final PostMediaCreator postMediaCreator;
   private final CommentGenerator commentGenerator;
   private final CommentCreator commentCreator;
 
@@ -44,16 +40,12 @@ public class SnsService {
     memberValidator.validateRole(member.getRole(), postType);
 
     Post post = postGenerator.generate(request, member);
-    postCreator.save(post);
 
     return post;
   }
 
   public String uploadPostMedia(MultipartFile file) {
-    Member member = memberProvider.getCurrentMember();
-    String url = s3Manager.upload(file);
-    postMediaCreator.save(url ,member);
-    return url;
+    return s3Manager.upload(file);
   }
 
 
