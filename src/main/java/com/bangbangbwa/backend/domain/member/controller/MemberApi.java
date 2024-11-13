@@ -201,6 +201,24 @@ public interface MemberApi {
   );
 
   @Operation(
+    tags = {"MemberAPI"},
+    summary = "마이페이지 > memberId 일치여부 조회",
+    description = "현재 사용자와 memberId가 일치하는지 조회합니다." +
+            "\n비로그인 사용자일 경우에는 false를 리턴합니다.",
+    responses = {
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "OK",
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE,
+                schema = @Schema(implementation = Boolean.class)
+            )
+        ),
+    }
+  )
+  ApiResponse<Boolean> isMyMemberId(String memberId);
+
+  @Operation(
       tags = {"MemberAPI"},
       summary = "마이페이지 > 프로필 정보 조회",
       description = "프로필 정보를 조회합니다.",

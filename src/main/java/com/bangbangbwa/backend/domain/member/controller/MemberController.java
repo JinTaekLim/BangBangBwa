@@ -117,6 +117,12 @@ public class MemberController implements MemberApi {
     return ApiResponse.ok(response);
   }
 
+  @GetMapping("/isMyMemberId/{memberId}")
+  public ApiResponse<Boolean> isMyMemberId(@PathVariable("memberId") String memberId) {
+    Boolean isMyMemberId = memberService.isMyMemberId(memberId);
+    return ApiResponse.ok(isMyMemberId);
+  }
+
   @GetMapping("/profile/{memberId}")
   public ApiResponse<ProfileDto.Response> getProfile(@PathVariable("memberId") String memberId) {
     ProfileDto.Response response;
