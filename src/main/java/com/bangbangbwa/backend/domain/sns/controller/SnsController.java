@@ -3,10 +3,8 @@ package com.bangbangbwa.backend.domain.sns.controller;
 import com.bangbangbwa.backend.domain.sns.common.dto.CreateCommentDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.UploadPostMediaDto;
 import com.bangbangbwa.backend.domain.sns.common.entity.Comment;
-import com.bangbangbwa.backend.domain.sns.common.entity.PostMedia;
 import com.bangbangbwa.backend.domain.sns.common.mapper.CommentMapper;
 import com.bangbangbwa.backend.domain.sns.common.mapper.PostMapper;
-import com.bangbangbwa.backend.domain.sns.common.mapper.PostMediaMapper;
 import com.bangbangbwa.backend.domain.sns.service.SnsService;
 import com.bangbangbwa.backend.domain.sns.common.dto.CreatePostDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.GetFollowedLatestPostsDto;
@@ -112,14 +110,12 @@ public class SnsController implements SnsApi{
   @PostMapping(value = "/uploadPostMedia", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   @PreAuthorize("hasAuthority('MEMBER')")
   public ApiResponse<UploadPostMediaDto.Response> uploadPostMedia(
-      @RequestPart @Valid UploadPostMediaDto.Request request,
       @RequestPart(value = "file", required = false) MultipartFile file
       ) {
-    Post post = snsService.getOrCreatePost(request.postId());
-    PostMedia postMedia = snsService.uploadPostMedia(post, file);
-    UploadPostMediaDto.Response response = PostMediaMapper
+    String mediaUrl = snsService.uploadPostMedia(file);
+    UploadPostMediaDto.Response response = PostMapper
         .INSTANCE
-        .dtoToCreatePostResponse(postMedia);
+        .dtoToUploadPostMediaResponse(mediaUrl);
     return ApiResponse.ok(response);
   }
 

@@ -8,16 +8,13 @@ import com.bangbangbwa.backend.domain.sns.business.CommentGenerator;
 import com.bangbangbwa.backend.domain.sns.business.PostCreator;
 import com.bangbangbwa.backend.domain.sns.business.PostGenerator;
 import com.bangbangbwa.backend.domain.sns.business.PostMediaCreator;
-import com.bangbangbwa.backend.domain.sns.business.PostMediaGenerator;
 import com.bangbangbwa.backend.domain.sns.business.PostReader;
 import com.bangbangbwa.backend.domain.sns.common.dto.CreateCommentDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.CreatePostDto;
-import com.bangbangbwa.backend.domain.sns.common.dto.UploadPostMediaDto;
 import com.bangbangbwa.backend.domain.sns.common.entity.Comment;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
-import com.bangbangbwa.backend.domain.sns.common.entity.PostMedia;
 import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
-import java.util.Optional;
+import com.bangbangbwa.backend.global.util.S3Manager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,7 +30,7 @@ public class SnsService {
   private final PostGenerator postGenerator;
   private final PostCreator postCreator;
   private final PostReader postReader;
-  private final PostMediaGenerator postMediaGenerator;
+  private final S3Manager s3Manager;
   private final PostMediaCreator postMediaCreator;
   private final CommentGenerator commentGenerator;
   private final CommentCreator commentCreator;
@@ -61,28 +58,11 @@ public class SnsService {
     return newPost;
   }
 
-
-  // note : 해당 로직은 snsService 가 아닌, business 단에 위치시키는 것이 좋을지?
-  public Post getOrCreatePost(Long postId) {
+  public String uploadPostMedia(MultipartFile file) {
     Member member = memberProvider.getCurrentMember();
-    return Optional.ofNullable(postId)
-        .map(postReader::findById)
-        .orElseGet(() -> {
-          Post newPost = postGenerator.generate(member);
-          postCreator.save(newPost);
-          return newPost;
-        });
-  }
-
-
-  public PostMedia uploadPostMedia(Post post, MultipartFile file) {
-
-    Member member = memberProvider.getCurrentMember();
-
-    PostMedia postMedia = postMediaGenerator.generate(post,file,member);
-    postMediaCreator.save(postMedia);
-
-    return postMedia;
+    String url = s3Manager.upload(file);
+    postMediaCreator.save(url ,member);
+    return url;
   }
 
 

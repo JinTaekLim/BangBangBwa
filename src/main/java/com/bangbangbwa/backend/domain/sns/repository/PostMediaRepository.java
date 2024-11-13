@@ -1,15 +1,31 @@
 package com.bangbangbwa.backend.domain.sns.repository;
 
-import com.bangbangbwa.backend.domain.sns.common.entity.PostMedia;
-import lombok.RequiredArgsConstructor;
-import org.apache.ibatis.session.SqlSession;
+import java.util.concurrent.TimeUnit;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@RequiredArgsConstructor
 public class PostMediaRepository {
 
-  private final SqlSession mysql;
+  private final RedisTemplate<String, String> redisTemplate;
 
-  public void save(PostMedia postMedia) { mysql.insert("PostMediaMapper.save",postMedia);}
+  public PostMediaRepository(RedisTemplate<String, String> redisTemplate) {
+    this.redisTemplate = redisTemplate;
+  }
+
+  private static final String PREFIX = "media:";
+  private static final TimeUnit EXPIRATION_UNIT = TimeUnit.HOURS;
+
+
+
+
+  public void save(String url, Long memberId, long expirationTime) {
+    String key = PREFIX + url;
+    redisTemplate.opsForValue().set(
+        key,
+        memberId.toString(),
+        expirationTime,
+        EXPIRATION_UNIT
+    );
+  }
 }
