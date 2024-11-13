@@ -1,8 +1,13 @@
 package com.bangbangbwa.backend.domain.member.service;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import com.bangbangbwa.backend.domain.member.business.MemberReader;
+import com.bangbangbwa.backend.domain.member.business.MemberValidator;
 import com.bangbangbwa.backend.domain.member.common.dto.CommentDto;
 import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto;
 import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
@@ -23,6 +28,8 @@ class MemberServiceTest extends ServiceTest {
   private MemberService memberService;
   @Mock
   private MemberReader memberReader;
+  @Mock
+  private MemberValidator memberValidator;
 
   private static Long memberId = 1L;
 
@@ -40,15 +47,62 @@ class MemberServiceTest extends ServiceTest {
   }
 
   @Test
-  void getProfile() {
+  void getProfile_내_정보() {
     // given
     Member member = testMember();
     when(memberReader.findById(memberId)).thenReturn(member);
+    when(memberValidator.isMyMemberId(memberId)).thenReturn(true);
 
     // when
     ProfileDto profile = memberService.getProfile(memberId);
 
     // then
+    assertAll(
+        () -> assertEquals(profile.getImageUrl(), member.getProfile()),
+        () -> assertEquals(profile.getNickName(), member.getNickname()),
+        () -> assertEquals(profile.getSelfIntroduction(), member.getSelfIntroduction()),
+        () -> assertFalse(profile.isFollowing())
+    );
+  }
+
+  @Test
+  void getProfile_다른_사람_정보_팔로잉_true() {
+    // given
+    Member member = testMember();
+    when(memberReader.findById(memberId)).thenReturn(member);
+    when(memberValidator.isMyMemberId(memberId)).thenReturn(false);
+    when(memberValidator.isFollowing(memberId)).thenReturn(true);
+
+    // when
+    ProfileDto profile = memberService.getProfile(memberId);
+
+    // then
+    assertAll(
+        () -> assertEquals(profile.getImageUrl(), member.getProfile()),
+        () -> assertEquals(profile.getNickName(), member.getNickname()),
+        () -> assertEquals(profile.getSelfIntroduction(), member.getSelfIntroduction()),
+        () -> assertTrue(profile.isFollowing())
+    );
+  }
+
+  @Test
+  void getProfile_다른_사람_정보_팔로잉_false() {
+    // given
+    Member member = testMember();
+    when(memberReader.findById(memberId)).thenReturn(member);
+    when(memberValidator.isMyMemberId(memberId)).thenReturn(false);
+    when(memberValidator.isFollowing(memberId)).thenReturn(false);
+
+    // when
+    ProfileDto profile = memberService.getProfile(memberId);
+
+    // then
+    assertAll(
+        () -> assertEquals(profile.getImageUrl(), member.getProfile()),
+        () -> assertEquals(profile.getNickName(), member.getNickname()),
+        () -> assertEquals(profile.getSelfIntroduction(), member.getSelfIntroduction()),
+        () -> assertFalse(profile.isFollowing())
+    );
   }
 
   @Test

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 public class MemberValidator {
 
   private final MemberRepository memberRepository;
+  private final MemberProvider memberProvider;
 
   public void validateNicknameDuplication(String nickname) {
     boolean isExists = memberRepository.isExistsNickname(nickname);
@@ -27,5 +28,18 @@ public class MemberValidator {
     if (!hasPermission) {
       throw new NoPostPermissionException();
     }
+  }
+
+  public boolean isMyMemberId(Long memberId) {
+    try {
+      Long myMemberId = memberProvider.getCurrentMemberId();
+      return memberId.equals(myMemberId);
+    } catch (Exception e) {
+      return false;
+    }
+  }
+
+  public boolean isFollowing(Long memberId) {
+    return false;
   }
 }

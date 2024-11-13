@@ -3,8 +3,17 @@ package com.bangbangbwa.backend.domain.member.common.dto;
 import com.bangbangbwa.backend.domain.member.common.enums.Interest;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@AllArgsConstructor
+@Getter
 public class ProfileDto {
+
+  private String imageUrl;
+  private String nickName;
+  private boolean isFollowing;
+  private String selfIntroduction;
 
   @Schema(name = "ProfileResponse", description = "프로필 정보 조회 응답")
   public record Response(
