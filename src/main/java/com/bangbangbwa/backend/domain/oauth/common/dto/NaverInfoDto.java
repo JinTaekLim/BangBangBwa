@@ -13,5 +13,7 @@ public record NaverInfoDto(String resultcode, String message, Response response)
       String birthday,
       String birthyear,
       String mobile
-  ) {}
+  ) {
+
+  }
 }
