@@ -12,7 +12,6 @@ import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
 import com.bangbangbwa.backend.domain.token.common.TokenDto;
-import com.bangbangbwa.backend.domain.token.common.entity.Token;
 import com.bangbangbwa.backend.global.test.IntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +64,7 @@ class MemberIntegrationTest extends IntegrationTest {
         .andExpect(jsonPath("$.message").value(HttpStatus.OK.getReasonPhrase()))
         .andExpect(jsonPath("$.data").isNotEmpty())
         .andExpect(jsonPath("$.data.imageUrl").value(expected.imageUrl()))
-        .andExpect(jsonPath("$.data.nickName").value(expected.nickName()))
+        .andExpect(jsonPath("$.data.nickname").value(expected.nickname()))
         .andExpect(jsonPath("$.data.isFollowing").value(expected.isFollowing()))
         .andExpect(jsonPath("$.data.selfIntroduction").value(expected.selfIntroduction()))
     ;

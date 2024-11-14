@@ -21,4 +21,16 @@
   <select id="findById" parameterType="Long" resultType="member">
     SELECT * FROM members WHERE id = #{id};
   </select>
+
+  <select id="findProfile" parameterType="Long" resultType="com.bangbangbwa.backend.domain.member.common.dto.ProfileDto">
+    SELECT m.profile AS image_url,
+           m.nickname,
+           (f.id IS NOT NULL) AS is_following,
+           NULL AS self_introduction,
+           NULL AS interests
+    FROM members m
+        LEFT JOIN follow f
+               ON f.followee_id = m.id
+    WHERE m.id = #{id};
+  </select>
 </mapper>

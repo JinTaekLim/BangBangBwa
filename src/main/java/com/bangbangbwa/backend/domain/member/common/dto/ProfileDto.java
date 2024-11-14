@@ -10,8 +10,10 @@ import lombok.Getter;
 @Getter
 public class ProfileDto {
 
+  private Long memberId;
+  private Long currentMemberId;
   private String imageUrl;
-  private String nickName;
+  private String nickname;
   private boolean isFollowing;
   private String selfIntroduction;
   private List<Interest> interests;
@@ -21,7 +23,7 @@ public class ProfileDto {
     @Schema(description = "이미지 URL")
     String imageUrl,
     @Schema(description = "닉네임")
-    String nickName,
+    String nickname,
     @Schema(description = "팔로잉 여부")
     boolean isFollowing,
     @Schema(description = "자기소개")

@@ -39,4 +39,12 @@ public class MemberProvider {
     Long memberId = getCurrentMemberId();
     return memberReader.findById(memberId);
   }
+
+  public Long getCurrentMemberIdIfLogin() {
+    try {
+      return this.getCurrentMemberId();
+    } catch (Exception e) {
+      return null;
+    }
+  }
 }
