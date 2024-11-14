@@ -5,6 +5,7 @@ import com.bangbangbwa.backend.domain.member.business.MemberValidator;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.sns.business.CommentCreator;
 import com.bangbangbwa.backend.domain.sns.business.CommentGenerator;
+import com.bangbangbwa.backend.domain.sns.business.PostCreator;
 import com.bangbangbwa.backend.domain.sns.business.PostGenerator;
 import com.bangbangbwa.backend.domain.sns.business.PostReader;
 import com.bangbangbwa.backend.domain.sns.common.dto.CreateCommentDto;
@@ -40,6 +41,12 @@ public class SnsService {
     memberValidator.validateRole(member.getRole(), postType);
 
     Post post = postGenerator.generate(request, member);
+    postCreator.save(post);
+    List<PostVisibilityMember> postVisibilityMember = postVisibilityMemberGenerator.generate(
+        post.getId(),
+        request.publicMembers()
+    );
+    postVisibilityMemberCreator.saveVisibilityMemberList(postVisibilityMember);
 
     return post;
   }
