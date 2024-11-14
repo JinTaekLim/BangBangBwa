@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PostMapper">
+
+  <insert id="save" parameterType="Post" keyProperty="id" useGeneratedKeys="true">
+    INSERT INTO posts (post_type, member_id, title, content, created_id, created_at)
+    VALUES (#{postType}, #{memberId}, #{title}, #{content}, #{createdId}, #{createdAt})
+  </insert>
+
+  <select id="findById" parameterType="Long" resultType="post">
+    SELECT * FROM posts WHERE id = #{id};
+  </select>
+
+</mapper>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TagMapper">
+  <select id="findByName" parameterType="String" resultType="Tag">
+    SELECT * FROM tags WHERE name = #{value}
+  </select>
+
+  <insert id="save" parameterType="Tag" keyProperty="id" useGeneratedKeys="true">
+    INSERT INTO tags (name, created_id, created_at)
+    VALUES (#{name}, #{createdId}, #{createdAt})
+  </insert>
+</mapper>
