@@ -1,6 +1,8 @@
 DROP TABLE IF EXISTS pending_streamer;
 DROP TABLE IF EXISTS admins;
 DROP TABLE IF EXISTS comments;
+DROP TABLE IF EXISTS posts_private_members;
+DROP TABLE IF EXISTS posts_public_members;
 DROP TABLE IF EXISTS posts;
 DROP TABLE IF EXISTS tokens;
 DROP TABLE IF EXISTS members;
@@ -69,6 +71,30 @@ CREATE TABLE posts
     deleted_at  DATETIME                NULL COMMENT '삭제 일시(null)',
     PRIMARY KEY (id),
     FOREIGN KEY (member_id) REFERENCES members (id)
+);
+
+CREATE TABLE posts_public_members
+(
+    id          BIGINT AUTO_INCREMENT   NOT NULL COMMENT '게시글 공개 멤버 ID',
+    member_id   BIGINT                  NOT NULL COMMENT '멤버 ID',
+    post_id     BIGINT                  NOT NULL COMMENT '게시물 ID',
+    created_at  DATETIME                NOT NULL COMMENT '생성 일시',
+    created_id  VARCHAR(255)            NOT NULL COMMENT '생성자',
+    PRIMARY KEY (id),
+    FOREIGN KEY (member_id) REFERENCES members (id),
+    FOREIGN KEY (post_id) REFERENCES posts (id)
+);
+
+CREATE TABLE posts_private_members
+(
+    id          BIGINT AUTO_INCREMENT   NOT NULL COMMENT '게시글 비공개 멤버 ID',
+    member_id   BIGINT                  NOT NULL COMMENT '멤버 ID',
+    post_id     BIGINT                  NOT NULL COMMENT '게시물 ID',
+    created_at  DATETIME                NOT NULL COMMENT '생성 일시',
+    created_id  VARCHAR(255)            NOT NULL COMMENT '생성자',
+    PRIMARY KEY (id),
+    FOREIGN KEY (member_id) REFERENCES members (id),
+    FOREIGN KEY (post_id) REFERENCES posts (id)
 );
 
 CREATE TABLE comments
