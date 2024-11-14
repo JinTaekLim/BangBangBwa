@@ -42,7 +42,6 @@ public class OAuthFeignManager {
         .email(kakaoInfoDto.kakaoAccount().email())
         .snsId(kakaoInfoDto.id())
         .snsType(SnsType.KAKAO)
-        .oAuthToken(accessToken)
         .build();
   }
 
@@ -52,7 +51,6 @@ public class OAuthFeignManager {
         .email(naverInfo.response().email())
         .snsId(naverInfo.response().id())
         .snsType(SnsType.NAVER)
-        .oAuthToken(oauthToken)
         .build();
   }
 

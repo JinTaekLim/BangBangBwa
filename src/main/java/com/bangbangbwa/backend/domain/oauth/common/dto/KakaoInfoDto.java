@@ -8,5 +8,10 @@ public record KakaoInfoDto(
     String id,
     KakaoAccount kakaoAccount
 ) {
+  
+  public record KakaoAccount(
+      String email
+  ) {
 
+  }
 }

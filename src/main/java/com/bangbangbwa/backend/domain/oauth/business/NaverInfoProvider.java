@@ -26,7 +26,7 @@ public class NaverInfoProvider {
       NaverInfoFeign naverInfoFeign,
       @Value("${oauth.client.naver.client-id}") String naverClientId,
       @Value("${oauth.client.naver.client-secret}") String naverClientSecret,
-      @Value("BangBangBwa") String state
+      @Value("${oauth.client.naver.state}") String state
   ) {
     this.naverTokenFeign = naverTokenFeign;
     this.naverInfoFeign = naverInfoFeign;
