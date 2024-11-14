@@ -17,8 +17,8 @@ public class PendingStreamer {
   private final String SELF = "SELF";
 
   private Long id;
-  private Long member_id;
-  private Long admin_id;
+  private Long memberId;
+  private Long adminId;
   private String platformUrl;
   private PendingType status;
   private String createdId;
@@ -27,16 +27,29 @@ public class PendingStreamer {
   private LocalDateTime updatedAt;
 
   @Builder
-  public PendingStreamer(Long member_id, Long admin_id, String platformUrl) {
-    this.member_id = member_id;
-    this.admin_id = admin_id;
+  public PendingStreamer(
+      Long id,
+      Long memberId,
+      Long adminId,
+      String platformUrl,
+      PendingType status
+  ) {
+    this.id = id;
+    this.memberId = memberId;
+    this.adminId = adminId;
     this.platformUrl = platformUrl;
-    this.status = PendingType.PENDING;
+    this.status = (status != null) ? status : PendingType.PENDING;
     this.createdId = SELF;
     this.createdAt = LocalDateTime.now();
   }
 
   public void updateMemberId(Long memberId) {
-    this.member_id = memberId;
+    this.memberId = memberId;
+  }
+
+  public void updateAdminId(Long adminId) {
+    this.adminId = adminId;
+    this.updatedId = adminId.toString();
+    this.updatedAt = LocalDateTime.now();
   }
 }

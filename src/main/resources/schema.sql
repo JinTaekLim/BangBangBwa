@@ -88,6 +88,8 @@ CREATE TABLE comments
 CREATE TABLE admins
 (
     id       BIGINT AUTO_INCREMENT NOT NULL COMMENT '관리자_ID',
+    created_at      DATETIME            NOT NULL COMMENT '생성 일시',
+    created_id      VARCHAR(255)        NOT NULL COMMENT '생성자',
     PRIMARY KEY (id)
 );
 
