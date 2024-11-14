@@ -1,6 +1,7 @@
 package com.bangbangbwa.backend.domain.sns.service;
 
 import com.bangbangbwa.backend.domain.member.business.MemberProvider;
+import com.bangbangbwa.backend.domain.member.business.MemberReader;
 import com.bangbangbwa.backend.domain.member.business.MemberValidator;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.sns.business.CommentCreator;
@@ -13,6 +14,7 @@ import com.bangbangbwa.backend.domain.sns.common.dto.CreatePostDto;
 import com.bangbangbwa.backend.domain.sns.common.entity.Comment;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
 import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ public class SnsService {
 
   private final MemberProvider memberProvider;
   private final MemberValidator memberValidator;
+  private final MemberReader memberReader;
   private final PostGenerator postGenerator;
   private final PostCreator postCreator;
   private final PostReader postReader;
@@ -47,5 +50,9 @@ public class SnsService {
     Comment comment = commentGenerator.generate(request, member);
     commentCreator.save(comment);
     return comment;
+  }
+
+  public List<Member> searchMember(String nickname) {
+    return memberReader.findByNicknameContaining(nickname);
   }
 }

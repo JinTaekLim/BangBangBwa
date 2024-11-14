@@ -3,6 +3,7 @@ package com.bangbangbwa.backend.domain.member.repository;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -34,6 +35,10 @@ public class MemberRepository {
   public boolean isExistsNickname(String nickname) {
     Member member = mysql.selectOne("MemberMapper.findByNickname", nickname);
     return Objects.nonNull(member);
+  }
+
+  public List<Member> findByNicknameContaining(String nickname) {
+    return mysql.selectList("MemberMapper.findByNicknameContaining", nickname);
   }
 
 }
