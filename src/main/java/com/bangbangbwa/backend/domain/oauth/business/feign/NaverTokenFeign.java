@@ -1,6 +1,5 @@
 package com.bangbangbwa.backend.domain.oauth.business.feign;
 
-import com.bangbangbwa.backend.domain.oauth.common.dto.GoogleTokenDto;
 import com.bangbangbwa.backend.domain.oauth.common.dto.NaverTokenDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
