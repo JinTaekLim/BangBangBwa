@@ -14,6 +14,7 @@ public class ProfileDto {
   private String nickName;
   private boolean isFollowing;
   private String selfIntroduction;
+  private List<Interest> interests;
 
   @Schema(name = "ProfileResponse", description = "프로필 정보 조회 응답")
   public record Response(

@@ -1,5 +1,6 @@
 package com.bangbangbwa.backend.domain.member.business;
 
+import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.member.exception.NotSignupMemberException;
 import com.bangbangbwa.backend.domain.member.repository.MemberRepository;
@@ -29,5 +30,9 @@ public class MemberReader {
 
   public boolean existsByNickname(String nickname) {
     return memberRepository.isExistsNickname(nickname);
+  }
+
+  public ProfileDto getProfile(Long memberId) {
+    return memberRepository.findProfile(memberId).orElseThrow(NotFoundMemberException::new);
   }
 }

@@ -216,7 +216,7 @@ public interface MemberApi {
         ),
     }
   )
-  ApiResponse<Boolean> isMyMemberId(String memberId);
+  ApiResponse<Boolean> isMyMemberId(Long memberId);
 
   @Operation(
       tags = {"MemberAPI"},
@@ -233,7 +233,7 @@ public interface MemberApi {
           ),
       }
   )
-  ApiResponse<ProfileDto.Response> getProfile(String memberId);
+  ApiResponse<ProfileDto.Response> getProfile(Long memberId);
 
   @Operation(
       tags = {"MemberAPI"},
@@ -250,7 +250,7 @@ public interface MemberApi {
           ),
       }
   )
-  ApiResponse<SummaryDto.Response> getSummary(String memberId);
+  ApiResponse<SummaryDto.Response> getSummary(Long memberId);
 
   @Operation(
       tags = {"MemberAPI"},
@@ -267,7 +267,7 @@ public interface MemberApi {
           ),
       }
   )
-  ApiResponse<PostDto.Response> getPosts(String memberId);
+  ApiResponse<PostDto.Response> getPosts(Long memberId);
 
   @Operation(
       tags = {"MemberAPI"},
@@ -284,7 +284,7 @@ public interface MemberApi {
           ),
       }
   )
-  ApiResponse<CommentDto.Response> getComments(String memberId);
+  ApiResponse<CommentDto.Response> getComments(Long memberId);
 
   @Operation(
       tags = {"MemberAPI"},
@@ -301,6 +301,6 @@ public interface MemberApi {
           ),
       }
   )
-  ApiResponse<FollowerDto.Response> getFollowers(String memberId);
+  ApiResponse<FollowerDto.Response> getFollowers(Long memberId);
 
 }

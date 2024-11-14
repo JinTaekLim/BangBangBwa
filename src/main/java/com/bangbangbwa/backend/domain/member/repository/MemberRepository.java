@@ -1,5 +1,6 @@
 package com.bangbangbwa.backend.domain.member.repository;
 
+import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import java.util.HashMap;
@@ -36,4 +37,7 @@ public class MemberRepository {
     return Objects.nonNull(member);
   }
 
+  public Optional<ProfileDto> findProfile(Long memberId) {
+    return Optional.ofNullable(mysql.selectOne("MemberMapper.findProfile", memberId));
+  }
 }

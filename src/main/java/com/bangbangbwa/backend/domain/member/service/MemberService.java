@@ -2,8 +2,6 @@ package com.bangbangbwa.backend.domain.member.service;
 
 import com.bangbangbwa.backend.domain.member.business.MemberCreator;
 import com.bangbangbwa.backend.domain.member.business.MemberGenerator;
-import com.bangbangbwa.backend.domain.member.business.MemberParser;
-import com.bangbangbwa.backend.domain.member.business.MemberProvider;
 import com.bangbangbwa.backend.domain.member.business.MemberReader;
 import com.bangbangbwa.backend.domain.member.business.MemberValidator;
 import com.bangbangbwa.backend.domain.member.business.NicknameProvider;
@@ -34,8 +32,6 @@ public class MemberService {
   private final MemberReader memberReader;
   private final TokenProvider tokenProvider;
   private final NicknameProvider nicknameProvider;
-  private final MemberProvider memberProvider;
-  private final MemberParser memberParser;
 
   @Transactional
   public TokenDto signup(OAuthInfoDto oAuthInfo, MemberSignupDto.Request request,
@@ -58,14 +54,12 @@ public class MemberService {
     return nicknameProvider.provideRandomNicknames(count);
   }
 
-  public Boolean isMyMemberId(String memberId) {
-    Long mid = memberParser.parseLong(memberId);
-    return memberValidator.isMyMemberId(mid);
+  public Boolean isMyMemberId(Long memberId) {
+    return memberValidator.isMyMemberId(memberId);
   }
 
   public ProfileDto getProfile(Long memberId) {
-    memberReader.findById(memberId);
-    return null;
+    return memberReader.getProfile(memberId);
   }
 
   public SummaryDto getSummary(Long memberId) {
