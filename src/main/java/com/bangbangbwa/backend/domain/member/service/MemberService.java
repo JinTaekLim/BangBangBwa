@@ -2,14 +2,21 @@ package com.bangbangbwa.backend.domain.member.service;
 
 import com.bangbangbwa.backend.domain.member.business.MemberCreator;
 import com.bangbangbwa.backend.domain.member.business.MemberGenerator;
+import com.bangbangbwa.backend.domain.member.business.MemberProvider;
 import com.bangbangbwa.backend.domain.member.business.MemberReader;
 import com.bangbangbwa.backend.domain.member.business.MemberValidator;
 import com.bangbangbwa.backend.domain.member.business.NicknameProvider;
+import com.bangbangbwa.backend.domain.member.common.dto.CommentDto;
+import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
+import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
+import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
+import com.bangbangbwa.backend.domain.member.common.dto.SummaryDto;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
 import com.bangbangbwa.backend.domain.token.common.TokenDto;
+import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +33,7 @@ public class MemberService {
   private final MemberReader memberReader;
   private final TokenProvider tokenProvider;
   private final NicknameProvider nicknameProvider;
+  private final MemberProvider memberProvider;
 
   @Transactional
   public TokenDto signup(OAuthInfoDto oAuthInfo, MemberSignupDto.Request request,
@@ -46,5 +54,39 @@ public class MemberService {
 
   public Set<String> serveRandomNicknames(Integer count) {
     return nicknameProvider.provideRandomNicknames(count);
+  }
+
+  public Boolean isMyMemberId(String memberId) {
+    try {
+      Long myMemberId = memberProvider.getCurrentMemberId();
+      return Long.valueOf(memberId).equals(myMemberId);
+    } catch (Exception e) {
+      return false;
+    }
+  }
+
+  public ProfileDto getProfile(Long memberId) {
+    memberReader.findById(memberId);
+    return null;
+  }
+
+  public SummaryDto getSummary(Long memberId) {
+    memberReader.findById(memberId);
+    return null;
+  }
+
+  public List<PostDto> getPosts(Long memberId) {
+    memberReader.findById(memberId);
+    return null;
+  }
+
+  public CommentDto getComments(Long memberId) {
+    memberReader.findById(memberId);
+    return null;
+  }
+
+  public List<FollowerDto> getFollowers(Long memberId) {
+    memberReader.findById(memberId);
+    return null;
   }
 }
