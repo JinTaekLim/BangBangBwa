@@ -12,7 +12,7 @@ public class PostVisibilityMemberCreator {
 
   private final PostVisibilityMemberRepository postVisibilityMemberRepository;
 
-  public void saveVisibilityMemberList(List<PostVisibilityMember> postVisibilityMemberList) {
-    postVisibilityMemberRepository.publicMemberListSave(postVisibilityMemberList);
+  public void saveList(List<PostVisibilityMember> postVisibilityMemberList) {
+    postVisibilityMemberRepository.saveList(postVisibilityMemberList);
   }
 }

@@ -36,7 +36,6 @@ public class CreatePostDto {
       PostType postType,
       @Schema(description = "제목")
       String title,
-
       @Schema(description = "내용")
       String content
   ){}

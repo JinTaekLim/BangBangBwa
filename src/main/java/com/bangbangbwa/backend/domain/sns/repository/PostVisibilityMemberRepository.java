@@ -12,11 +12,8 @@ public class PostVisibilityMemberRepository {
 
   private final SqlSession mysql;
 
-  public void publicMemberListSave(List<PostVisibilityMember> memberList) {
-    mysql.insert("PostVisibilityMember.publicMemberSaveList", memberList);
+  public void saveList(List<PostVisibilityMember> memberList) {
+    mysql.insert("PostVisibilityMember.saveList", memberList);
   }
 
-//  public void privateMemberListSave(List<PostVisibilityMember> memberList) {
-//    mysql.insert("PostVisibilityMember.privateMemberSaveList", memberList);
-//  }
 }

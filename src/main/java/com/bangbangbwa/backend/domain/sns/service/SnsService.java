@@ -8,6 +8,7 @@ import com.bangbangbwa.backend.domain.sns.business.CommentGenerator;
 import com.bangbangbwa.backend.domain.sns.business.PostCreator;
 import com.bangbangbwa.backend.domain.sns.business.PostGenerator;
 import com.bangbangbwa.backend.domain.sns.business.PostReader;
+import com.bangbangbwa.backend.domain.sns.business.PostValidator;
 import com.bangbangbwa.backend.domain.sns.business.PostVisibilityMemberCreator;
 import com.bangbangbwa.backend.domain.sns.business.PostVisibilityMemberGenerator;
 import com.bangbangbwa.backend.domain.sns.common.dto.CreateCommentDto;
@@ -16,6 +17,7 @@ import com.bangbangbwa.backend.domain.sns.common.entity.Comment;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
 import com.bangbangbwa.backend.domain.sns.common.entity.PostVisibilityMember;
 import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
+import com.bangbangbwa.backend.domain.sns.common.enums.VisibilityType;
 import com.bangbangbwa.backend.global.util.S3Manager;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +36,7 @@ public class SnsService {
   private final PostGenerator postGenerator;
   private final PostCreator postCreator;
   private final PostReader postReader;
+  private final PostValidator postValidator;
   private final PostVisibilityMemberCreator postVisibilityMemberCreator;
   private final PostVisibilityMemberGenerator postVisibilityMemberGenerator;
   private final S3Manager s3Manager;
@@ -41,7 +44,6 @@ public class SnsService {
   private final CommentCreator commentCreator;
 
 
-  // note : publicMembers, privateMembers 함께 전달 불가하도록 수정 필요
   // 게시글 저장 전, content에서 url을 추출 후 redis 값 삭제하는 과정 필요
   @Transactional
   public Post createPost(CreatePostDto.Request request) {
@@ -51,11 +53,22 @@ public class SnsService {
 
     Post post = postGenerator.generate(request, member);
     postCreator.save(post);
-    List<PostVisibilityMember> postVisibilityMember = postVisibilityMemberGenerator.generate(
-        post.getId(),
-        request.publicMembers()
+
+    VisibilityType type = postValidator.validateMembers(
+        request.publicMembers(),
+        request.privateMembers()
     );
-    postVisibilityMemberCreator.saveVisibilityMemberList(postVisibilityMember);
+
+    if (type != null) {
+      List<Long> memberList = (type == VisibilityType.PRIVATE) ?
+          request.privateMembers() : request.publicMembers();
+
+      List<PostVisibilityMember> postVisibilityMember = postVisibilityMemberGenerator.generate(
+          post, type, memberList
+      );
+
+      postVisibilityMemberCreator.saveList(postVisibilityMember);
+    }
 
     return post;
   }

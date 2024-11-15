@@ -1,6 +1,8 @@
 package com.bangbangbwa.backend.domain.sns.business;
 
+import com.bangbangbwa.backend.domain.sns.common.entity.Post;
 import com.bangbangbwa.backend.domain.sns.common.entity.PostVisibilityMember;
+import com.bangbangbwa.backend.domain.sns.common.enums.VisibilityType;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -9,13 +11,22 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class PostVisibilityMemberGenerator {
 
-  // note. 로직 위치 변경 필요
-  public List<PostVisibilityMember> generate(Long postId, List<Long> memberList) {
+  public List<PostVisibilityMember> generate(
+      Post post,
+      VisibilityType type,
+      List<Long> memberList
+  ) {
+    return generateVisibilityMembers(post, memberList, type);
+  }
+
+
+  private List<PostVisibilityMember> generateVisibilityMembers(Post post, List<Long> memberList, VisibilityType type) {
     return memberList.stream()
         .map(memberId -> PostVisibilityMember.builder()
-            .createdId("test")
+            .createdId(post.getMemberId().toString())
+            .type(type)
             .memberId(memberId)
-            .postId(postId)
+            .postId(post.getId())
             .build())
         .toList();
   }

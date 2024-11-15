@@ -3,23 +3,12 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="PostVisibilityMember">
-  <insert id="publicMemberSaveList" parameterType="List" keyProperty="id" useGeneratedKeys="true">
-    INSERT INTO posts_public_members (member_id, post_id, created_id, created_at)
+  <insert id="saveList" parameterType="List" keyProperty="id" useGeneratedKeys="true">
+    INSERT INTO posts_visibility_member (member_id, post_id, type, created_id, created_at)
     VALUES
     <foreach collection="list" item="member" separator=",">
-      (#{member.memberId}, #{member.postId}, #{member.createdId}, #{member.createdAt})
+      (#{member.memberId}, #{member.postId}, #{member.type}, #{member.createdId}, #{member.createdAt})
     </foreach>
   </insert>
-
-<!--  <insert id="privateMemberSaveList" parameterType="List" keyProperty="id" useGeneratedKeys="true">-->
-<!--    INSERT INTO posts_private_members (member_id, post_id, created_id, created_at)-->
-<!--    VALUES-->
-<!--    <foreach collection="list" item="member" separator=",">-->
-<!--      (#{member.memberId}, #{member.postId}, #{member.createdId}, #{member.createdAt})-->
-<!--    </foreach>-->
-<!--  </insert>-->
-
-
-
 
 </mapper>
