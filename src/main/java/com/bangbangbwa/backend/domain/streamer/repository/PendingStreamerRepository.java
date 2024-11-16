@@ -15,4 +15,7 @@ public class PendingStreamerRepository {
     mysql.insert("PendingStreamerMapper.save", pendingStreamer);
   }
 
+  public void updateStatus(PendingStreamer pendingStreamer) {
+    mysql.insert("PendingStreamerMapper.updateStatus",pendingStreamer);
+  }
 }

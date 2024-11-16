@@ -5,7 +5,20 @@
 <mapper namespace="PendingStreamerMapper">
 
   <insert id="save" parameterType="PendingStreamer" keyProperty="id" useGeneratedKeys="true">
-    INSERT INTO pending_streamer (member_id, admin_id, platformUrl, created_id, created_at)
-    VALUES (#{member_id}, #{admin_id}, #{platformUrl}, #{createdId}, #{createdAt})
+    INSERT INTO pending_streamer (member_id, platformUrl, created_id, created_at)
+    VALUES (#{memberId}, #{platformUrl}, #{createdId}, #{createdAt})
   </insert>
+
+  <update id="updateStatus" parameterType="PendingStreamer">
+    UPDATE pending_streamer
+    SET
+    admin_id = #{adminId},
+    status = #{status},
+    updated_at = #{updatedAt},
+    updated_id = #{updatedId}
+    WHERE id = #{id}
+  </update>
+
+
+
 </mapper>

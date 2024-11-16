@@ -39,10 +39,9 @@ public class OAuthFeignManager {
   public OAuthInfoDto getKakaoInfo(String accessToken) throws FeignException {
     KakaoInfoDto kakaoInfoDto = kakaoInfoProvider.getInfo(accessToken);
     return OAuthInfoDto.builder()
-        .email(kakaoInfoDto.email())
+        .email(kakaoInfoDto.kakaoAccount().email())
         .snsId(kakaoInfoDto.id())
         .snsType(SnsType.KAKAO)
-        .oAuthToken(accessToken)
         .build();
   }
 
@@ -52,7 +51,6 @@ public class OAuthFeignManager {
         .email(naverInfo.response().email())
         .snsId(naverInfo.response().id())
         .snsType(SnsType.NAVER)
-        .oAuthToken(oauthToken)
         .build();
   }
 
@@ -71,7 +69,7 @@ public class OAuthFeignManager {
     KakaoTokenDto kakaoTokenDto = kakaoInfoProvider.getInfoByCode(authCode);
     KakaoInfoDto kakaoInfoDto = kakaoInfoProvider.getInfo(kakaoTokenDto.accessToken());
     return OAuthInfoDto.builder()
-        .email(kakaoInfoDto.email())
+        .email(kakaoInfoDto.kakaoAccount().email())
         .snsId(kakaoInfoDto.id())
         .snsType(SnsType.KAKAO)
         .oAuthToken(kakaoTokenDto.accessToken())

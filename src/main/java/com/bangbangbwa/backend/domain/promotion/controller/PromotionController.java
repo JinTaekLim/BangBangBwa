@@ -1,9 +1,8 @@
 package com.bangbangbwa.backend.domain.promotion.controller;
 
 import com.bangbangbwa.backend.domain.promotion.common.dto.PromotionBannerDto;
-import com.bangbangbwa.backend.domain.promotion.common.dto.PromotionBannerDto.PromotionBannerResponseBanner;
 import com.bangbangbwa.backend.domain.promotion.common.dto.PromotionStreamerDto;
-import com.bangbangbwa.backend.domain.promotion.common.dto.PromotionStreamerDto.PromotionStreamerResponseStreamer;
+import com.bangbangbwa.backend.domain.promotion.common.dto.PromotionStreamerDto.PromotionStreamer;
 import com.bangbangbwa.backend.domain.promotion.service.BannerService;
 import com.bangbangbwa.backend.domain.promotion.service.StreamerService;
 import com.bangbangbwa.backend.global.response.ApiResponse;
@@ -24,14 +23,15 @@ public class PromotionController implements PromotionApi {
 
   @GetMapping("/banners")
   public ApiResponse<PromotionBannerDto.Response> getBanners() {
-    List<PromotionBannerResponseBanner> banners = bannerService.getBanners();
+    List<PromotionBannerDto.PromotionBanner> banners = bannerService.getBanners();
     PromotionBannerDto.Response response = new PromotionBannerDto.Response(banners);
+
     return ApiResponse.ok(response);
   }
 
   @GetMapping("/streamers")
   public ApiResponse<PromotionStreamerDto.Response> getStreamers() {
-    Set<PromotionStreamerResponseStreamer> streamerList = streamerService.getRandomStreamers();
+    Set<PromotionStreamer> streamerList = streamerService.getRandomStreamers();
     PromotionStreamerDto.Response response = new PromotionStreamerDto.Response(streamerList);
     return ApiResponse.ok(response);
   }

@@ -1,6 +1,6 @@
 package com.bangbangbwa.backend.domain.promotion.business;
 
-import com.bangbangbwa.backend.domain.promotion.common.dto.PromotionStreamerDto.PromotionStreamerResponseStreamer;
+import com.bangbangbwa.backend.domain.promotion.common.dto.PromotionStreamerDto;
 import com.bangbangbwa.backend.domain.promotion.common.entity.Streamer;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -17,12 +17,12 @@ public class RandomStreamerProvider {
   private final StreamerReader streamerReader;
   private final StreamerParser streamerParser;
 
-  public Set<PromotionStreamerResponseStreamer> getStreamers() {
+  public Set<PromotionStreamerDto.PromotionStreamer> getStreamers() {
     List<Streamer> streamers = streamerReader.readAllStreamers();
     if (streamers.isEmpty()) {
       return new HashSet<>();
     }
-    Set<Streamer> randomStreamers = getRandomStreamers(streamers, 5);
+    Set<Streamer> randomStreamers = getRandomStreamers(streamers, 4);
     List<Streamer> interestedStreamers =
         new ArrayList<>(getInterestedStreamers(streamers, 0));// TODO: 회원 관심분야 작업 선행 필요!
     randomStreamers.addAll(interestedStreamers);

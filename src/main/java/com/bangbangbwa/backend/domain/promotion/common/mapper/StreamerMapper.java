@@ -1,6 +1,6 @@
 package com.bangbangbwa.backend.domain.promotion.common.mapper;
 
-import com.bangbangbwa.backend.domain.promotion.common.dto.PromotionStreamerDto.PromotionStreamerResponseStreamer;
+import com.bangbangbwa.backend.domain.promotion.common.dto.PromotionStreamerDto.PromotionStreamer;
 import com.bangbangbwa.backend.domain.promotion.common.entity.Streamer;
 import java.util.Set;
 import org.mapstruct.IterableMapping;
@@ -19,10 +19,10 @@ public interface StreamerMapper {
   @Mapping(target = "selfIntroduction", source = "entity.selfIntroduction")
   @Mapping(target = "imageUrl", source = "entity.imageUrl")
   @Mapping(target = "name", source = "entity.name")
-  @Mapping(target = "tagList", source = "entity.tags")
+  @Mapping(target = "interestedList", source = "entity.tags")
   @Mapping(target = "platformList", source = "entity.platforms")
-  PromotionStreamerResponseStreamer entityToResponse(Streamer entity);
+  PromotionStreamer entityToResponse(Streamer entity);
 
-  @IterableMapping(elementTargetType = PromotionStreamerResponseStreamer.class, qualifiedByName = "entityToResponse")
-  Set<PromotionStreamerResponseStreamer> entitiesToResponses(Set<Streamer> streamer);
+  @IterableMapping(elementTargetType = PromotionStreamer.class, qualifiedByName = "entityToResponse")
+  Set<PromotionStreamer> entitiesToResponses(Set<Streamer> streamer);
 }

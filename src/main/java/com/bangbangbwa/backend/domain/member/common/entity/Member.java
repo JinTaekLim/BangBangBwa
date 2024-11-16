@@ -1,9 +1,12 @@
 package com.bangbangbwa.backend.domain.member.common.entity;
 
+import com.bangbangbwa.backend.domain.member.common.enums.Interest;
 import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
+import com.bangbangbwa.backend.domain.sns.common.entity.Post;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,8 +34,11 @@ public class Member {
   private LocalDateTime createdAt;
   private String updatedId;
   private LocalDateTime updatedAt;
-
-//  private List<Interest> interests;
+  private String selfIntroduction;
+  private List<Interest> interests;
+  private List<Post> posts;
+  private List<Follower> followers;
+  private List<Follower> followings;
 
   @Builder
   public Member(

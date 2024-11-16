@@ -14,5 +14,5 @@ public interface BannerMapper {
 
   @Mapping(target = "url", source = "banners.url")
   @Mapping(target = "bgColor", source = "banners.bgColor")
-  List<PromotionBannerDto.PromotionBannerResponseBanner> entityToDto(List<Banner> banners);
+  List<PromotionBannerDto.PromotionBanner> entityToDto(List<Banner> banners);
 }

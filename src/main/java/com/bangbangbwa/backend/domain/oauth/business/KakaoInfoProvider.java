@@ -4,8 +4,8 @@ import static com.bangbangbwa.backend.domain.oauth.business.OAuthFeignManager.BE
 import static com.bangbangbwa.backend.domain.oauth.business.OAuthFeignManager.CONTENT_TYPE;
 import static com.bangbangbwa.backend.domain.oauth.business.OAuthFeignManager.GRANT_TYPE;
 
-import com.bangbangbwa.backend.domain.oauth.business.feign.KakaoTokenFeign;
 import com.bangbangbwa.backend.domain.oauth.business.feign.KakaoInfoFeign;
+import com.bangbangbwa.backend.domain.oauth.business.feign.KakaoTokenFeign;
 import com.bangbangbwa.backend.domain.oauth.common.dto.KakaoInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.dto.KakaoTokenDto;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,9 +39,9 @@ public class KakaoInfoProvider {
     return kakaoInfoFeign.requestInfo(BEARER + accessToken, CONTENT_TYPE);
   }
 
-  public KakaoTokenDto getInfoByCode(String oauthToken) {
+  public KakaoTokenDto getInfoByCode(String authCode) {
     return kakaoTokenFeign.getAccessToken(
-        oauthToken,
+        authCode,
         KAKAO_CLIENT_ID,
         KAKAO_CLIENT_SECRET,
         KAKAO_REDIRECT_URI,
