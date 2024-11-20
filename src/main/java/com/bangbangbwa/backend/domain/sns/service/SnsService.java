@@ -94,7 +94,7 @@ public class SnsService {
     return memberReader.findByNicknameContaining(nickname);
   }
 
-  public List<Post> getPostList() {
-    return postProvider.getRandomPost(PostType.MEMBER);
+  public List<Post> getPostList(PostType postType) {
+    return postProvider.getRandomPost(postType);
   }
 }
