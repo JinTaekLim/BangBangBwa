@@ -91,4 +91,8 @@ public class SnsService {
   public List<Member> searchMember(String nickname) {
     return memberReader.findByNicknameContaining(nickname);
   }
+
+  public List<Post> getPostList() {
+    return postReader.findAllByPostType(PostType.MEMBER);
+  }
 }
