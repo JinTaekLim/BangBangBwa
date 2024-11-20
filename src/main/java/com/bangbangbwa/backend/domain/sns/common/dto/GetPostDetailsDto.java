@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class GetPostDetailsDto {
 
   public record Response(
+      @Schema(description = "게시물ID")
+      Long postId,
       @Schema(description = "작성자ID")
       Long writerId,
       @Schema(description = "프로필 사진")

@@ -9,4 +9,8 @@
     VALUES (#{postId}, #{memberId}, #{content}, #{createdId}, #{createdAt})
   </insert>
 
+  <select id="findByPostId" parameterType="Long" resultType="comment">
+    SELECT * FROM comments WHERE post_id = #{postId};
+  </select>
+
 </mapper>
