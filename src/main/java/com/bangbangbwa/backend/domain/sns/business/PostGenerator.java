@@ -18,4 +18,10 @@ public class PostGenerator {
     postUpdater.updateMemberId(post, member);
     return post;
   }
+
+  public Post generate(Member member) {
+    Post post = Post.builder().build();
+    postUpdater.updateMemberId(post, member);
+    return post;
+  }
 }

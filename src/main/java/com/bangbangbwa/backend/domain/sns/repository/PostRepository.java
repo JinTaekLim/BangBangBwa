@@ -12,7 +12,7 @@ public class PostRepository {
 
   private final SqlSession mysql;
 
-  public void savePost(Post post) { mysql.insert("PostMapper.save", post); }
+  public void save(Post post) { mysql.insert("PostMapper.save", post); }
 
   public Optional<Post> findById(Long postId) {
     return Optional.ofNullable(mysql.selectOne("PostMapper.findById", postId));

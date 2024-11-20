@@ -1,6 +1,7 @@
 package com.bangbangbwa.backend.domain.sns.common.mapper;
 
 import com.bangbangbwa.backend.domain.sns.common.dto.CreatePostDto;
+import com.bangbangbwa.backend.domain.sns.common.dto.UploadPostMediaDto;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -24,4 +25,6 @@ public interface PostMapper {
   @Mapping(target = "content", source = "post.content")
   CreatePostDto.Response dtoToCreatePostResponse(Post post);
 
+  @Mapping(target = "url", source = "url")
+  UploadPostMediaDto.Response dtoToUploadPostMediaResponse(String url);
 }
