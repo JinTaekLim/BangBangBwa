@@ -21,4 +21,10 @@
   <select id="findById" parameterType="Long" resultType="member">
     SELECT * FROM members WHERE id = #{id};
   </select>
+
+  <select id="findByNicknameContaining" parameterType="String" resultType="member">
+    SELECT * FROM members
+    WHERE nickname LIKE CONCAT(#{nickname}, '%')
+    LIMIT 3
+  </select>
 </mapper>

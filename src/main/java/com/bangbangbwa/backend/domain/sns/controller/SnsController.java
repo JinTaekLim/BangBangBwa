@@ -1,6 +1,9 @@
 package com.bangbangbwa.backend.domain.sns.controller;
 
+import com.bangbangbwa.backend.domain.member.common.entity.Member;
+import com.bangbangbwa.backend.domain.member.common.mapper.MemberMapper;
 import com.bangbangbwa.backend.domain.sns.common.dto.CreateCommentDto;
+import com.bangbangbwa.backend.domain.sns.common.dto.SearchMemberDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.UploadPostMediaDto;
 import com.bangbangbwa.backend.domain.sns.common.entity.Comment;
 import com.bangbangbwa.backend.domain.sns.common.mapper.CommentMapper;
@@ -124,6 +127,16 @@ public class SnsController implements SnsApi{
   ) {
     Comment comment = snsService.createComment(request);
     CreateCommentDto.Response response = CommentMapper.INSTANCE.dtoToCreateCommentResponse(comment);
+    return ApiResponse.ok(response);
+  }
+
+  @GetMapping("/searchMember/{nickname}")
+  @PreAuthorize("hasAuthority('MEMBER')")
+  public ApiResponse<List<SearchMemberDto.Response>> searchMember(@PathVariable String nickname) {
+    List<Member> memberList = snsService.searchMember(nickname);
+    List<SearchMemberDto.Response> response = MemberMapper
+        .INSTANCE
+        .dtoToSearchNicknameResponse(memberList);
     return ApiResponse.ok(response);
   }
 }
