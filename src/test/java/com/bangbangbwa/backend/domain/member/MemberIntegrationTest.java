@@ -28,7 +28,9 @@ class MemberIntegrationTest extends IntegrationTest {
   private TokenProvider tokenProvider;
 
   private Member testMember() {
-    Member member = Member.builder().build();
+    Member member = Member.builder()
+        .nickname("bbbNickname")
+        .build();
 
     OAuthInfoDto oAuthInfo = OAuthInfoDto.builder()
         .snsId("bbbSnsId")
