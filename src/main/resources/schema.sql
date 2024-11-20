@@ -113,7 +113,7 @@ CREATE TABLE follow (
     id              BIGINT AUTO_INCREMENT PRIMARY KEY   COMMENT '팔로우 ID',
     follower_id     BIGINT              NOT NULL        COMMENT '팔로우 하는 사람의 ID',
     followee_id     BIGINT              NOT NULL        COMMENT '팔로우 당하는 사람의 ID',
-    follow_date     DATETIME                            COMMENT '팔로우 일시',
+    followed_at     DATETIME            NOT NULL        COMMENT '팔로우 일시',
     created_at      DATETIME            NOT NULL        COMMENT '생성일시',
     created_id      VARCHAR(255)        NOT NULL        COMMENT '생성자',
     updated_at      DATETIME                            COMMENT '수정일시',

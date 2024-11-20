@@ -16,9 +16,14 @@ public class ProfileDto {
   private Long currentMemberId;
   private String imageUrl;
   private String nickname;
-  private boolean isFollowing;
+  private Boolean isFollowing;
   private String selfIntroduction;
   private List<Interest> interests;
+
+  public ProfileDto(Long memberId, Long currentMemberId) {
+    this.memberId = memberId;
+    this.currentMemberId = currentMemberId;
+  }
 
   @Schema(name = "ProfileResponse", description = "프로필 정보 조회 응답")
   public record Response(

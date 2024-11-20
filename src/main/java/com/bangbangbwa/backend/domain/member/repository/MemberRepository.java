@@ -37,7 +37,7 @@ public class MemberRepository {
     return Objects.nonNull(member);
   }
 
-  public Optional<ProfileDto> findProfile(Long memberId) {
-    return Optional.ofNullable(mysql.selectOne("MemberMapper.findProfile", memberId));
+  public Optional<ProfileDto> findProfile(ProfileDto profileDto) {
+    return Optional.ofNullable(mysql.selectOne("MemberMapper.findProfile", profileDto));
   }
 }
