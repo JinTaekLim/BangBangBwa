@@ -9,8 +9,8 @@
     VALUES (#{postId}, #{memberId}, #{content}, #{createdId}, #{createdAt})
   </insert>
 
-  <select id="findByPostId" parameterType="Long" resultType="comment">
-    SELECT * FROM comments WHERE post_id = #{postId};
+  <select id="findByPostAndMember" parameterType="map" resultType="comment">
+    SELECT * FROM comments WHERE post_id = #{postId} AND member_id = #{memberId}
   </select>
 
 </mapper>

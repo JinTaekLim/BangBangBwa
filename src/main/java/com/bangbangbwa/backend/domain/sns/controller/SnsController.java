@@ -86,12 +86,12 @@ public class SnsController implements SnsApi{
 
   //note. 팔로우 관련 작업 필요
   @GetMapping("/getPostDetails/{postId}")
+  @PreAuthorize("hasAuthority('MEMBER')")
   public ApiResponse<GetPostDetailsDto.Response> getPostDetails(@PathVariable Long postId) {
 
     Post post = snsService.getPostDetails(postId);
     Member member = memberService.findById(post.getMemberId());
-    Comment comment = snsService.findByPost(post);
-
+    Comment comment = snsService.findByCurrentMemberPost(post);
 
     GetPostDetailsDto.Response response = PostMapper
         .INSTANCE

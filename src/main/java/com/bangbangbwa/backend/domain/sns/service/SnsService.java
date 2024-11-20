@@ -98,7 +98,8 @@ public class SnsService {
     return postReader.findById(postId);
   }
 
-  public Comment findByPost(Post postId) {
-    return commentReader.findByPost(postId);
+  public Comment findByCurrentMemberPost(Post post) {
+    Member member = memberProvider.getCurrentMember();
+    return commentReader.findByPostAndMember(post,member);
   }
 }
