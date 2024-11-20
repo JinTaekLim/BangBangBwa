@@ -21,6 +21,8 @@ public class DatabaseCleaner {
     tableNames = jdbcTemplate.queryForList(
         "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'PUBLIC'",
         String.class);
+
+    this.execute();
   }
 
   @Transactional
