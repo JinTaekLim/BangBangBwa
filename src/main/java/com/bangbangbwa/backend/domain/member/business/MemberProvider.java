@@ -39,4 +39,10 @@ public class MemberProvider {
     Long memberId = getCurrentMemberId();
     return memberReader.findById(memberId);
   }
+
+  public Member getCurrentMemberOrNull() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication.getPrincipal().equals("anonymousUser")) return null;
+    return getCurrentMember();
+  }
 }

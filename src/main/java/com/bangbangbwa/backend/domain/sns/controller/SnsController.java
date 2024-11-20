@@ -17,6 +17,7 @@ import com.bangbangbwa.backend.domain.sns.common.dto.GetFollowedLatestPostsDto.R
 import com.bangbangbwa.backend.domain.sns.common.dto.GetPostDetailsDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.GetPostListDto;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
+import com.bangbangbwa.backend.global.annotation.authentication.AuthenticationContext;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import com.bangbangbwa.backend.global.util.randomValue.RandomValue;
 import jakarta.validation.Valid;
@@ -86,7 +87,7 @@ public class SnsController implements SnsApi{
 
   //note. 팔로우 관련 작업 필요
   @GetMapping("/getPostDetails/{postId}")
-  @PreAuthorize("hasAuthority('MEMBER')")
+  @AuthenticationContext
   public ApiResponse<GetPostDetailsDto.Response> getPostDetails(@PathVariable Long postId) {
 
     Post post = snsService.getPostDetails(postId);

@@ -99,7 +99,8 @@ public class SnsService {
   }
 
   public Comment findByCurrentMemberPost(Post post) {
-    Member member = memberProvider.getCurrentMember();
+    Member member = memberProvider.getCurrentMemberOrNull();
+    if (member == null) return null;
     return commentReader.findByPostAndMember(post,member);
   }
 }
