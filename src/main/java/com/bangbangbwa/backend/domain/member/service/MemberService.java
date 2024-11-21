@@ -89,8 +89,4 @@ public class MemberService {
     memberReader.findById(memberId);
     return null;
   }
-
-  public Member findById(Long memberId) {
-    return memberReader.findById(memberId);
-  }
 }

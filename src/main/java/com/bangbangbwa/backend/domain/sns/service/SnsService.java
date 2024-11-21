@@ -97,17 +97,9 @@ public class SnsService {
     return memberReader.findByNicknameContaining(nickname);
   }
 
-  public Post getPostDetails(Long postId) {
-    return postReader.findById(postId);
   public GetPostDetailsDto.Response getPostDetails(Long postId) {
     Long memberId = memberProvider.getCurrentMemberIdOrNull();
     return postReader.getPostDetails(postId, memberId);
-  }
-
-  public Comment findByCurrentMemberPost(Post post) {
-    Member member = memberProvider.getCurrentMemberOrNull();
-    if (member == null) return null;
-    return commentReader.findByPostAndMember(post, member);
   }
     
   public List<Post> getPostList(PostType postType) {
