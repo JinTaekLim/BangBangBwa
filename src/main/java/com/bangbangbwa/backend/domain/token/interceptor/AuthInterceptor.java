@@ -1,6 +1,7 @@
 package com.bangbangbwa.backend.domain.token.interceptor;
 
 import com.bangbangbwa.backend.domain.token.service.TokenService;
+import com.bangbangbwa.backend.global.annotation.authentication.AuthenticationContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,15 +24,10 @@ public class AuthInterceptor implements HandlerInterceptor {
       Object handler) {
 
     boolean hasAnnotation = hasPreAuthorizeAnnotation(handler);
+    if (!hasAnnotation) return true;
 
-    if (hasAnnotation) {
-      String accessToken = tokenService.getTokenFromAuthorizationHeader(request);
-
-      tokenService.validateAccessToken(accessToken);
-
-      Authentication auth = tokenService.getAuthenticationByAccessToken(accessToken);
-      SecurityContextHolder.getContext().setAuthentication(auth);
-    }
+    String accessToken = tokenService.getTokenFromAuthorizationHeader(request);
+    if (isValidToken(accessToken)) {setAuthentication(accessToken);}
 
     return true;
   }
@@ -43,6 +39,17 @@ public class AuthInterceptor implements HandlerInterceptor {
     }
 
     HandlerMethod handlerMethod = (HandlerMethod) handler;
-    return handlerMethod.getMethod().isAnnotationPresent(PreAuthorize.class);
+    return handlerMethod.getMethod().isAnnotationPresent(PreAuthorize.class)
+        || handlerMethod.getMethod().isAnnotationPresent(AuthenticationContext.class);
+  }
+
+  private boolean isValidToken(String token) {
+    return token != null && !token.isEmpty();
+  }
+
+  private void setAuthentication(String token) {
+    tokenService.validateAccessToken(token);
+    Authentication authentication = tokenService.getAuthenticationByAccessToken(token);
+    SecurityContextHolder.getContext().setAuthentication(authentication);
   }
 }

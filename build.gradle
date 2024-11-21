@@ -82,10 +82,6 @@ dependencies {
     // Swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
 
-    // AOP
-    implementation 'org.springframework.boot:spring-boot-starter-aop:3.3.3'
-
-
     // Test
     testRuntimeOnly 'com.h2database:h2:2.2.224'
     testCompileOnly 'org.projectlombok:lombok:1.18.34'
