@@ -9,6 +9,7 @@ import com.bangbangbwa.backend.domain.sns.business.CommentGenerator;
 import com.bangbangbwa.backend.domain.sns.business.CommentReader;
 import com.bangbangbwa.backend.domain.sns.business.PostCreator;
 import com.bangbangbwa.backend.domain.sns.business.PostGenerator;
+import com.bangbangbwa.backend.domain.sns.business.PostProvider;
 import com.bangbangbwa.backend.domain.sns.business.PostReader;
 import com.bangbangbwa.backend.domain.sns.business.PostValidator;
 import com.bangbangbwa.backend.domain.sns.business.PostVisibilityMemberCreator;
@@ -39,6 +40,7 @@ public class SnsService {
   private final PostGenerator postGenerator;
   private final PostCreator postCreator;
   private final PostReader postReader;
+  private final PostProvider postProvider;
   private final PostValidator postValidator;
   private final CommentReader commentReader;
   private final PostVisibilityMemberCreator postVisibilityMemberCreator;
@@ -101,6 +103,10 @@ public class SnsService {
   public Comment findByCurrentMemberPost(Post post) {
     Member member = memberProvider.getCurrentMemberOrNull();
     if (member == null) return null;
-    return commentReader.findByPostAndMember(post,member);
+    return commentReader.findByPostAndMember(post, member);
+  }
+    
+  public List<Post> getPostList(PostType postType) {
+    return postProvider.getRandomPost(postType);
   }
 }
