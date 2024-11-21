@@ -16,6 +16,7 @@ import com.bangbangbwa.backend.domain.sns.business.PostVisibilityMemberCreator;
 import com.bangbangbwa.backend.domain.sns.business.PostVisibilityMemberGenerator;
 import com.bangbangbwa.backend.domain.sns.common.dto.CreateCommentDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.CreatePostDto;
+import com.bangbangbwa.backend.domain.sns.common.dto.GetPostDetailsDto;
 import com.bangbangbwa.backend.domain.sns.common.entity.Comment;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
 import com.bangbangbwa.backend.domain.sns.common.entity.PostVisibilityMember;
@@ -98,6 +99,9 @@ public class SnsService {
 
   public Post getPostDetails(Long postId) {
     return postReader.findById(postId);
+  public GetPostDetailsDto.Response getPostDetails(Long postId) {
+    Long memberId = memberProvider.getCurrentMemberIdOrNull();
+    return postReader.getPostDetails(postId, memberId);
   }
 
   public Comment findByCurrentMemberPost(Post post) {

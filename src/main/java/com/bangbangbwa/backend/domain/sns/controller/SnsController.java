@@ -83,15 +83,7 @@ public class SnsController implements SnsApi{
   @GetMapping("/getPostDetails/{postId}")
   @AuthenticationContext
   public ApiResponse<GetPostDetailsDto.Response> getPostDetails(@PathVariable Long postId) {
-
-    Post post = snsService.getPostDetails(postId);
-    Member member = memberService.findById(post.getMemberId());
-    Comment comment = snsService.findByCurrentMemberPost(post);
-
-    GetPostDetailsDto.Response response = PostMapper
-        .INSTANCE
-        .dtoToGetPostDetailsResponse(post, member, comment);
-
+    GetPostDetailsDto.Response response = snsService.getPostDetails(postId);
     return ApiResponse.ok(response);
   }
 
