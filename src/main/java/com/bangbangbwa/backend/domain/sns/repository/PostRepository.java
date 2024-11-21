@@ -1,6 +1,7 @@
 package com.bangbangbwa.backend.domain.sns.repository;
 
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSession;
@@ -16,5 +17,9 @@ public class PostRepository {
 
   public Optional<Post> findById(Long postId) {
     return Optional.ofNullable(mysql.selectOne("PostMapper.findById", postId));
+  }
+
+  public List<Post> findAllByPostType(String postType) {
+    return mysql.selectList("PostMapper.findAllByPostType", postType);
   }
 }

@@ -13,4 +13,8 @@
     SELECT * FROM posts WHERE id = #{id};
   </select>
 
+  <select id="findAllByPostType" parameterType="String" resultType="post">
+    SELECT * FROM posts WHERE post_type = #{postType};
+  </select>
+
 </mapper>

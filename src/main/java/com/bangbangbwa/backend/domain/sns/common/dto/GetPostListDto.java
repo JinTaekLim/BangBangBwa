@@ -9,7 +9,11 @@ public class GetPostListDto {
       @Schema(description = "게시물ID")
       Long postId,
       @Schema(description = "제목")
-      String title
+      String title,
+      @Schema(description = "이미지 포함여부")
+      boolean hasImage,
+      @Schema(description = "동영상 포함여부")
+      boolean hasVideo
   ) {}
 
 }
