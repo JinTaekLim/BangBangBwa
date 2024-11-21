@@ -31,7 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 @ApiResponse500
 public interface MemberApi {
 
-  @Operation(summary = "회원가입", tags = {"MemberAPI"})
+  @Operation(summary = "회원가입", tags = {"MemberAPI"}, description = "회원가입을 수행합니다.")
   @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(
           responseCode = "200", description = "OK",
@@ -70,7 +70,7 @@ public interface MemberApi {
       @RequestBody MemberSignupDto.Request request
   );
 
-  @Operation(summary = "로그인", tags = {"MemberAPI"})
+  @Operation(summary = "로그인", tags = {"MemberAPI"}, description = "로그인을 수행합니다.")
   @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(
           responseCode = "200", description = "OK",
