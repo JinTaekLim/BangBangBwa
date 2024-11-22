@@ -49,7 +49,7 @@
     SELECT
     p.id AS postId,
     p.member_id AS writerId,
-    p.title,
+    p.title AS title,
     p.content,
     m.profile AS profileUrl,
     m.nickname,
