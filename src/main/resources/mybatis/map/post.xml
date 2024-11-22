@@ -13,7 +13,7 @@
     SELECT * FROM posts WHERE id = #{id};
   </select>
 
-  <select id="findAllByPostType" parameterType="String" resultType="post">
+  <select id="findAllByPostType" parameterType="PostType" resultType="post">
     SELECT * FROM posts WHERE post_type = #{postType};
   </select>
 
