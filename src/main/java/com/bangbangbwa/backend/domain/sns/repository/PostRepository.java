@@ -1,7 +1,10 @@
 package com.bangbangbwa.backend.domain.sns.repository;
 
+import com.bangbangbwa.backend.domain.sns.common.dto.GetPostDetailsDto;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSession;
@@ -21,5 +24,12 @@ public class PostRepository {
 
   public List<Post> findAllByPostType(String postType) {
     return mysql.selectList("PostMapper.findAllByPostType", postType);
+  }
+
+  public GetPostDetailsDto.Response getPostDetails(Long postId, Long memberId) {
+    Map<String, Object> params = new HashMap<>();
+    params.put("postId", postId);
+    params.put("memberId", memberId);
+    return mysql.selectOne("PostMapper.getPostDetails", params);
   }
 }

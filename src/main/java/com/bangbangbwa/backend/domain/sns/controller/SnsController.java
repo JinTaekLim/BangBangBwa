@@ -2,6 +2,7 @@ package com.bangbangbwa.backend.domain.sns.controller;
 
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.member.common.mapper.MemberMapper;
+import com.bangbangbwa.backend.domain.member.service.MemberService;
 import com.bangbangbwa.backend.domain.sns.common.dto.CreateCommentDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.SearchMemberDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.UploadPostMediaDto;
@@ -17,6 +18,7 @@ import com.bangbangbwa.backend.domain.sns.common.dto.GetFollowedLatestPostsDto.R
 import com.bangbangbwa.backend.domain.sns.common.dto.GetPostDetailsDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.GetPostListDto;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
+import com.bangbangbwa.backend.global.annotation.authentication.AuthenticationContext;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import com.bangbangbwa.backend.global.util.randomValue.RandomValue;
 import jakarta.validation.Valid;
@@ -40,6 +42,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class SnsController implements SnsApi{
 
   private final SnsService snsService;
+  private final MemberService memberService;
 
 
   @GetMapping("/getFollowedLatestPosts")
@@ -76,19 +79,11 @@ public class SnsController implements SnsApi{
     return ApiResponse.ok(response);
   }
 
+  //note. 팔로우 관련 작업 필요
   @GetMapping("/getPostDetails/{postId}")
+  @AuthenticationContext
   public ApiResponse<GetPostDetailsDto.Response> getPostDetails(@PathVariable Long postId) {
-
-    GetPostDetailsDto.Response response = new GetPostDetailsDto.Response(
-        RandomValue.getRandomLong(0,9999),
-        "https://photoUrl//" + postId,
-        RandomValue.string(20).setNullable(false).get(),
-        RandomValue.string(20).setNullable(false).get(),
-        RandomValue.string(500).setNullable(false).get(),
-        RandomValue.string(50).setNullable(false).get(),
-        RandomValue.getRandomBoolean()
-    );
-
+    GetPostDetailsDto.Response response = snsService.getPostDetails(postId);
     return ApiResponse.ok(response);
   }
 

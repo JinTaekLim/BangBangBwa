@@ -1,8 +1,11 @@
 package com.bangbangbwa.backend.domain.sns.common.mapper;
 
+import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.sns.common.dto.CreatePostDto;
+import com.bangbangbwa.backend.domain.sns.common.dto.GetPostDetailsDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.GetPostListDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.UploadPostMediaDto;
+import com.bangbangbwa.backend.domain.sns.common.entity.Comment;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
 import java.util.List;
 import org.mapstruct.Mapper;
@@ -34,5 +37,4 @@ public interface PostMapper {
   @Mapping(target = "title", source = "title")
   GetPostListDto.Response dtoToGetPostListResponse(Post post);
   List<GetPostListDto.Response> dtoToGetPostListResponse(List<Post> postList);
-
 }

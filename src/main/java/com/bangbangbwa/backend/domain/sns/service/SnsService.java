@@ -6,6 +6,7 @@ import com.bangbangbwa.backend.domain.member.business.MemberValidator;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.sns.business.CommentCreator;
 import com.bangbangbwa.backend.domain.sns.business.CommentGenerator;
+import com.bangbangbwa.backend.domain.sns.business.CommentReader;
 import com.bangbangbwa.backend.domain.sns.business.PostCreator;
 import com.bangbangbwa.backend.domain.sns.business.PostGenerator;
 import com.bangbangbwa.backend.domain.sns.business.PostProvider;
@@ -15,6 +16,7 @@ import com.bangbangbwa.backend.domain.sns.business.PostVisibilityMemberCreator;
 import com.bangbangbwa.backend.domain.sns.business.PostVisibilityMemberGenerator;
 import com.bangbangbwa.backend.domain.sns.common.dto.CreateCommentDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.CreatePostDto;
+import com.bangbangbwa.backend.domain.sns.common.dto.GetPostDetailsDto;
 import com.bangbangbwa.backend.domain.sns.common.entity.Comment;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
 import com.bangbangbwa.backend.domain.sns.common.entity.PostVisibilityMember;
@@ -41,6 +43,7 @@ public class SnsService {
   private final PostReader postReader;
   private final PostProvider postProvider;
   private final PostValidator postValidator;
+  private final CommentReader commentReader;
   private final PostVisibilityMemberCreator postVisibilityMemberCreator;
   private final PostVisibilityMemberGenerator postVisibilityMemberGenerator;
   private final S3Manager s3Manager;
@@ -94,6 +97,11 @@ public class SnsService {
     return memberReader.findByNicknameContaining(nickname);
   }
 
+  public GetPostDetailsDto.Response getPostDetails(Long postId) {
+    Long memberId = memberProvider.getCurrentMemberIdOrNull();
+    return postReader.getPostDetails(postId, memberId);
+  }
+    
   public List<Post> getPostList(PostType postType) {
     return postProvider.getRandomPost(postType);
   }

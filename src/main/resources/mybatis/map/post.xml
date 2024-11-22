@@ -17,4 +17,20 @@
     SELECT * FROM posts WHERE post_type = #{postType};
   </select>
 
+  <select id="getPostDetails" parameterType="map" resultType="com.bangbangbwa.backend.domain.sns.common.dto.GetPostDetailsDto$Response">
+    SELECT
+    p.id AS postId,
+    p.member_id AS writerId,
+    p.title,
+    p.content,
+    m.profile AS profileUrl,
+    m.nickname,
+    c.content AS comment
+    FROM posts p
+    LEFT JOIN members m ON p.member_id = m.id
+    LEFT JOIN comments c ON c.post_id = p.id AND c.member_id = #{memberId}
+    WHERE p.id = #{postId}
+  </select>
+
+
 </mapper>
