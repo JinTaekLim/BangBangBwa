@@ -1,5 +1,7 @@
 package com.bangbangbwa.backend.domain.streamer.service;
 
+import com.bangbangbwa.backend.domain.member.business.MemberProvider;
+import com.bangbangbwa.backend.domain.promotion.common.entity.Streamer;
 import com.bangbangbwa.backend.domain.streamer.common.business.DailyMessageCreator;
 import com.bangbangbwa.backend.domain.streamer.common.business.DailyMessageGenerator;
 import com.bangbangbwa.backend.domain.streamer.common.business.DailyMessageReader;
@@ -13,13 +15,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class DailyMessageService {
 
+  private final MemberProvider memberProvider;
   private final DailyMessageGenerator dailyMessageGenerator;
   private final DailyMessageCreator dailyMessageCreator;
   private final DailyMessageReader dailyMessageReader;
 
   public DailyMessage createDailyMessage(CreateDailyMessageDto.Request request) {
-    // streamer 관련 추가 작업 필요
-    DailyMessage dailyMessage = dailyMessageGenerator.generate(request,null);
+    Streamer streamer = memberProvider.getCurrentStreamer();
+    DailyMessage dailyMessage = dailyMessageGenerator.generate(request,streamer);
     dailyMessageCreator.save(dailyMessage);
     return dailyMessage;
   }
