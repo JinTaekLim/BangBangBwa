@@ -52,6 +52,8 @@ CREATE TABLE members_tags
     FOREIGN KEY (tag_id) REFERENCES tags (id)
 );
 
+ALTER TABLE members_tags ADD UNIQUE KEY unique_members_tags (member_id, tag_id);
+
 CREATE TABLE tokens
 (
     id              BIGINT AUTO_INCREMENT NOT NULL COMMENT '토큰_ID',
