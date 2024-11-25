@@ -54,7 +54,7 @@ public class SnsController implements SnsApi{
   //note. 팔로우 관련 작업 필요
   @GetMapping("/getPostDetails/{postId}")
   @AuthenticationContext
-  public ApiResponse<GetPostDetailsDto.Response> getPostDetails(@PathVariable Long postId) {
+  public ApiResponse<GetPostDetailsDto.Response> getPostDetails(@PathVariable("postId") Long postId) {
     GetPostDetailsDto.Response response = snsService.getPostDetails(postId);
     return ApiResponse.ok(response);
   }
@@ -93,7 +93,7 @@ public class SnsController implements SnsApi{
 
   @GetMapping("/searchMember/{nickname}")
   @PreAuthorize("hasAuthority('MEMBER')")
-  public ApiResponse<List<SearchMemberDto.Response>> searchMember(@PathVariable String nickname) {
+  public ApiResponse<List<SearchMemberDto.Response>> searchMember(@PathVariable("nickname") String nickname) {
     List<Member> memberList = snsService.searchMember(nickname);
     List<SearchMemberDto.Response> response = MemberMapper
         .INSTANCE
