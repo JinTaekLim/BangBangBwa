@@ -9,11 +9,6 @@ VALUES ('GOOGLE', '12345', 'user@example.com', 'nickname123', 'MEMBER', 'admin',
 INSERT INTO members (sns_type, sns_id, email, nickname, role, created_id, created_at)
 VALUES ('GOOGLE', '12345', 'user@example.com', 'nickname123', 'MEMBER', 'admin', NOW());
 
-INSERT INTO members
-SELECT 1, 'GOOGLE', 'googleTestSnsId', 'bbb@gamil.com', 'https://as2.ftcdn.net/v2/jpg/02/50/30/59/1000_F_250305943_sDC6la1N1fDl3bLgfLxOkQwItIodsdMb.jpg',
-       'BangBangBwa', 'MEMBER', null, now(), 'SYSTEM', now(), 'SYSTEM'
-;
-
 INSERT INTO streamers (member_id, today_comment, self_introduction, image_url, name)
 VALUES ('1','1', '1', '1', '1');
 INSERT INTO streamers (member_id, today_comment, self_introduction, image_url, name)
@@ -32,14 +27,14 @@ SELECT 1, 1, 2, now(), now(), 'SYSTEM', now(), 'SYSTEM'
 INSERT INTO follow
 SELECT 2, 2, 1, now(), now(), 'SYSTEM', now(), 'SYSTEM'
 ;
-INSERT INTO streamers (today_comment, self_introduction, image_url, name)
-VALUES ('1', '1', '1', '1');
-INSERT INTO streamers (today_comment, self_introduction, image_url, name)
-VALUES ('2', '2', '2', '2');
-INSERT INTO streamers (today_comment, self_introduction, image_url, name)
-VALUES ('3', '3', '3', '3');
-INSERT INTO streamers (today_comment, self_introduction, image_url, name)
-VALUES ('4', '4', '4', '4');
+INSERT INTO streamers (today_comment, member_id, self_introduction, image_url, name)
+VALUES ('1', '1','1', '1', '1');
+INSERT INTO streamers (today_comment, member_id, self_introduction, image_url, name)
+VALUES ('2',  '2','2', '2', '2');
+INSERT INTO streamers (today_comment, member_id, self_introduction, image_url, name)
+VALUES ('3', '3', '3', '3', '3');
+INSERT INTO streamers (today_comment, member_id, self_introduction, image_url, name)
+VALUES ('4', '4', '4', '4', '4');
 
 INSERT INTO tags (name, created_at, created_id)
 VALUES ('1', now(), '1');
