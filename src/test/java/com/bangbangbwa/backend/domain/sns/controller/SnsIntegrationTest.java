@@ -99,17 +99,13 @@ class SnsIntegrationTest extends IntegrationTest {
   }
 
 
-  /*
-  note. postCount 랜덤 값 변경 필요
-  내부 값 검사 필요
-   */
+  // note. 내부 값 검사 필요
   @Test()
   void getPostList_성공_게시물_갯수_체크() {
     // given
     PostType postType = PostType.STREAMER;
     Member writeMember = createMember();
-//    int postCount = RandomValue.getInt(1,5);
-    int postCount = 5;
+    int postCount = RandomValue.getInt(0,5);
 
     IntStream.range(0, postCount)
             .forEach(i -> createPost(postType, writeMember));
