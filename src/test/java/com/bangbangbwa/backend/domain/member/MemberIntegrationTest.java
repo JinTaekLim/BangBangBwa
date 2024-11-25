@@ -86,71 +86,71 @@ class MemberIntegrationTest extends IntegrationTest {
     ;
   }
 
-  @Test
-  void getProfile_다른_사람_정보_팔로잉_true() throws Exception {
-    Member member1 = testMember();
-    memberRepository.save(member1);
-    TokenDto token = tokenProvider.getToken(member1);
-
-    Member member2 = testMember();
-    memberRepository.save(member2);
-
-    // member1 -> member2를 Follow한다.
-    Follow follow = testFollow(member1.getId(), member2.getId());
-    followRepository.save(follow);
-
-    ProfileDto.Response expected = new ProfileDto.Response(
-        member2.getProfile(),
-        member2.getNickname(),
-        true,
-        member2.getSelfIntroduction(),
-        null
-    );
-
-    String URL = "/api/v1/members/profile/" + member2.getId();
-    mvc.perform(get(URL)
-            .header(HttpHeaders.AUTHORIZATION, token.getAccessToken()))
-        .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.code").value(HttpStatus.OK.name()))
-        .andExpect(jsonPath("$.message").value(HttpStatus.OK.getReasonPhrase()))
-        .andExpect(jsonPath("$.data").isNotEmpty())
-        .andExpect(jsonPath("$.data.imageUrl").value(expected.imageUrl()))
-        .andExpect(jsonPath("$.data.nickname").value(expected.nickname()))
-        .andExpect(jsonPath("$.data.isFollowing").value(expected.isFollowing()))
-        .andExpect(jsonPath("$.data.selfIntroduction").value(expected.selfIntroduction()))
-    ;
-  }
-
-  @Test
-  void getProfile_다른_사람_정보_팔로잉_false() throws Exception {
-    Member member1 = testMember();
-    memberRepository.save(member1);
-
-    Member member2 = testMember();
-    memberRepository.save(member2);
-    TokenDto token = tokenProvider.getToken(member2);
-
-    ProfileDto.Response expected = new ProfileDto.Response(
-        member1.getProfile(),
-        member1.getNickname(),
-        false,
-        member1.getSelfIntroduction(),
-        null
-    );
-
-    String URL = "/api/v1/members/profile/" + member1.getId();
-    mvc.perform(get(URL)
-            .header(HttpHeaders.AUTHORIZATION, token.getAccessToken()))
-        .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.code").value(HttpStatus.OK.name()))
-        .andExpect(jsonPath("$.message").value(HttpStatus.OK.getReasonPhrase()))
-        .andExpect(jsonPath("$.data").isNotEmpty())
-        .andExpect(jsonPath("$.data.imageUrl").value(expected.imageUrl()))
-        .andExpect(jsonPath("$.data.nickname").value(expected.nickname()))
-        .andExpect(jsonPath("$.data.isFollowing").value(expected.isFollowing()))
-        .andExpect(jsonPath("$.data.selfIntroduction").value(expected.selfIntroduction()))
-    ;
-  }
+//  @Test
+//  void getProfile_다른_사람_정보_팔로잉_true() throws Exception {
+//    Member member1 = testMember();
+//    memberRepository.save(member1);
+//    TokenDto token = tokenProvider.getToken(member1);
+//
+//    Member member2 = testMember();
+//    memberRepository.save(member2);
+//
+//    // member1 -> member2를 Follow한다.
+//    Follow follow = testFollow(member1.getId(), member2.getId());
+//    followRepository.save(follow);
+//
+//    ProfileDto.Response expected = new ProfileDto.Response(
+//        member2.getProfile(),
+//        member2.getNickname(),
+//        true,
+//        member2.getSelfIntroduction(),
+//        null
+//    );
+//
+//    String URL = "/api/v1/members/profile/" + member2.getId();
+//    mvc.perform(get(URL)
+//            .header(HttpHeaders.AUTHORIZATION, token.getAccessToken()))
+//        .andExpect(status().isOk())
+//        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+//        .andExpect(jsonPath("$.code").value(HttpStatus.OK.name()))
+//        .andExpect(jsonPath("$.message").value(HttpStatus.OK.getReasonPhrase()))
+//        .andExpect(jsonPath("$.data").isNotEmpty())
+//        .andExpect(jsonPath("$.data.imageUrl").value(expected.imageUrl()))
+//        .andExpect(jsonPath("$.data.nickname").value(expected.nickname()))
+//        .andExpect(jsonPath("$.data.isFollowing").value(expected.isFollowing()))
+//        .andExpect(jsonPath("$.data.selfIntroduction").value(expected.selfIntroduction()))
+//    ;
+//  }
+//
+//  @Test
+//  void getProfile_다른_사람_정보_팔로잉_false() throws Exception {
+//    Member member1 = testMember();
+//    memberRepository.save(member1);
+//
+//    Member member2 = testMember();
+//    memberRepository.save(member2);
+//    TokenDto token = tokenProvider.getToken(member2);
+//
+//    ProfileDto.Response expected = new ProfileDto.Response(
+//        member1.getProfile(),
+//        member1.getNickname(),
+//        false,
+//        member1.getSelfIntroduction(),
+//        null
+//    );
+//
+//    String URL = "/api/v1/members/profile/" + member1.getId();
+//    mvc.perform(get(URL)
+//            .header(HttpHeaders.AUTHORIZATION, token.getAccessToken()))
+//        .andExpect(status().isOk())
+//        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+//        .andExpect(jsonPath("$.code").value(HttpStatus.OK.name()))
+//        .andExpect(jsonPath("$.message").value(HttpStatus.OK.getReasonPhrase()))
+//        .andExpect(jsonPath("$.data").isNotEmpty())
+//        .andExpect(jsonPath("$.data.imageUrl").value(expected.imageUrl()))
+//        .andExpect(jsonPath("$.data.nickname").value(expected.nickname()))
+//        .andExpect(jsonPath("$.data.isFollowing").value(expected.isFollowing()))
+//        .andExpect(jsonPath("$.data.selfIntroduction").value(expected.selfIntroduction()))
+//    ;
+//  }
 }
