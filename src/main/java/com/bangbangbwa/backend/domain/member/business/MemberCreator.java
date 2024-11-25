@@ -11,7 +11,7 @@ public class MemberCreator {
 
   private final MemberRepository memberRepository;
 
-  public Long save(Member member) {
-    return memberRepository.save(member);
+  public void save(Member member) {
+    memberRepository.save(member);
   }
 }

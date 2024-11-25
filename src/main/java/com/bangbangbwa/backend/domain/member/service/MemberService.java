@@ -44,8 +44,8 @@ public class MemberService {
   public TokenDto signup(OAuthInfoDto oAuthInfo, MemberSignupDto.Request request,
       MultipartFile profileFile) {
     Member member = memberGenerator.generate(oAuthInfo, request, profileFile);
-    Long memberId = memberCreator.save(member);
-    List<Tag> tags = tagManager.getTags(request.tags(), String.valueOf(memberId));
+    memberCreator.save(member);
+    List<Tag> tags = tagManager.getTags(request.tags(), String.valueOf(member.getId()));
     // TODO : Bulk 연산 학습 후 적용 예정
     for (Tag tag : tags) {
       memberTagRelation.relation(member, tag);

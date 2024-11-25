@@ -18,9 +18,8 @@ public class MemberRepository {
 
   private final SqlSession mysql;
 
-  public Long save(Member member) {
+  public void save(Member member) {
     mysql.insert("MemberMapper.save", member);
-    return member.getId();
   }
 
   public Optional<Member> findBySns(String snsId, SnsType snsType) {
