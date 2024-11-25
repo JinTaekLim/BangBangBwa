@@ -57,16 +57,12 @@ public class MemberController implements MemberApi {
 
   @PostMapping(value = "/{snsType}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   public ApiResponse<MemberSignupDto.Response> signup(
-//      @ValidEnum(enumClass = SnsType.class, message = "지원하지 않는 SNS 타입입니다.") todo : 추가 로직 수정 필요. -> 현재 오류 발생함.
       @PathVariable("snsType") SnsType snsType,
       @RequestPart(value = "file", required = false) MultipartFile file,
       @RequestPart @Valid MemberSignupDto.Request request
   ) {
     String oauthToken = request.oauthToken();
     OAuthInfoDto oAuthInfo = oAuthService.getInfoByToken(snsType, oauthToken);
-//    note : 테스트를 위한 코드 추후 삭제 예정
-//    OAuthInfoDto oAuthInfo = OAuthInfoDto.builder()
-//        .snsType(SnsType.GOOGLE).snsId("").email("").build();
     TokenDto token = memberService.signup(oAuthInfo, request, file);
     MemberSignupDto.Response response = MemberMapper.INSTANCE.dtoToSignupResponse(token);
     return ApiResponse.ok(response);

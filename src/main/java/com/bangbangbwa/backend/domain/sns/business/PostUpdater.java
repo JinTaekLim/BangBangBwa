@@ -10,4 +10,5 @@ public class PostUpdater {
   public void updateMemberId(Post post, Member member) {
     post.updateMemberId(member.getId());
   }
+
 }

@@ -12,6 +12,8 @@ public enum MemberErrorType {
   NOT_FOUND_MEMBER("존재하지 않는 회원입니다."),
   NOT_SIGN_UP_MEMBER("가입되지 않은 회원입니다."),
   DUPLICATED_NICKNAME_ERROR("이미 사용중인 닉네임 입니다."),
+  EMPTY_NICKNAME("닉네임이 공백 혹은 null 입니다."),
+
 
   AUTHENTICATION_NULL_ERROR("Authentication 이 NULL 입니다."),
   AUTHENTICATION_NAME_NULL_ERROR("Authentication name 이 NULL 입니다."),

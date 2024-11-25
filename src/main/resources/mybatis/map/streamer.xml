@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="StreamerMapper">
+
+  <resultMap id="streamerMap"
+    type="com.bangbangbwa.backend.domain.promotion.common.entity.Streamer">
+    <id property="id" column="id"/>
+    <result property="todayComment" column="today_comment"/>
+    <result property="selfIntroduction" column="self_introduction"/>
+    <result property="imageUrl" column="image_url"/>
+    <result property="name" column="streamer_name"/>
+    <collection property="tags" resultMap="streamerTagMap"/>
+    <collection property="platforms" resultMap="streamerPlatformMap"/>
+  </resultMap>
+
+  <resultMap id="streamerTagMap"
+    type="com.bangbangbwa.backend.domain.tag.common.entity.Tag">
+    <id property="id" column="tag_id"/>
+    <result property="name" column="tag_name"/>
+  </resultMap>
+
+  <resultMap id="streamerPlatformMap"
+    type="com.bangbangbwa.backend.domain.promotion.common.entity.Platform">
+    <id property="id" column="platform_id"/>
+    <result property="name" column="platform_name"/>
+    <result property="imageUrl" column="platform_image_url"/>
+    <result property="profileUrl" column="streamer_profile_url"/>
+  </resultMap>
+
+  <select id="selectAll" resultMap="streamerMap">
+    SELECT
+    s.id AS streamer_id,
+    s.name AS streamer_name,
+    s.today_comment,
+    s.self_introduction,
+    s.image_url,
+    t.id AS tag_id,
+    t.name AS tag_name,
+    p.id AS platform_id,
+    p.name AS platform_name,
+    p.image_url AS platform_image_url,
+    sp.streamer_profile_url
+    FROM
+    streamers s
+    LEFT JOIN streamers_tags st ON s.id = st.streamer_id
+    LEFT JOIN tags t ON st.tag_id = t.id
+    LEFT JOIN streamers_platforms sp ON s.id = sp.streamer_id
+    LEFT JOIN platforms p ON sp.platform_id = p.id
+    ORDER BY
+    s.id
+  </select>
+
+  <!--<select id="selectAll2" resultMap="streamerMap">
+    select *
+    from ~~~ a
+    inner join ~~
+    join ~~
+    left join ~~
+    left outer join ~~
+
+
+    inner join ~~
+    left join ~~
+    where 1=1
+    and ~~~~
+    limit 100
+    ;
+
+    SELECT *
+    FROM streamers a
+    INNER JOIN streamers_tags b
+    INNER JOIN tags c
+    INNER JOIN streamers_platforms d
+    INNER JOIN platforms e
+    SELECT *
+    FROM streamers s
+    INNER JOIN streamers_platforms_daily_sum_check SPDSC
+    INNER JOIN streamers_platforms_daily_sum_check dailySum
+    INNER JOIN streamers_platforms_month_check a
+    INNER JOIN streamers_platforms_month_count_check a
+    INNER JOIN streamers_triggers st
+    INNER JOIN streamers_tags st
+    INNER JOIN tags t
+    INNER JOIN streamers_platforms sp
+    INNER JOIN platforms p
+  </select>-->
+</mapper>

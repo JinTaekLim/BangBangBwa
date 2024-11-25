@@ -22,6 +22,12 @@
     SELECT * FROM members WHERE id = #{id};
   </select>
 
+  <select id="findByNicknameContaining" parameterType="String" resultType="member">
+    SELECT * FROM members
+    WHERE nickname LIKE CONCAT(#{nickname}, '%')
+    LIMIT 3
+  </select>
+
   <select id="findProfile"
     parameterType="com.bangbangbwa.backend.domain.member.common.dto.ProfileDto"
     resultType="com.bangbangbwa.backend.domain.member.common.dto.ProfileDto">
