@@ -29,8 +29,10 @@ import com.bangbangbwa.backend.global.util.randomValue.Language;
 import com.bangbangbwa.backend.global.util.randomValue.RandomValue;
 import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import org.junit.jupiter.api.RepeatedTest;
+import java.util.stream.IntStream;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -95,6 +97,47 @@ class SnsIntegrationTest extends IntegrationTest {
     Post post = getPost(postType, writeMember);
     postRepository.save(post);
     return post;
+  }
+
+  @Test()
+  void getPostList_성공() {
+    // given
+    PostType postType = PostType.MEMBER;
+    Member writeMember = createMember();
+    int postCount = RandomValue.getInt(0,5);
+
+    List<Post> expectedPosts = IntStream.range(0, postCount)
+        .mapToObj(i -> createPost(postType, writeMember))
+        .toList();
+
+    String url = "http://localhost:" + port + "/api/v1/sns/getPostList";
+
+
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
+
+    ApiResponse<List<GetPostListDto.Response>> apiResponse = gson.fromJson(
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<List<GetPostListDto.Response>>>() {}.getType()
+    );
+
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertNotNull(apiResponse.getData());
+    assertThat(apiResponse.getData().size()).isEqualTo(postCount);
+
+    List<GetPostListDto.Response> actualPosts = apiResponse.getData();
+    actualPosts.sort(Comparator.comparing(GetPostListDto.Response::postId));
+
+    IntStream.range(0, postCount)
+            .forEach(i -> {
+              Post expectedPost = expectedPosts.get(i);
+              GetPostListDto.Response actualPost = actualPosts.get(i);
+
+              assertThat(actualPost.postId()).isEqualTo(expectedPost.getId());
+              assertThat(actualPost.title()).isEqualTo(expectedPost.getTitle());
+            });
+
   }
 
 
