@@ -36,4 +36,4 @@ jobs:
 
       # gradle 빌드 및 테스트
       - name: Build and test with gradle
-        run: ./gradlew clean build
+        run: ./gradlew clean build -info --stacktrace
