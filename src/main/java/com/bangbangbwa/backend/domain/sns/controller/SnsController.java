@@ -46,7 +46,7 @@ public class SnsController implements SnsApi{
 
   @GetMapping("/getPostList")
   public ApiResponse<List<GetPostListDto.Response>> getPostList() {
-    List<Post> postList = snsService.getPostList(PostType.MEMBER);
+    List<Post> postList = snsService.getPostList(PostType.STREAMER);
     List<GetPostListDto.Response> response = PostMapper.INSTANCE.dtoToGetPostListResponse(postList);
     return ApiResponse.ok(response);
   }
