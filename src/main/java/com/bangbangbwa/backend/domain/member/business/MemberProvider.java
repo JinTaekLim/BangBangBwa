@@ -60,4 +60,12 @@ public class MemberProvider {
     if (authentication.getPrincipal().equals(GUEST)) return null;
     return getCurrentMemberId();
   }
+
+  public Long getCurrentMemberIdIfLogin() {
+    try {
+      return this.getCurrentMemberId();
+    } catch (Exception e) {
+      return null;
+    }
+  }
 }

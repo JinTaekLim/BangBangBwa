@@ -16,4 +16,6 @@
     <appender-ref ref="CONSOLE"/>
   </root>
 
+  <logger name="com.bangbangbwa" level="DEBUG"/>
+
 </configuration>
