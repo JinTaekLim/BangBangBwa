@@ -79,6 +79,7 @@ dependencies {
 
     // Test
     testRuntimeOnly 'com.h2database:h2:2.2.224'
+    testImplementation 'com.github.codemonstur:embedded-redis:1.4.3'
     testCompileOnly 'org.projectlombok:lombok:1.18.34'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
