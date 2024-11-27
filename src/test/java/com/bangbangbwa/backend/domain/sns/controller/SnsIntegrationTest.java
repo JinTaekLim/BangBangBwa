@@ -3,6 +3,8 @@ package com.bangbangbwa.backend.domain.sns.controller;
 import static com.mongodb.assertions.Assertions.assertNotNull;
 import static com.mongodb.assertions.Assertions.assertNull;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 
@@ -10,12 +12,7 @@ import com.bangbangbwa.backend.domain.member.exception.UnAuthenticationMemberExc
 import com.bangbangbwa.backend.domain.member.repository.MemberRepository;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
-import com.bangbangbwa.backend.domain.sns.common.dto.CreateCommentDto;
-import com.bangbangbwa.backend.domain.sns.common.dto.CreatePostDto;
-import com.bangbangbwa.backend.domain.sns.common.dto.GetLatestPostsDto;
-import com.bangbangbwa.backend.domain.sns.common.dto.GetPostDetailsDto;
-import com.bangbangbwa.backend.domain.sns.common.dto.GetPostListDto;
-import com.bangbangbwa.backend.domain.sns.common.dto.SearchMemberDto;
+import com.bangbangbwa.backend.domain.sns.common.dto.*;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
 import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
 import com.bangbangbwa.backend.domain.sns.exception.InvalidMemberVisibilityException;
@@ -37,10 +34,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.multipart.MultipartFile;
 
 class SnsIntegrationTest extends IntegrationTest {
 
@@ -284,36 +282,46 @@ class SnsIntegrationTest extends IntegrationTest {
   }
 
 
-//  @Test
-//  void uploadPostMedia() throws IOException {
-//    // given
-//    MultipartFile mockFile = mock(MultipartFile.class);
-//
-//    String url = "http://localhost:" + port + "/api/v1/sns/uploadPostMedia";
-//
-//    // when
-//    when(s3Manager.upload(any(MultipartFile.class))).thenReturn("urldkadjfkasjfk");
-//
-//    HttpHeaders headers = new HttpHeaders();
-//    headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-//    HttpEntity<MultipartFile> requestEntity = new HttpEntity<>(mockFile, headers);
-//
-//
-//
-//    ResponseEntity<String> responseEntity = restTemplate.postForEntity(
-//        url,
-//        requestEntity,
-//        String.class
-//    );
-//
-//    ApiResponse<UploadPostMediaDto.Response> apiResponse = gson.fromJson(
-//        responseEntity.getBody(),
-//        new TypeToken<ApiResponse<UploadPostMediaDto.Response>>() {}.getType()
-//    );
+  @Test
+  void uploadPostMedia() {
+    // given
+    String url = "http://localhost:" + port + "/api/v1/sns/uploadPostMedia";
+    String returnUrl = "http://" + RandomValue.string(10,50).setNullable(false).setLanguages(Language.ENGLISH).get();
 
+    MockMultipartFile mockFile = new MockMultipartFile(
+            "file",
+            "test-image.jpg",
+            "image/jpeg",
+            "test-image-content".getBytes()
+    );
+
+    // when
+    when(s3Manager.upload(any(MultipartFile.class))).thenReturn(returnUrl);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+    MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+    body.add("file", mockFile.getResource());
+    HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+    ResponseEntity<String> responseEntity = restTemplate.postForEntity(
+            url,
+            requestEntity,
+            String.class
+    );
+
+    ApiResponse<UploadPostMediaDto.Response> apiResponse = gson.fromJson(
+            responseEntity.getBody(),
+            new TypeToken<ApiResponse<UploadPostMediaDto.Response>>() {}.getType()
+    );
 
     // then
-//  }
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(apiResponse.getData()).isNotNull();
+    assertThat(apiResponse.getData().url()).isEqualTo(returnUrl);
+  }
+
 
   @Test
   void createComment() {
