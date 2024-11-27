@@ -13,15 +13,43 @@
     SELECT * FROM posts WHERE id = #{id};
   </select>
 
-  <select id="findAllByPostType" parameterType="String" resultType="post">
+  <select id="findAllByPostType" parameterType="PostType" resultType="post">
     SELECT * FROM posts WHERE post_type = #{postType};
   </select>
+
+
+  <resultMap id="GetLatestPostsDtoMap" type="com.bangbangbwa.backend.domain.sns.common.dto.GetLatestPostsDto">
+    <result property="streamerId" column="streamerId" />
+    <result property="profileUrl" column="profileUrl" />
+    <result property="postIdList" column="postIdList" />
+  </resultMap>
+
+  <select id="findPostsWithinLast24Hours" parameterType="PostType" resultMap="GetLatestPostsDtoMap">
+    SELECT
+    s.id AS streamerId,
+    m.profile AS profileUrl,
+    GROUP_CONCAT(p.id ORDER BY p.created_at DESC) AS postIdList
+    FROM
+    posts p
+    JOIN
+    members m ON p.member_id = m.id
+    LEFT JOIN
+    streamers s ON m.id = s.member_id
+    WHERE
+    p.created_at >= NOW() - INTERVAL 1 DAY
+    AND p.post_type = #{postType}
+    GROUP BY
+    s.id, m.profile
+    ORDER BY
+    MAX(p.created_at) DESC;
+  </select>
+
 
   <select id="getPostDetails" parameterType="map" resultType="com.bangbangbwa.backend.domain.sns.common.dto.GetPostDetailsDto$Response">
     SELECT
     p.id AS postId,
     p.member_id AS writerId,
-    p.title,
+    p.title AS title,
     p.content,
     m.profile AS profileUrl,
     m.nickname,

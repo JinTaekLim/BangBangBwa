@@ -1,17 +1,16 @@
 DROP TABLE IF EXISTS streamers_tags;
 DROP TABLE IF EXISTS streamers_platforms;
 DROP TABLE IF EXISTS members_tags;
-
 DROP TABLE IF EXISTS pending_streamer;
 DROP TABLE IF EXISTS admins;
 DROP TABLE IF EXISTS comments;
 DROP TABLE IF EXISTS posts_visibility_member;
 DROP TABLE IF EXISTS posts;
 DROP TABLE IF EXISTS tokens;
+DROP TABLE IF EXISTS streamers;
 DROP TABLE IF EXISTS members;
 DROP TABLE IF EXISTS tags;
 DROP TABLE IF EXISTS banners;
-DROP TABLE IF EXISTS streamers;
 DROP TABLE IF EXISTS platforms;
 
 CREATE TABLE members
@@ -144,11 +143,13 @@ CREATE TABLE pending_streamer
 CREATE TABLE streamers
 (
     id                BIGINT AUTO_INCREMENT NOT NULL COMMENT '스트리머_ID',
+    member_id         BIGINT              NOT NULL COMMENT '멤버_ID',
     today_comment     VARCHAR(20) NULL COMMENT '스트리머_오늘의_한마디',
     self_introduction VARCHAR(100) NOT NULL COMMENT '스트리머_자기_소개',
     image_url         LONGTEXT     NOT NULL COMMENT '스트리머_이미지_URL',
     name              VARCHAR(10)  NOT NULL COMMENT '스트리머_이름',
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    FOREIGN KEY (member_id) REFERENCES members (id)
 );
 
 CREATE TABLE platforms

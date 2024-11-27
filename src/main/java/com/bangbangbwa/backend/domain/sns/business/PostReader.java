@@ -1,5 +1,6 @@
 package com.bangbangbwa.backend.domain.sns.business;
 
+import com.bangbangbwa.backend.domain.sns.common.dto.GetLatestPostsDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.GetPostDetailsDto;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
 import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
@@ -24,7 +25,10 @@ public class PostReader {
   }
 
   public List<Post> findAllByPostType(PostType postType) {
-    return postRepository.findAllByPostType(postType.name());
+    return postRepository.findAllByPostType(postType);
   }
 
+  public List<GetLatestPostsDto> findPostsWithinLast24Hours(PostType postType) {
+    return postRepository.findPostsWithinLast24Hours(postType);
+  }
 }
