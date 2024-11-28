@@ -71,7 +71,7 @@ public class MemberService {
   }
 
   public ProfileDto getProfile(Long memberId) {
-    Long currentMemberId = memberProvider.getCurrentMemberIdIfLogin();
+    Long currentMemberId = memberProvider.getCurrentMemberIdOrNull();
     ProfileDto profileDto = new ProfileDto(memberId, currentMemberId);
     return memberReader.getProfile(profileDto);
   }

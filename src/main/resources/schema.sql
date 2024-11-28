@@ -23,6 +23,7 @@ CREATE TABLE members
     profile    VARCHAR(255) NULL COMMENT 'storage URL',
     nickname   VARCHAR(255) NOT NULL COMMENT '닉네임(null시 랜덤값 생성)',
     role       VARCHAR(20)  NOT NULL COMMENT '회원 권한',
+    self_introduction VARCHAR(100) NULL COMMENT '자기소개',
     deleted_at DATETIME NULL COMMENT '탈퇴일시(null)',
     created_at DATETIME     NOT NULL COMMENT '생성일시',
     created_id VARCHAR(255) NOT NULL COMMENT '생성자',

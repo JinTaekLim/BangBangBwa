@@ -15,8 +15,8 @@ import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
 import com.bangbangbwa.backend.domain.member.common.dto.PromoteStreamerDto;
 import com.bangbangbwa.backend.domain.member.common.dto.SummaryDto;
 import com.bangbangbwa.backend.domain.member.common.mapper.MemberMapper;
-import com.bangbangbwa.backend.domain.member.service.MemberService;
 import com.bangbangbwa.backend.domain.member.common.mapper.ProfileMapper;
+import com.bangbangbwa.backend.domain.member.service.MemberService;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import com.bangbangbwa.backend.domain.oauth.service.OAuthService;
@@ -121,6 +121,7 @@ public class MemberController implements MemberApi {
   }
 
   @GetMapping("/profile/{memberId}")
+  @PreAuthorize("permitAll()")
   public ApiResponse<ProfileDto.Response> getProfile(@PathVariable("memberId") Long memberId) {
     ProfileDto profile = memberService.getProfile(memberId);
     ProfileDto.Response response = ProfileMapper
