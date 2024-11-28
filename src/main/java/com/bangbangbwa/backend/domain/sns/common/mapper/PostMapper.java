@@ -34,7 +34,6 @@ public interface PostMapper {
   UploadPostMediaDto.Response dtoToUploadPostMediaResponse(String url);
 
   @Mapping(target = "postId", source = "id")
-  @Mapping(target = "title", source = "title")
   GetPostListDto.Response dtoToGetPostListResponse(Post post);
   List<GetPostListDto.Response> dtoToGetPostListResponse(List<Post> postList);
 }

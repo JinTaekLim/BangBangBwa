@@ -14,7 +14,7 @@ public class DailyMessageGenerator {
 
   public DailyMessage generate(CreateDailyMessageDto.Request request, Streamer streamer) {
     DailyMessage dailyMessage = dailyMessageParser.requestToEntity(request);
-//    dailyMessage.updateStreamerId(streamer.getId());
+    dailyMessage.updateStreamerId(streamer.getId());
     return dailyMessage;
   }
 

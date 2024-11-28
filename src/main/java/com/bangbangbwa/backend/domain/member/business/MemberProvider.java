@@ -5,6 +5,8 @@ import com.bangbangbwa.backend.domain.member.exception.AuthenticationNameNullExc
 import com.bangbangbwa.backend.domain.member.exception.AuthenticationNullException;
 import com.bangbangbwa.backend.domain.member.exception.NotParsedValueException;
 import com.bangbangbwa.backend.domain.member.exception.type.MemberErrorType;
+import com.bangbangbwa.backend.domain.promotion.business.StreamerReader;
+import com.bangbangbwa.backend.domain.promotion.common.entity.Streamer;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -17,6 +19,7 @@ import org.springframework.util.StringUtils;
 public class MemberProvider {
 
   private final MemberReader memberReader;
+  private final StreamerReader streamerReader;
 
   public Long getCurrentMemberId() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -38,6 +41,11 @@ public class MemberProvider {
   public Member getCurrentMember() {
     Long memberId = getCurrentMemberId();
     return memberReader.findById(memberId);
+  }
+
+  public Streamer getCurrentStreamer() {
+    Long memberId = getCurrentMemberId();
+    return streamerReader.findByMemberId(memberId);
   }
 
   public Long getCurrentMemberIdOrNull() {

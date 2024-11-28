@@ -4,6 +4,7 @@ import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.member.common.mapper.MemberMapper;
 import com.bangbangbwa.backend.domain.member.service.MemberService;
 import com.bangbangbwa.backend.domain.sns.common.dto.CreateCommentDto;
+import com.bangbangbwa.backend.domain.sns.common.dto.GetLatestPostsDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.SearchMemberDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.UploadPostMediaDto;
 import com.bangbangbwa.backend.domain.sns.common.entity.Comment;
@@ -12,18 +13,17 @@ import com.bangbangbwa.backend.domain.sns.common.mapper.CommentMapper;
 import com.bangbangbwa.backend.domain.sns.common.mapper.PostMapper;
 import com.bangbangbwa.backend.domain.sns.service.SnsService;
 import com.bangbangbwa.backend.domain.sns.common.dto.CreatePostDto;
-import com.bangbangbwa.backend.domain.sns.common.dto.GetFollowedLatestPostsDto;
-import com.bangbangbwa.backend.domain.sns.common.dto.GetFollowedLatestPostsDto.RecentPost;
-import com.bangbangbwa.backend.domain.sns.common.dto.GetFollowedLatestPostsDto.Response;
 import com.bangbangbwa.backend.domain.sns.common.dto.GetPostDetailsDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.GetPostListDto;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
+import com.bangbangbwa.backend.domain.streamer.common.entity.DailyMessage;
+import com.bangbangbwa.backend.domain.streamer.service.DailyMessageService;
 import com.bangbangbwa.backend.global.annotation.authentication.AuthenticationContext;
 import com.bangbangbwa.backend.global.response.ApiResponse;
-import com.bangbangbwa.backend.global.util.randomValue.RandomValue;
 import jakarta.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -42,35 +42,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class SnsController implements SnsApi{
 
   private final SnsService snsService;
-  private final MemberService memberService;
-
-
-  @GetMapping("/getFollowedLatestPosts")
-  public ApiResponse<GetFollowedLatestPostsDto.Response> getFollowedLatestPosts() {
-
-    List<RecentPost> postList = new ArrayList<>();
-    int randomInt = RandomValue.getInt(5);
-
-    for(int i=0; i<randomInt; i++) {
-      postList.add(
-          new RecentPost(
-              RandomValue.string(20).setNullable(false).get(),
-              RandomValue.string(500).setNullable(false).get(),
-              RandomValue.string(50).setNullable(false).get(),
-              RandomValue.getRandomBoolean()
-          )
-      );
-    }
-
-    GetFollowedLatestPostsDto.Response response = new Response(
-        RandomValue.getRandomLong(0,9999),
-        "https://photoUrl//1",
-        RandomValue.string(20).setNullable(false).get(),
-        RandomValue.string(20).setNullable(false).get(),
-        postList
-    );
-    return ApiResponse.ok(response);
-  }
+  private final DailyMessageService dailyMessageService;
 
   @GetMapping("/getPostList")
   public ApiResponse<List<GetPostListDto.Response>> getPostList() {
@@ -126,6 +98,24 @@ public class SnsController implements SnsApi{
     List<SearchMemberDto.Response> response = MemberMapper
         .INSTANCE
         .dtoToSearchNicknameResponse(memberList);
+    return ApiResponse.ok(response);
+  }
+
+  @GetMapping("/getLatestPosts")
+  @AuthenticationContext
+  public ApiResponse<List<GetLatestPostsDto.Response>> getLatestPosts() {
+    List<GetLatestPostsDto> getLatestPostsDto = snsService.getLatestPosts(PostType.STREAMER);
+
+    List<Long> streamerIds = getLatestPostsDto.stream()
+        .map(GetLatestPostsDto::getStreamerId)
+        .collect(Collectors.toList());
+
+    List<DailyMessage> dailyMessageList = dailyMessageService.getDailyMessagesByIds(streamerIds);
+
+    List<GetLatestPostsDto.Response> response = IntStream.range(0, getLatestPostsDto.size())
+        .mapToObj(i -> getLatestPostsDto.get(i).toResponse(dailyMessageList.get(i)))
+        .collect(Collectors.toList());
+
     return ApiResponse.ok(response);
   }
 }

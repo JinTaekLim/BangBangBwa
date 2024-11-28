@@ -16,6 +16,7 @@ import com.bangbangbwa.backend.domain.sns.business.PostVisibilityMemberCreator;
 import com.bangbangbwa.backend.domain.sns.business.PostVisibilityMemberGenerator;
 import com.bangbangbwa.backend.domain.sns.common.dto.CreateCommentDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.CreatePostDto;
+import com.bangbangbwa.backend.domain.sns.common.dto.GetLatestPostsDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.GetPostDetailsDto;
 import com.bangbangbwa.backend.domain.sns.common.entity.Comment;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
@@ -43,7 +44,6 @@ public class SnsService {
   private final PostReader postReader;
   private final PostProvider postProvider;
   private final PostValidator postValidator;
-  private final CommentReader commentReader;
   private final PostVisibilityMemberCreator postVisibilityMemberCreator;
   private final PostVisibilityMemberGenerator postVisibilityMemberGenerator;
   private final S3Manager s3Manager;
@@ -101,8 +101,12 @@ public class SnsService {
     Long memberId = memberProvider.getCurrentMemberIdOrNull();
     return postReader.getPostDetails(postId, memberId);
   }
-    
+
   public List<Post> getPostList(PostType postType) {
     return postProvider.getRandomPost(postType);
+  }
+
+  public List<GetLatestPostsDto> getLatestPosts(PostType postType) {
+    return postReader.findPostsWithinLast24Hours(postType);
   }
 }
