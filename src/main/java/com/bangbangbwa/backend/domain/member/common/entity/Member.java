@@ -37,8 +37,8 @@ public class Member {
   private String selfIntroduction;
   private List<Interest> interests;
   private List<Post> posts;
-  private List<Follower> followers;
-  private List<Follower> followings;
+  private List<Follow> followers;
+  private List<Follow> followings;
 
   @Builder
   public Member(

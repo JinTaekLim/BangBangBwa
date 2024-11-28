@@ -53,4 +53,12 @@ public class MemberProvider {
     if (authentication.getPrincipal().equals("anonymousUser")) return null;
     return getCurrentMemberId();
   }
+
+  public Long getCurrentMemberIdIfLogin() {
+    try {
+      return this.getCurrentMemberId();
+    } catch (Exception e) {
+      return null;
+    }
+  }
 }

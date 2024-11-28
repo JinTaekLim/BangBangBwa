@@ -66,18 +66,14 @@ public class MemberService {
     return nicknameProvider.provideRandomNicknames(count);
   }
 
-  public Boolean isMyMemberId(String memberId) {
-    try {
-      Long myMemberId = memberProvider.getCurrentMemberId();
-      return Long.valueOf(memberId).equals(myMemberId);
-    } catch (Exception e) {
-      return false;
-    }
+  public Boolean isMyMemberId(Long memberId) {
+    return memberValidator.isMyMemberId(memberId);
   }
 
   public ProfileDto getProfile(Long memberId) {
-    memberReader.findById(memberId);
-    return null;
+    Long currentMemberId = memberProvider.getCurrentMemberIdIfLogin();
+    ProfileDto profileDto = new ProfileDto(memberId, currentMemberId);
+    return memberReader.getProfile(profileDto);
   }
 
   public SummaryDto getSummary(Long memberId) {

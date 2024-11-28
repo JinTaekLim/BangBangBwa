@@ -16,6 +16,7 @@ import com.bangbangbwa.backend.domain.member.common.dto.PromoteStreamerDto;
 import com.bangbangbwa.backend.domain.member.common.dto.SummaryDto;
 import com.bangbangbwa.backend.domain.member.common.mapper.MemberMapper;
 import com.bangbangbwa.backend.domain.member.service.MemberService;
+import com.bangbangbwa.backend.domain.member.common.mapper.ProfileMapper;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import com.bangbangbwa.backend.domain.oauth.service.OAuthService;
@@ -114,27 +115,22 @@ public class MemberController implements MemberApi {
   }
 
   @GetMapping("/isMyMemberId/{memberId}")
-  public ApiResponse<Boolean> isMyMemberId(@PathVariable("memberId") String memberId) {
+  public ApiResponse<Boolean> isMyMemberId(@PathVariable("memberId") Long memberId) {
     Boolean isMyMemberId = memberService.isMyMemberId(memberId);
     return ApiResponse.ok(isMyMemberId);
   }
 
   @GetMapping("/profile/{memberId}")
-  public ApiResponse<ProfileDto.Response> getProfile(@PathVariable("memberId") String memberId) {
-    ProfileDto.Response response;
-
-    response = new ProfileDto.Response(
-        "https://images.khan.co.kr/article/2024/03/05/news-p.v1.20240305.9dc707937ff0483e9f91ee16c87312dd_P1.jpg",
-        "전정국",
-        new Random().nextBoolean(),
-        "안녕하세요. 전정국입니다.",
-        null
-    );
+  public ApiResponse<ProfileDto.Response> getProfile(@PathVariable("memberId") Long memberId) {
+    ProfileDto profile = memberService.getProfile(memberId);
+    ProfileDto.Response response = ProfileMapper
+        .INSTANCE
+        .dtoToResponse(profile);
     return ApiResponse.ok(response);
   }
 
   @GetMapping("/summary/{memberId}")
-  public ApiResponse<SummaryDto.Response> getSummary(@PathVariable("memberId") String memberId) {
+  public ApiResponse<SummaryDto.Response> getSummary(@PathVariable("memberId") Long memberId) {
     SummaryDto.Response response = new SummaryDto.Response(
         123L,
         456L,
@@ -147,51 +143,35 @@ public class MemberController implements MemberApi {
   }
 
   @GetMapping("/posts/{memberId}")
-  public ApiResponse<PostDto.Response> getPosts(@PathVariable("memberId") String memberId) {
+  public ApiResponse<PostDto.Response> getPosts(@PathVariable("memberId") Long memberId) {
     List<PostResponse> postResponses = new ArrayList<>();
     postResponses.add(new PostResponse(1L, true, "제목입니다1.", "내용입니다1.", "2024.01.01", true, true));
     postResponses.add(new PostResponse(2L, true, "제목입니다2.", "내용입니다2.", "2024.04.24", true, false));
-    postResponses.add(
-        new PostResponse(3L, new Random().nextBoolean(), "제목입니다3.", "내용입니다3.", "2024.07.05", false,
-            true));
-    postResponses.add(
-        new PostResponse(4L, false, "제목입니다4.", "내용입니다4.", "2024.09.15", false, false));
+    postResponses.add(new PostResponse(3L, new Random().nextBoolean(), "제목입니다3.", "내용입니다3.", "2024.07.05", false, true));
+    postResponses.add(new PostResponse(4L, false, "제목입니다4.", "내용입니다4.", "2024.09.15", false, false));
     PostDto.Response response = new PostDto.Response(postResponses);
     return ApiResponse.ok(response);
   }
 
   @GetMapping("/comments/{memberId}")
-  public ApiResponse<CommentDto.Response> getComments(@PathVariable("memberId") String memberId) {
-    long id = 1L;
-    try {
-      id = Long.parseLong(memberId);
-    } catch (NumberFormatException ignored) {
-    }
+  public ApiResponse<CommentDto.Response> getComments(@PathVariable("memberId") Long memberId) {
     List<CommentResponse> commentResponses = new ArrayList<>();
     CommentResponsePostInfo postInfo;
     CommentResponseCommentInfo commentInfo;
 
-    postInfo = new CommentResponsePostInfo(1L, "제목입니다1", id, "전정국",
-        "https://images.khan.co.kr/article/2024/03/05/news-p.v1.20240305.9dc707937ff0483e9f91ee16c87312dd_P1.jpg",
-        true, true);
+    postInfo = new CommentResponsePostInfo(1L, "제목입니다1", memberId, "전정국", "https://images.khan.co.kr/article/2024/03/05/news-p.v1.20240305.9dc707937ff0483e9f91ee16c87312dd_P1.jpg", true, true);
     commentInfo = new CommentResponseCommentInfo(1L, "댓글입니다1", 1L, "답글입니다1");
     commentResponses.add(new CommentResponse(postInfo, commentInfo));
 
-    postInfo = new CommentResponsePostInfo(2L, "제목입니다2", id, "전정국",
-        "https://images.khan.co.kr/article/2024/03/05/news-p.v1.20240305.9dc707937ff0483e9f91ee16c87312dd_P1.jpg",
-        true, false);
+    postInfo = new CommentResponsePostInfo(2L, "제목입니다2", memberId, "전정국", "https://images.khan.co.kr/article/2024/03/05/news-p.v1.20240305.9dc707937ff0483e9f91ee16c87312dd_P1.jpg", true, false);
     commentInfo = new CommentResponseCommentInfo(2L, "댓글입니다2", 2L, "답글입니다2");
     commentResponses.add(new CommentResponse(postInfo, commentInfo));
 
-    postInfo = new CommentResponsePostInfo(3L, "제목입니다3", id, "전정국",
-        "https://images.khan.co.kr/article/2024/03/05/news-p.v1.20240305.9dc707937ff0483e9f91ee16c87312dd_P1.jpg",
-        false, true);
+    postInfo = new CommentResponsePostInfo(3L, "제목입니다3", memberId, "전정국", "https://images.khan.co.kr/article/2024/03/05/news-p.v1.20240305.9dc707937ff0483e9f91ee16c87312dd_P1.jpg", false, true);
     commentInfo = new CommentResponseCommentInfo(3L, "댓글입니다3", 3L, "답글입니다3");
     commentResponses.add(new CommentResponse(postInfo, commentInfo));
 
-    postInfo = new CommentResponsePostInfo(4L, "제목입니다4", id, "전정국",
-        "https://images.khan.co.kr/article/2024/03/05/news-p.v1.20240305.9dc707937ff0483e9f91ee16c87312dd_P1.jpg",
-        false, false);
+    postInfo = new CommentResponsePostInfo(4L, "제목입니다4", memberId, "전정국", "https://images.khan.co.kr/article/2024/03/05/news-p.v1.20240305.9dc707937ff0483e9f91ee16c87312dd_P1.jpg", false, false);
     commentInfo = new CommentResponseCommentInfo(4L, "댓글입니다4", 4L, "답글입니다4");
     commentResponses.add(new CommentResponse(postInfo, commentInfo));
 
@@ -201,15 +181,12 @@ public class MemberController implements MemberApi {
   }
 
   @GetMapping("/followers/{memberId}")
-  public ApiResponse<FollowerDto.Response> getFollowers(@PathVariable("memberId") String memberId) {
+  public ApiResponse<FollowerDto.Response> getFollowers(@PathVariable("memberId") Long memberId) {
     List<FollowerResponse> followerResponses = new ArrayList<>();
 
-    followerResponses.add(new FollowerResponse(1L, "전정국",
-        "https://images.khan.co.kr/article/2024/03/05/news-p.v1.20240305.9dc707937ff0483e9f91ee16c87312dd_P1.jpg"));
-    followerResponses.add(new FollowerResponse(2L, "정국",
-        "https://theviewers.co.kr/Files/30/News/202308/2890_20230816082125807.JPEG"));
-    followerResponses.add(new FollowerResponse(3L, "JK",
-        "https://img.etoday.co.kr/pto_db/2023/04/600/20230425161027_1877523_1200_1655.jpg"));
+    followerResponses.add(new FollowerResponse(1L, "전정국", "https://images.khan.co.kr/article/2024/03/05/news-p.v1.20240305.9dc707937ff0483e9f91ee16c87312dd_P1.jpg"));
+    followerResponses.add(new FollowerResponse(2L, "정국", "https://theviewers.co.kr/Files/30/News/202308/2890_20230816082125807.JPEG"));
+    followerResponses.add(new FollowerResponse(3L, "JK", "https://img.etoday.co.kr/pto_db/2023/04/600/20230425161027_1877523_1200_1655.jpg"));
 
     FollowerDto.Response response = new FollowerDto.Response(followerResponses);
 

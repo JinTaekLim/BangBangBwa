@@ -11,10 +11,12 @@ import com.bangbangbwa.backend.domain.streamer.service.PendingStreamerService;
 import com.bangbangbwa.backend.domain.token.service.TokenService;
 import com.bangbangbwa.backend.global.test.ControllerTest;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
+@WebMvcTest(MemberControllerTest.class)
 class MemberControllerTest extends ControllerTest {
 
   @MockBean

@@ -1,6 +1,8 @@
 package com.bangbangbwa.backend.domain.member.business;
 
+import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
+import com.bangbangbwa.backend.domain.member.exception.NotFoundMemberException;
 import com.bangbangbwa.backend.domain.member.exception.NotSignupMemberException;
 import com.bangbangbwa.backend.domain.member.exception.type.EmptyNicknameException;
 import com.bangbangbwa.backend.domain.member.repository.MemberRepository;
@@ -36,5 +38,9 @@ public class MemberReader {
   public List<Member> findByNicknameContaining(String nickname) {
     if (nickname == null || nickname.trim().isEmpty()) throw new EmptyNicknameException();
     return memberRepository.findByNicknameContaining(nickname);
+  }
+
+  public ProfileDto getProfile(ProfileDto profileDto) {
+    return memberRepository.findProfile(profileDto).orElseThrow(NotFoundMemberException::new);
   }
 }

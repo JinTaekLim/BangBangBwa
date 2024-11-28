@@ -18,6 +18,10 @@ VALUES ('3','3', '3', '3', '3');
 INSERT INTO streamers (member_id, today_comment, self_introduction, image_url, name)
 VALUES ('4','4', '4', '4', '4');
 
+INSERT INTO follow SELECT 1, 1, 2, now(), now(), 'SYSTEM', now(), 'SYSTEM';
+
+INSERT INTO follow SELECT 2, 2, 1, now(), now(), 'SYSTEM', now(), 'SYSTEM';
+
 INSERT INTO tags (name, created_at, created_id)
 VALUES ('1', now(), '1');
 INSERT INTO tags (name, created_at, created_id)
@@ -57,4 +61,3 @@ INSERT INTO streamers_platforms (streamer_id, platform_id, streamer_profile_url)
 VALUES ('3', '1', '1');
 INSERT INTO streamers_platforms (streamer_id, platform_id, streamer_profile_url)
 VALUES ('4', '2', '2');
-       

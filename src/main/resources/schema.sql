@@ -12,6 +12,7 @@ DROP TABLE IF EXISTS members;
 DROP TABLE IF EXISTS tags;
 DROP TABLE IF EXISTS banners;
 DROP TABLE IF EXISTS platforms;
+DROP TABLE IF EXISTS follow;
 
 CREATE TABLE members
 (
@@ -25,8 +26,8 @@ CREATE TABLE members
     deleted_at DATETIME NULL COMMENT '탈퇴일시(null)',
     created_at DATETIME     NOT NULL COMMENT '생성일시',
     created_id VARCHAR(255) NOT NULL COMMENT '생성자',
-    updated_id VARCHAR(255) NULL COMMENT '수정자(null)',
     updated_at DATETIME NULL COMMENT '수정일시(null)',
+    updated_id VARCHAR(255) NULL COMMENT '수정자(null)',
     PRIMARY KEY (id)
 );
 
@@ -36,8 +37,8 @@ CREATE TABLE tags
     name       VARCHAR(30)  NOT NULL COMMENT '태그명',
     created_at DATETIME     NOT NULL COMMENT '생성일시',
     created_id VARCHAR(255) NOT NULL COMMENT '생성자',
-    updated_id VARCHAR(255) NULL COMMENT '수정자(null)',
     updated_at DATETIME NULL COMMENT '수정일시(null)',
+    updated_id VARCHAR(255) NULL COMMENT '수정자(null)',
     PRIMARY KEY (id)
 );
 
@@ -80,8 +81,8 @@ CREATE TABLE posts
     content    VARCHAR(4000) COMMENT '내용',
     created_at DATETIME     NOT NULL COMMENT '생성 일시',
     created_id VARCHAR(255) NOT NULL COMMENT '생성자',
-    updated_id VARCHAR(255) NULL COMMENT '수정자(null)',
     updated_at DATETIME NULL COMMENT '수정 일시(null)',
+    updated_id VARCHAR(255) NULL COMMENT '수정자(null)',
     deleted_at DATETIME NULL COMMENT '삭제 일시(null)',
     PRIMARY KEY (id),
     FOREIGN KEY (member_id) REFERENCES members (id)
@@ -107,8 +108,8 @@ CREATE TABLE comments
     content    VARCHAR(500) NOT NULL COMMENT '내용',
     created_at DATETIME     NOT NULL COMMENT '생성 일시',
     created_id VARCHAR(255) NOT NULL COMMENT '생성자',
-    updated_id VARCHAR(255) NULL COMMENT '수정자(null)',
     updated_at DATETIME NULL COMMENT '수정 일시(null)',
+    updated_id VARCHAR(255) NULL COMMENT '수정자(null)',
     deleted_at DATETIME NULL COMMENT '삭제 일시(null)',
     PRIMARY KEY (post_id, member_id),
     FOREIGN KEY (post_id) REFERENCES posts (id),
@@ -133,8 +134,8 @@ CREATE TABLE pending_streamer
     status      ENUM('APPROVAL', 'PENDING', 'REJECTION') NOT NULL DEFAULT 'PENDING',
     created_at  DATETIME     NOT NULL COMMENT '생성 일시',
     created_id  VARCHAR(255) NOT NULL COMMENT '생성자',
-    updated_id  VARCHAR(255) NULL COMMENT '수정자(null)',
     updated_at  DATETIME NULL COMMENT '수정 일시(null)',
+    updated_id  VARCHAR(255) NULL COMMENT '수정자(null)',
     PRIMARY KEY (id),
     FOREIGN KEY (admin_id) REFERENCES admins (id),
     FOREIGN KEY (member_id) REFERENCES members (id)
@@ -179,4 +180,15 @@ CREATE TABLE streamers_platforms
     PRIMARY KEY (id),
     FOREIGN KEY (streamer_id) REFERENCES streamers (id),
     FOREIGN KEY (platform_id) REFERENCES platforms (id)
+);
+
+CREATE TABLE follow (
+    id              BIGINT AUTO_INCREMENT PRIMARY KEY   COMMENT '팔로우 ID',
+    follower_id     BIGINT              NOT NULL        COMMENT '팔로우 하는 사람의 ID',
+    followee_id     BIGINT              NOT NULL        COMMENT '팔로우 당하는 사람의 ID',
+    followed_at     DATETIME            NOT NULL        COMMENT '팔로우 일시',
+    created_at      DATETIME            NOT NULL        COMMENT '생성일시',
+    created_id      VARCHAR(255)        NOT NULL        COMMENT '생성자',
+    updated_at      DATETIME                            COMMENT '수정일시',
+    updated_id      VARCHAR(255)                        COMMENT '수정자'
 );
