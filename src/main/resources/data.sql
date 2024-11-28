@@ -22,15 +22,6 @@ INSERT INTO follow SELECT 1, 1, 2, now(), now(), 'SYSTEM', now(), 'SYSTEM';
 
 INSERT INTO follow SELECT 2, 2, 1, now(), now(), 'SYSTEM', now(), 'SYSTEM';
 
-INSERT INTO streamers (today_comment, self_introduction, image_url, name)
-VALUES ('1', '1', '1', '1');
-INSERT INTO streamers (today_comment, self_introduction, image_url, name)
-VALUES ('2', '2', '2', '2');
-INSERT INTO streamers (today_comment, self_introduction, image_url, name)
-VALUES ('3', '3', '3', '3');
-INSERT INTO streamers (today_comment, self_introduction, image_url, name)
-VALUES ('4', '4', '4', '4');
-
 INSERT INTO tags (name, created_at, created_id)
 VALUES ('1', now(), '1');
 INSERT INTO tags (name, created_at, created_id)
