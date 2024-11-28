@@ -42,7 +42,7 @@ public class DailyMessageRepository {
     return IntStream.range(0, ids.size())
         .mapToObj(i -> DailyMessage.builder()
             .streamerId(ids.get(i))
-            .message(messages != null && i < messages.size() ? messages.get(i) : null)
+            .message(messages != null ? messages.get(i) : null)
             .build())
         .collect(Collectors.toList());
   }
