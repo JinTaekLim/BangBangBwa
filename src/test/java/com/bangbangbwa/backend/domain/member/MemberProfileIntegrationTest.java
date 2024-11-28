@@ -21,7 +21,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-class MemberIntegrationTest extends IntegrationTest {
+class MemberProfileIntegrationTest extends IntegrationTest {
 
   @Autowired
   private MemberRepository memberRepository;
