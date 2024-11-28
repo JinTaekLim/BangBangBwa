@@ -16,13 +16,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StringGenerator {
 
+  private final String DEFAULTSTRING = "x";
   private static final String english = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
   private boolean nullable = true;
   private List<Language> languages = new ArrayList<>();
 
   private List<String> charsetList = new ArrayList<>(Charset.availableCharsets().keySet());
-  private int minSize = 0;
+  private int minSize = 1;
   private int maxSize = 2000;
 
   /**
@@ -105,7 +106,7 @@ public class StringGenerator {
 
 
 
-  public static String randomEnglish(int size) {
+  public String randomEnglish(int size) {
     if (size < 0) return null;
     StringBuilder sb = new StringBuilder(size);
 
@@ -114,7 +115,8 @@ public class StringGenerator {
       sb.append(english.charAt(index));
     }
 
-    return sb.toString();
+    String response = sb.toString();
+    return defaultIfEmptyAndSize(size, response);
   }
 
 
@@ -133,13 +135,16 @@ public class StringGenerator {
     };
   }
 
+
   private String truncatedString(int size) {
     if (size < 0) return null;
     byte[] randomByte = randomByte(size);
     Charset charset = randomCharset();
     String str = new String(randomByte, charset);
-    return str.length() < size ? str : str.substring(0, size);
+    String response = str.length() < size ? str : str.substring(0, size);
+    return defaultIfEmptyAndSize(size, response);
   }
+
   private static byte[] randomByte(int size) {
     byte[] array = new byte[size];
     for (int i = 0; i < size; i++ ) {
@@ -152,4 +157,9 @@ public class StringGenerator {
     int randomIndex = random.nextInt(charsetList.size());
     return Charset.forName(charsetList.get(randomIndex));
   }
+
+  private String defaultIfEmptyAndSize(int size, String str) {
+    return (str == null || str.trim().isEmpty() && size != 0) ? DEFAULTSTRING : str;
+  }
+
 }
