@@ -116,7 +116,7 @@ public class StringGenerator {
     }
 
     String response = sb.toString();
-    return defaultIfEmptyAndSize(size, response);
+    return getDefaultIfEmpty(size, response);
   }
 
 
@@ -142,7 +142,7 @@ public class StringGenerator {
     Charset charset = randomCharset();
     String str = new String(randomByte, charset);
     String response = str.length() < size ? str : str.substring(0, size);
-    return defaultIfEmptyAndSize(size, response);
+    return getDefaultIfEmpty(size, response);
   }
 
   private static byte[] randomByte(int size) {
@@ -158,8 +158,12 @@ public class StringGenerator {
     return Charset.forName(charsetList.get(randomIndex));
   }
 
-  private String defaultIfEmptyAndSize(int size, String str) {
-    return (str == null || str.trim().isEmpty() && size != 0) ? DEFAULTSTRING : str;
+  private String getDefaultIfEmpty(int size, String str) {
+    if (str == null || str.trim().isEmpty()) {
+      return nullable ? null : (size != 0 ? DEFAULTSTRING : str);
+    }
+    return str;
   }
+
 
 }
