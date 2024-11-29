@@ -170,13 +170,7 @@ public class RandomStringGenerator {
     }
 
     // 사용 가능한 문자 검증
-    StringBuilder chars = new StringBuilder();
-    if (includeUppercase) chars.append(UPPERCASE);
-    if (includeLowercase) chars.append(LOWERCASE);
-    if (includeNumbers) chars.append(NUMBERS);
-    if (includeSpecialChars) chars.append(SPECIAL_CHARS);
-
-    if (chars.length() == 0) {
+    if (getAvailableCharacters().isEmpty()) {
       throw new IllegalStateException("At least one character type must be included");
     }
   }
