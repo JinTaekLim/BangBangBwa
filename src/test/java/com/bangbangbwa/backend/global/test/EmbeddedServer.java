@@ -8,9 +8,11 @@ public class EmbeddedServer {
 
     private static RedisServer redisServer;
 
-    public static void startRedis(int port) throws IOException {
+    private final static int REDIS_PORT = 6379;
+
+    public static void startRedis() throws IOException {
         if (redisServer == null || !redisServer.isActive()) {
-            redisServer = new RedisServer(port);
+            redisServer = new RedisServer(REDIS_PORT);
             redisServer.start();
         }
     }
