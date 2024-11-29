@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS report_comments;
 DROP TABLE IF EXISTS report_posts;
 DROP TABLE IF EXISTS streamers_tags;
 DROP TABLE IF EXISTS streamers_platforms;
