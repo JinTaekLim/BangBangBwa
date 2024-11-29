@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 
+import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.member.exception.UnAuthenticationMemberException;
 import com.bangbangbwa.backend.domain.member.repository.MemberRepository;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -98,10 +100,18 @@ class SnsIntegrationTest extends IntegrationTest {
 
 
   // note. 내부 값 검사 필요
-  @Test()
-  void getPostList_성공_게시물_갯수_체크() {
+  @Test
+  void getPostList() {
     // given
-    PostType postType = PostType.STREAMER;
+    Role memberRole = (RandomValue.getInt(2) == 1) ? Role.MEMBER : Role.STREAMER;
+    PostType postType = (memberRole == Role.MEMBER) ? PostType.STREAMER : PostType.MEMBER;
+
+    Member member = getMember();
+    member.updateRole(memberRole);
+    memberRepository.save(member);
+
+    TokenDto tokenDto = tokenProvider.getToken(member);
+
     Member writeMember = createMember();
     int postCount = RandomValue.getInt(0,5);
 
@@ -109,11 +119,20 @@ class SnsIntegrationTest extends IntegrationTest {
             .forEach(i -> createPost(postType, writeMember));
 
 
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(tokenDto.getAccessToken());
+    HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
     String url = "http://localhost:" + port + "/api/v1/sns/getPostList";
 
 
     // when
-    ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
+    ResponseEntity<String> responseEntity = restTemplate.exchange(
+            url,
+            HttpMethod.GET,
+            requestEntity,
+            String.class
+    );
 
     ApiResponse<List<GetPostListDto.Response>> apiResponse = gson.fromJson(
         responseEntity.getBody(),
@@ -124,8 +143,40 @@ class SnsIntegrationTest extends IntegrationTest {
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertNotNull(apiResponse.getData());
     assertThat(apiResponse.getData().size()).isEqualTo(postCount);
-
   }
+
+
+  @Test
+  void getPostList_토큰_미입력() {
+    // given
+    PostType postType = PostType.STREAMER;
+
+    Member writeMember = createMember();
+    int postCount = RandomValue.getInt(0,5);
+
+    IntStream.range(0, postCount)
+            .forEach(i -> createPost(postType, writeMember));
+
+    String url = "http://localhost:" + port + "/api/v1/sns/getPostList";
+
+
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.getForEntity(
+            url,
+            String.class
+    );
+
+    ApiResponse<List<GetPostListDto.Response>> apiResponse = gson.fromJson(
+            responseEntity.getBody(),
+            new TypeToken<ApiResponse<List<GetPostListDto.Response>>>() {}.getType()
+    );
+
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertNotNull(apiResponse.getData());
+    assertThat(apiResponse.getData().size()).isEqualTo(postCount);
+  }
+
 
 
   @Test
