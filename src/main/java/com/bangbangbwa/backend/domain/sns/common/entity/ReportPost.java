@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 public class ReportPost {
 
     private Long id;
-    private String handled_id;
     private ReportStatus status;
     private Long postId;
     private String createdId;

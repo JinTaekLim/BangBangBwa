@@ -198,7 +198,6 @@ CREATE TABLE follow (
 
 CREATE TABLE report_posts (
     id              BIGINT AUTO_INCREMENT PRIMARY KEY   COMMENT '게시물 신고 ID',
-    handled_id      VARCHAR(255)                        COMMENT '관리자 ID',
     status          VARCHAR(100)        NOT NULL        COMMENT 'CANCEL, PENDING, DELETED',
     post_id         BIGINT              NOT NULL        COMMENT '게시물 ID',
     created_at      DATETIME            NOT NULL        COMMENT '생성일시',
@@ -210,7 +209,6 @@ CREATE TABLE report_posts (
 
 CREATE TABLE report_comments (
     id              BIGINT AUTO_INCREMENT PRIMARY KEY   COMMENT '댓글 신고 ID',
-    handled_id      VARCHAR(255)                        COMMENT '관리자 ID',
     status          VARCHAR(100)        NOT NULL        COMMENT 'CANCEL, PENDING, DELETED',
     comments_id         BIGINT          NOT NULL        COMMENT '댓글 ID',
     created_at      DATETIME            NOT NULL        COMMENT '생성일시',
