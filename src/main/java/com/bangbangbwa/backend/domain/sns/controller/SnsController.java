@@ -2,7 +2,6 @@ package com.bangbangbwa.backend.domain.sns.controller;
 
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.member.common.mapper.MemberMapper;
-import com.bangbangbwa.backend.domain.member.service.MemberService;
 import com.bangbangbwa.backend.domain.sns.common.dto.CreateCommentDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.GetLatestPostsDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.SearchMemberDto;
@@ -45,8 +44,9 @@ public class SnsController implements SnsApi{
   private final DailyMessageService dailyMessageService;
 
   @GetMapping("/getPostList")
+  @AuthenticationContext
   public ApiResponse<List<GetPostListDto.Response>> getPostList() {
-    List<Post> postList = snsService.getPostList(PostType.STREAMER);
+    List<Post> postList = snsService.getPostList();
     List<GetPostListDto.Response> response = PostMapper.INSTANCE.dtoToGetPostListResponse(postList);
     return ApiResponse.ok(response);
   }

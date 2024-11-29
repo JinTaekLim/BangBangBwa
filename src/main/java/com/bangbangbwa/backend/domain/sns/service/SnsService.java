@@ -4,16 +4,8 @@ import com.bangbangbwa.backend.domain.member.business.MemberProvider;
 import com.bangbangbwa.backend.domain.member.business.MemberReader;
 import com.bangbangbwa.backend.domain.member.business.MemberValidator;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
-import com.bangbangbwa.backend.domain.sns.business.CommentCreator;
-import com.bangbangbwa.backend.domain.sns.business.CommentGenerator;
-import com.bangbangbwa.backend.domain.sns.business.CommentReader;
-import com.bangbangbwa.backend.domain.sns.business.PostCreator;
-import com.bangbangbwa.backend.domain.sns.business.PostGenerator;
-import com.bangbangbwa.backend.domain.sns.business.PostProvider;
-import com.bangbangbwa.backend.domain.sns.business.PostReader;
-import com.bangbangbwa.backend.domain.sns.business.PostValidator;
-import com.bangbangbwa.backend.domain.sns.business.PostVisibilityMemberCreator;
-import com.bangbangbwa.backend.domain.sns.business.PostVisibilityMemberGenerator;
+import com.bangbangbwa.backend.domain.member.common.enums.Role;
+import com.bangbangbwa.backend.domain.sns.business.*;
 import com.bangbangbwa.backend.domain.sns.common.dto.CreateCommentDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.CreatePostDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.GetLatestPostsDto;
@@ -49,6 +41,7 @@ public class SnsService {
   private final S3Manager s3Manager;
   private final CommentGenerator commentGenerator;
   private final CommentCreator commentCreator;
+  private final PostTypeProvider postTypeProvider;
 
 
   // 게시글 저장 전, content에서 url을 추출 후 redis 값 삭제하는 과정 필요
@@ -102,7 +95,9 @@ public class SnsService {
     return postReader.getPostDetails(postId, memberId);
   }
 
-  public List<Post> getPostList(PostType postType) {
+  public List<Post> getPostList() {
+    Role role = memberProvider.getCurrentRole();
+    PostType postType = postTypeProvider.getInversePostTypeForRole(role);
     return postProvider.getRandomPost(postType);
   }
 
