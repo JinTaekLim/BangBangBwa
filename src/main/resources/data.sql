@@ -19,7 +19,6 @@ INSERT INTO streamers (member_id, today_comment, self_introduction, image_url, n
 VALUES ('4','4', '4', '4', '4');
 
 
-
 INSERT INTO follow
 SELECT 1, 1, 2, now(), now(), 'SYSTEM', now(), 'SYSTEM'
 ;
