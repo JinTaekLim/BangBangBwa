@@ -51,7 +51,6 @@ public class SnsController implements SnsApi{
     return ApiResponse.ok(response);
   }
 
-  //note. 팔로우 관련 작업 필요
   @GetMapping("/getPostDetails/{postId}")
   @AuthenticationContext
   public ApiResponse<GetPostDetailsDto.Response> getPostDetails(@PathVariable("postId") Long postId) {
