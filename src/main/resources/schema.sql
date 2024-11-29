@@ -113,7 +113,6 @@ CREATE TABLE comments
     updated_id VARCHAR(255) NULL COMMENT '수정자(null)',
     deleted_at DATETIME NULL COMMENT '삭제 일시(null)',
     FOREIGN KEY (post_id) REFERENCES posts (id),
-    FOREIGN KEY (member_id) REFERENCES members (id)
     FOREIGN KEY (member_id) REFERENCES members (id),
     UNIQUE (post_id, member_id)
 );
