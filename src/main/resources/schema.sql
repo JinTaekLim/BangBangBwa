@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS report_posts;
 DROP TABLE IF EXISTS streamers_tags;
 DROP TABLE IF EXISTS streamers_platforms;
 DROP TABLE IF EXISTS members_tags;
@@ -204,4 +205,16 @@ CREATE TABLE report_posts (
     updated_at      DATETIME                            COMMENT '수정일시',
     updated_id      VARCHAR(255)                        COMMENT '수정자',
     FOREIGN KEY (post_id) REFERENCES posts (id)
+);
+
+CREATE TABLE report_comments (
+    id              BIGINT AUTO_INCREMENT PRIMARY KEY   COMMENT '댓글 신고 ID',
+    handled_id      VARCHAR(255)                        COMMENT '관리자 ID',
+    status          VARCHAR(100)        NOT NULL        COMMENT 'CANCEL, PENDING, DELETED',
+    comments_id         BIGINT          NOT NULL        COMMENT '댓글 ID',
+    created_at      DATETIME            NOT NULL        COMMENT '생성일시',
+    created_id      VARCHAR(255)        NOT NULL        COMMENT '생성자',
+    updated_at      DATETIME                            COMMENT '수정일시',
+    updated_id      VARCHAR(255)                        COMMENT '수정자',
+    FOREIGN KEY (comments_id) REFERENCES comments (id)
 );
