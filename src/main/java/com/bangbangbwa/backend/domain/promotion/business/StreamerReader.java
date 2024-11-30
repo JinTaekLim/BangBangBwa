@@ -1,5 +1,6 @@
 package com.bangbangbwa.backend.domain.promotion.business;
 
+import com.bangbangbwa.backend.domain.promotion.common.dto.StreamerDto;
 import com.bangbangbwa.backend.domain.promotion.common.entity.Streamer;
 import com.bangbangbwa.backend.domain.promotion.repository.StreamerRepository;
 import com.bangbangbwa.backend.domain.streamer.common.exception.NotFoundStreamerException;
@@ -13,7 +14,7 @@ public class StreamerReader {
 
   private final StreamerRepository streamerRepository;
 
-  public List<Streamer> readAllStreamers() {
+  public List<StreamerDto> readAllStreamers() {
     return streamerRepository.findAll();
   }
 

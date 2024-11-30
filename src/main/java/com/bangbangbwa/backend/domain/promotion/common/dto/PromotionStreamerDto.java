@@ -16,6 +16,8 @@ public class PromotionStreamerDto {
 
   @Schema(name = "PromotionStreamerResponseStreamer")
   public record PromotionStreamer(
+      @Schema(description = "스트리머 이름", example = "이수연")
+      String name,
       @Schema(description = "스트리머 오늘의 한마디", example = "한마디")
       String todayComment,
       @Schema(description = "스트리머 자기소개", example = "안녕하세요 이번에 새로 시작하게된 스트리머 이수연 입니다.")
@@ -25,9 +27,7 @@ public class PromotionStreamerDto {
       @Schema(description = "스트리머 관심분야 목록")
       List<PromotionStreamerInterested> interestedList,
       @Schema(description = "스트리머 플랫폼 목록")
-      List<PromotionStreamerPlatform> platformList,
-      @Schema(description = "스트리머 이름", example = "이수연")
-      String name
+      List<PromotionStreamerPlatform> platformList
   ) {
 
   }

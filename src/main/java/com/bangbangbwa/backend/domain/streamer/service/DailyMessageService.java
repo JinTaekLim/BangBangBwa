@@ -22,13 +22,17 @@ public class DailyMessageService {
 
   public DailyMessage createDailyMessage(CreateDailyMessageDto.Request request) {
     Streamer streamer = memberProvider.getCurrentStreamer();
-    DailyMessage dailyMessage = dailyMessageGenerator.generate(request,streamer);
+    DailyMessage dailyMessage = dailyMessageGenerator.generate(request, streamer);
     dailyMessageCreator.save(dailyMessage);
     return dailyMessage;
   }
 
   public List<DailyMessage> getDailyMessagesByIds(List<Long> ids) {
     return dailyMessageReader.findByIds(ids);
+  }
+
+  public String getDailyMessageByStreamerId(Long streamerId) {
+    return dailyMessageReader.getMessage(streamerId);
   }
 
 }

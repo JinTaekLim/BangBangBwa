@@ -18,11 +18,8 @@ public class DailyMessageRepository {
     this.redisTemplate = redisTemplate;
   }
 
-  private static final String PREFIX = "dailyMessage:";
+  public static final String PREFIX = "dailyMessage:";
   private static final TimeUnit EXPIRATION_UNIT = TimeUnit.HOURS;
-
-
-
 
   public void save(Long id, String message, long expirationTime) {
     String key = PREFIX + id;
@@ -47,4 +44,8 @@ public class DailyMessageRepository {
         .collect(Collectors.toList());
   }
 
+  public String getDailyMessage(Long streamerId) {
+    String key = PREFIX + streamerId;
+    return redisTemplate.opsForValue().get(key);
+  }
 }
