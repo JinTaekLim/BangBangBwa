@@ -17,10 +17,15 @@ import com.bangbangbwa.backend.domain.promotion.repository.StreamerRepository;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
 import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
 import com.bangbangbwa.backend.domain.sns.repository.PostRepository;
+import com.bangbangbwa.backend.domain.streamer.common.entity.PendingStreamer;
+import com.bangbangbwa.backend.domain.streamer.repository.PendingStreamerRepository;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
+import com.bangbangbwa.backend.domain.token.common.TokenDto;
 import com.bangbangbwa.backend.global.test.IntegrationTest;
+import com.bangbangbwa.backend.global.util.randomValue.RandomValue;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
@@ -31,6 +36,9 @@ class MemberSummaryIntegrationTest extends IntegrationTest {
 
   @Autowired
   private StreamerRepository streamerRepository;
+
+  @Autowired
+  private PendingStreamerRepository pendingStreamerRepository;
 
   @Autowired
   private FollowRepository followRepository;
@@ -60,10 +68,19 @@ class MemberSummaryIntegrationTest extends IntegrationTest {
 
   private Streamer testStreamer(Long memberId) {
     Streamer streamer = Streamer.builder()
-        // TODO: 스트리머 내부 데이터 채워주기
+        .memberId(memberId)
         .build();
 
     return streamer;
+  }
+
+  private PendingStreamer testPendingStreamer(Long memberId) {
+    PendingStreamer pendingStreamer = PendingStreamer.builder()
+        .memberId(memberId)
+        .platformUrl("https://www.naver.com/")
+        .build();
+
+    return pendingStreamer;
   }
 
   private Follow testFollow(Long memberId, Long followeeMemberId) {
@@ -92,35 +109,91 @@ class MemberSummaryIntegrationTest extends IntegrationTest {
   void getSummary_스트리머_내_정보() throws Exception {
     Member member = testMember();
     memberRepository.save(member);
+    TokenDto token = tokenProvider.getToken(member);
+    String AUTHORIZATION = "Bearer " + token.getAccessToken();
 
-    
-    // 팔로워 3명
-    Member member1 = testMember();
-    memberRepository.save(member1);
-    followRepository.save(testFollow(member1.getId(), member.getId()));
-    Member member2 = testMember();
-    memberRepository.save(member2);
-    followRepository.save(testFollow(member2.getId(), member.getId()));
-    Member member3 = testMember();
-    memberRepository.save(member3);
-    followRepository.save(testFollow(member3.getId(), member.getId()));
-    
-    // 팔로잉 1명
-    followRepository.save(testFollow(member.getId(), member1.getId()));
+    // 팔로워 1~20명
+    long followerCount = RandomValue.getRandomLong(1, 20);
+    for (int i = 0; i < followerCount; i++) {
+      Member m = testMember();
+      memberRepository.save(m);
+      followRepository.save(testFollow(m.getId(), member.getId()));
+    }
+    // 팔로잉 1~20명
+    long followingCount = RandomValue.getRandomLong(1, 20);
+    for (int i = 0; i < followingCount; i++) {
+      Member m = testMember();
+      memberRepository.save(m);
+      followRepository.save(testFollow(member.getId(), m.getId()));
+    }
 
-    // 게시글 5개
-    postRepository.save(testPost(member.getId()));
-    postRepository.save(testPost(member.getId()));
-    postRepository.save(testPost(member.getId()));
-    postRepository.save(testPost(member.getId()));
-    postRepository.save(testPost(member.getId()));
+    // 게시글 1~50개
+    long postCount = RandomValue.getRandomLong(1, 50);
+    for (int i = 0; i < postCount; i++) {
+      postRepository.save(testPost(member.getId()));
+    }
 
+    // 스트리머 등록
     streamerRepository.save(testStreamer(member.getId()));
     
     SummaryDto.Response expected = new SummaryDto.Response(
-        3L,
-        1L,
-        5L,
+        followerCount,
+        followingCount,
+        postCount,
+        true,
+        false,
+        null
+    );
+
+    String URL = "/api/v1/members/summary/" + member.getId();
+    mvc.perform(get(URL)
+            .header(HttpHeaders.AUTHORIZATION, AUTHORIZATION))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.code").value(HttpStatus.OK.name()))
+        .andExpect(jsonPath("$.message").value(HttpStatus.OK.getReasonPhrase()))
+        .andExpect(jsonPath("$.data").isNotEmpty())
+        .andExpect(jsonPath("$.data.followerCount").value(expected.followerCount()))
+        .andExpect(jsonPath("$.data.followingCount").value(expected.followingCount()))
+        .andExpect(jsonPath("$.data.postCount").value(expected.postCount()))
+        .andExpect(jsonPath("$.data.isStreamer").value(expected.isStreamer()))
+        .andExpect(jsonPath("$.data.isSubmittedToStreamer").value(expected.isSubmittedToStreamer()))
+    ;
+  }
+
+  @Test
+  void getSummary_스트리머_다른사람_정보() throws Exception {
+    Member member = testMember();
+    memberRepository.save(member);
+
+    // 팔로워 1~20명
+    long followerCount = RandomValue.getRandomLong(1, 20);
+    for (int i = 0; i < followerCount; i++) {
+      Member m = testMember();
+      memberRepository.save(m);
+      followRepository.save(testFollow(m.getId(), member.getId()));
+    }
+    // 팔로잉 1~20명
+    long followingCount = RandomValue.getRandomLong(1, 20);
+    for (int i = 0; i < followingCount; i++) {
+      Member m = testMember();
+      memberRepository.save(m);
+      followRepository.save(testFollow(member.getId(), m.getId()));
+    }
+
+    // 게시글 1~50개
+    long postCount = RandomValue.getRandomLong(1, 50);
+    for (int i = 0; i < postCount; i++) {
+      postRepository.save(testPost(member.getId()));
+    }
+
+    // 스트리머 등록
+    streamerRepository.save(testStreamer(member.getId()));
+
+    SummaryDto.Response expected = new SummaryDto.Response(
+        followerCount,
+        0L, // 다른 사람을 조회할 때에 팔로잉 수는 보여주면 안된다.
+        postCount,
         true,
         false,
         null
@@ -133,26 +206,223 @@ class MemberSummaryIntegrationTest extends IntegrationTest {
         .andExpect(jsonPath("$.code").value(HttpStatus.OK.name()))
         .andExpect(jsonPath("$.message").value(HttpStatus.OK.getReasonPhrase()))
         .andExpect(jsonPath("$.data").isNotEmpty())
+        .andExpect(jsonPath("$.data.followerCount").value(expected.followerCount()))
+        .andExpect(jsonPath("$.data.followingCount").value(expected.followingCount()))
+        .andExpect(jsonPath("$.data.postCount").value(expected.postCount()))
+        .andExpect(jsonPath("$.data.isStreamer").value(expected.isStreamer()))
+        .andExpect(jsonPath("$.data.isSubmittedToStreamer").value(expected.isSubmittedToStreamer()))
     ;
   }
 
   @Test
-  void getSummary_스트리머_다른사람_정보() throws Exception {
-  }
-
-  @Test
   void getSummary_스트리머_신청중_내_정보() throws Exception {
+    Member member = testMember();
+    memberRepository.save(member);
+    TokenDto token = tokenProvider.getToken(member);
+    String AUTHORIZATION = "Bearer " + token.getAccessToken();
+
+    // 팔로워 1~20명
+    long followerCount = RandomValue.getRandomLong(1, 20);
+    for (int i = 0; i < followerCount; i++) {
+      Member m = testMember();
+      memberRepository.save(m);
+      followRepository.save(testFollow(m.getId(), member.getId()));
+    }
+    // 팔로잉 1~20명
+    long followingCount = RandomValue.getRandomLong(1, 20);
+    for (int i = 0; i < followingCount; i++) {
+      Member m = testMember();
+      memberRepository.save(m);
+      followRepository.save(testFollow(member.getId(), m.getId()));
+    }
+
+    // 게시글 1~50개
+    long postCount = RandomValue.getRandomLong(1, 50);
+    for (int i = 0; i < postCount; i++) {
+      postRepository.save(testPost(member.getId()));
+    }
+
+    // 스트리머 신청 등록
+    pendingStreamerRepository.save(testPendingStreamer(member.getId()));
+
+    SummaryDto.Response expected = new SummaryDto.Response(
+        followerCount,
+        followingCount,
+        postCount,
+        false,
+        true,
+        null
+    );
+
+    String URL = "/api/v1/members/summary/" + member.getId();
+    mvc.perform(get(URL)
+            .header(HttpHeaders.AUTHORIZATION, AUTHORIZATION))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.code").value(HttpStatus.OK.name()))
+        .andExpect(jsonPath("$.message").value(HttpStatus.OK.getReasonPhrase()))
+        .andExpect(jsonPath("$.data").isNotEmpty())
+        .andExpect(jsonPath("$.data.followerCount").value(expected.followerCount()))
+        .andExpect(jsonPath("$.data.followingCount").value(expected.followingCount()))
+        .andExpect(jsonPath("$.data.postCount").value(expected.postCount()))
+        .andExpect(jsonPath("$.data.isStreamer").value(expected.isStreamer()))
+        .andExpect(jsonPath("$.data.isSubmittedToStreamer").value(expected.isSubmittedToStreamer()))
+    ;
   }
 
   @Test
   void getSummary_스트리머_신청중_다른사람_정보() throws Exception {
+    Member member = testMember();
+    memberRepository.save(member);
+
+    // 팔로워 1~20명
+    long followerCount = RandomValue.getRandomLong(1, 20);
+    for (int i = 0; i < followerCount; i++) {
+      Member m = testMember();
+      memberRepository.save(m);
+      followRepository.save(testFollow(m.getId(), member.getId()));
+    }
+    // 팔로잉 1~20명
+    long followingCount = RandomValue.getRandomLong(1, 20);
+    for (int i = 0; i < followingCount; i++) {
+      Member m = testMember();
+      memberRepository.save(m);
+      followRepository.save(testFollow(member.getId(), m.getId()));
+    }
+
+    // 게시글 1~50개
+    long postCount = RandomValue.getRandomLong(1, 50);
+    for (int i = 0; i < postCount; i++) {
+      postRepository.save(testPost(member.getId()));
+    }
+
+    // 스트리머 신청 등록
+    pendingStreamerRepository.save(testPendingStreamer(member.getId()));
+
+    SummaryDto.Response expected = new SummaryDto.Response(
+        followerCount,
+        0L, // 다른 사람을 조회할 때에 팔로잉 수는 보여주면 안된다.
+        postCount,
+        false,
+        false, // 다른 사람을 조회할 때에 스트리머 신청 여부를 보여주면 안된다.
+        null
+    );
+
+    String URL = "/api/v1/members/summary/" + member.getId();
+    mvc.perform(get(URL))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.code").value(HttpStatus.OK.name()))
+        .andExpect(jsonPath("$.message").value(HttpStatus.OK.getReasonPhrase()))
+        .andExpect(jsonPath("$.data").isNotEmpty())
+        .andExpect(jsonPath("$.data.followerCount").value(expected.followerCount()))
+        .andExpect(jsonPath("$.data.followingCount").value(expected.followingCount()))
+        .andExpect(jsonPath("$.data.postCount").value(expected.postCount()))
+        .andExpect(jsonPath("$.data.isStreamer").value(expected.isStreamer()))
+        .andExpect(jsonPath("$.data.isSubmittedToStreamer").value(expected.isSubmittedToStreamer()))
+    ;
   }
 
   @Test
   void getSummary_일반인_내_정보() throws Exception {
+    Member member = testMember();
+    memberRepository.save(member);
+    TokenDto token = tokenProvider.getToken(member);
+    String AUTHORIZATION = "Bearer " + token.getAccessToken();
+
+    // 팔로워 1~20명
+    long followerCount = RandomValue.getRandomLong(1, 20);
+    for (int i = 0; i < followerCount; i++) {
+      Member m = testMember();
+      memberRepository.save(m);
+      followRepository.save(testFollow(m.getId(), member.getId()));
+    }
+    // 팔로잉 1~20명
+    long followingCount = RandomValue.getRandomLong(1, 20);
+    for (int i = 0; i < followingCount; i++) {
+      Member m = testMember();
+      memberRepository.save(m);
+      followRepository.save(testFollow(member.getId(), m.getId()));
+    }
+
+    // 게시글 1~50개
+    long postCount = RandomValue.getRandomLong(1, 50);
+    for (int i = 0; i < postCount; i++) {
+      postRepository.save(testPost(member.getId()));
+    }
+
+    SummaryDto.Response expected = new SummaryDto.Response(
+        followerCount,
+        followingCount,
+        postCount,
+        false,
+        false,
+        null
+    );
+
+    String URL = "/api/v1/members/summary/" + member.getId();
+    mvc.perform(get(URL)
+            .header(HttpHeaders.AUTHORIZATION, AUTHORIZATION))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.code").value(HttpStatus.OK.name()))
+        .andExpect(jsonPath("$.message").value(HttpStatus.OK.getReasonPhrase()))
+        .andExpect(jsonPath("$.data").isNotEmpty())
+        .andExpect(jsonPath("$.data.followerCount").value(expected.followerCount()))
+        .andExpect(jsonPath("$.data.followingCount").value(expected.followingCount()))
+        .andExpect(jsonPath("$.data.postCount").value(expected.postCount()))
+        .andExpect(jsonPath("$.data.isStreamer").value(expected.isStreamer()))
+        .andExpect(jsonPath("$.data.isSubmittedToStreamer").value(expected.isSubmittedToStreamer()))
+    ;
   }
 
   @Test
   void getSummary_일반인_다른사람_정보() throws Exception {
+    Member member = testMember();
+    memberRepository.save(member);
+
+    // 팔로워 1~20명
+    long followerCount = RandomValue.getRandomLong(1, 20);
+    for (int i = 0; i < followerCount; i++) {
+      Member m = testMember();
+      memberRepository.save(m);
+      followRepository.save(testFollow(m.getId(), member.getId()));
+    }
+    // 팔로잉 1~20명
+    long followingCount = RandomValue.getRandomLong(1, 20);
+    for (int i = 0; i < followingCount; i++) {
+      Member m = testMember();
+      memberRepository.save(m);
+      followRepository.save(testFollow(member.getId(), m.getId()));
+    }
+
+    // 게시글 1~50개
+    long postCount = RandomValue.getRandomLong(1, 50);
+    for (int i = 0; i < postCount; i++) {
+      postRepository.save(testPost(member.getId()));
+    }
+
+    SummaryDto.Response expected = new SummaryDto.Response(
+        followerCount,
+        0L, // 다른 사람을 조회할 때에 팔로잉 수는 보여주면 안된다.
+        postCount,
+        false,
+        false,
+        null
+    );
+
+    String URL = "/api/v1/members/summary/" + member.getId();
+    mvc.perform(get(URL))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.code").value(HttpStatus.OK.name()))
+        .andExpect(jsonPath("$.message").value(HttpStatus.OK.getReasonPhrase()))
+        .andExpect(jsonPath("$.data").isNotEmpty())
+        .andExpect(jsonPath("$.data.followerCount").value(expected.followerCount()))
+        .andExpect(jsonPath("$.data.followingCount").value(expected.followingCount()))
+        .andExpect(jsonPath("$.data.postCount").value(expected.postCount()))
+        .andExpect(jsonPath("$.data.isStreamer").value(expected.isStreamer()))
+        .andExpect(jsonPath("$.data.isSubmittedToStreamer").value(expected.isSubmittedToStreamer()))
+    ;
   }
 }

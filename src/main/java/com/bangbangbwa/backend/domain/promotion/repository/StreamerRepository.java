@@ -22,6 +22,6 @@ public class StreamerRepository {
   }
 
   public void save(Streamer streamer) {
-
+    mysql.insert("StreamerMapper.save", streamer);
   }
 }

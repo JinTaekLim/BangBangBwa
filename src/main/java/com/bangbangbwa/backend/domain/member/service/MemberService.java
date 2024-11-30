@@ -20,6 +20,7 @@ import com.bangbangbwa.backend.domain.tag.common.entity.Tag;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
 import com.bangbangbwa.backend.domain.token.common.TokenDto;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -77,8 +78,14 @@ public class MemberService {
   }
 
   public SummaryDto getSummary(Long memberId) {
-    memberReader.findById(memberId);
-    return null;
+    Long currentMemberId = memberProvider.getCurrentMemberIdOrNull();
+    SummaryDto request = new SummaryDto(memberId, currentMemberId);
+    SummaryDto summaryDto = memberReader.getSummary(request);
+
+    if (!Objects.equals(memberId, currentMemberId)) {
+      memberValidator.removeData(summaryDto);
+    }
+    return summaryDto;
   }
 
   public List<PostDto> getPosts(Long memberId) {

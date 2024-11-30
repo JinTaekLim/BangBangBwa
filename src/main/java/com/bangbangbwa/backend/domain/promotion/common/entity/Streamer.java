@@ -17,6 +17,7 @@ import org.apache.ibatis.type.Alias;
 public class Streamer {
 
   private Long id;
+  private Long memberId;
   private String todayComment;
   private String selfIntroduction;
   private String imageUrl;
@@ -26,11 +27,13 @@ public class Streamer {
 
   @Builder
   public Streamer(
+      Long memberId,
       String todayComment,
       String selfIntroduction,
       String imageUrl,
       String name
   ) {
+    this.memberId = memberId;
     this.todayComment = todayComment;
     this.selfIntroduction = selfIntroduction;
     this.imageUrl = imageUrl;

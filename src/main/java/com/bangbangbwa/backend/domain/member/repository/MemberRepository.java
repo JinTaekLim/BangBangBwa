@@ -1,6 +1,7 @@
 package com.bangbangbwa.backend.domain.member.repository;
 
 import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
+import com.bangbangbwa.backend.domain.member.common.dto.SummaryDto;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import com.bangbangbwa.backend.domain.tag.common.entity.Tag;
@@ -51,5 +52,9 @@ public class MemberRepository {
   }
   public Optional<ProfileDto> findProfile(ProfileDto profileDto) {
     return Optional.ofNullable(mysql.selectOne("MemberMapper.findProfile", profileDto));
+  }
+
+  public Optional<SummaryDto> findSummary(SummaryDto summaryDto) {
+    return Optional.ofNullable(mysql.selectOne("MemberMapper.findSummary", summaryDto));
   }
 }

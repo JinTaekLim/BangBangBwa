@@ -91,4 +91,12 @@
     SELECT * FROM streamers WHERE member_id = #{memberId}
   </select>
 
+  <insert id="save" parameterType="streamer" keyProperty="id">
+    INSERT INTO streamers (
+      member_id
+    ) VALUES (
+      #{memberId}
+    );
+  </insert>
+
 </mapper>

@@ -50,4 +50,66 @@
               AND f.follower_id = #{currentMemberId}
     WHERE m.id = #{memberId};
   </select>
+
+  <select id="findSummary"
+    parameterType="com.bangbangbwa.backend.domain.member.common.dto.SummaryDto"
+    resultType="com.bangbangbwa.backend.domain.member.common.dto.SummaryDto">
+    SELECT
+        #{memberId} AS member_id,
+        SUM(CASE WHEN type = 'follower' THEN cnt ELSE 0 END) AS follower_count,
+        SUM(CASE WHEN type = 'following' THEN cnt ELSE 0 END) AS following_count,
+        SUM(CASE WHEN type = 'post' THEN cnt ELSE 0 END) AS post_count,
+        MAX(isStreamer) AS isStreamer,
+        MAX(is_submitted_to_streamer) AS is_submitted_to_streamer,
+        NULL AS platforms
+    FROM (
+        SELECT
+            'follower' AS type,
+            COUNT(*) AS cnt,
+            0 AS isStreamer,
+            0 AS is_submitted_to_streamer
+        FROM follow
+        WHERE followee_id = #{memberId}
+
+        UNION ALL
+
+        SELECT
+            'following' AS type,
+            COUNT(*) AS cnt,
+            0 AS isStreamer,
+            0 AS is_submitted_to_streamer
+        FROM follow
+        WHERE follower_id = #{memberId}
+
+        UNION ALL
+
+        SELECT
+            'post' AS type,
+            COUNT(*) AS cnt,
+            0 AS isStreamer,
+            0 AS is_submitted_to_streamer
+        FROM posts
+        WHERE member_id = #{memberId}
+
+        UNION ALL
+
+        SELECT
+            'streamer' AS type,
+            0 AS cnt,
+            1 AS isStreamer,
+            0 AS is_submitted_to_streamer
+        FROM streamers
+        WHERE member_id = #{memberId}
+
+        UNION ALL
+
+        SELECT
+            'pending' AS type,
+            0 AS cnt,
+            0 AS isStreamer,
+            CASE WHEN status = #{pendingType} THEN 1 ELSE 0 END AS is_submitted_to_streamer
+        FROM pending_streamer
+        WHERE member_id = #{memberId}
+    ) t;
+  </select>
 </mapper>
