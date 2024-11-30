@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ReportCommentMapper">
+
+  <insert id="save" parameterType="reportComment">
+    INSERT INTO report_comments (status, comment_id, created_at, created_id)
+    VALUES (#{status}, #{commentId}, #{createdAt}, #{createdId})
+  </insert>
+
+  <select id="findByCommentIdAndCreatedIdAndStatus" parameterType="reportComment" resultType="reportComment">
+    SELECT * FROM report_comments WHERE comment_id = #{commentId} AND created_id = #{createdId} AND status = #{status}
+  </select>
+</mapper>
