@@ -16,6 +16,7 @@ import com.bangbangbwa.backend.domain.sns.common.dto.*;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
 import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
 import com.bangbangbwa.backend.domain.sns.exception.InvalidMemberVisibilityException;
+import com.bangbangbwa.backend.domain.sns.exception.NotFoundPostException;
 import com.bangbangbwa.backend.domain.sns.repository.PostRepository;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
 import com.bangbangbwa.backend.domain.token.common.TokenDto;
@@ -157,6 +158,32 @@ class SnsIntegrationTest extends IntegrationTest {
 //    assertThat(apiResponse.getData().comment()).isEqualTo();
 
   }
+
+  @Test
+  void getPostDetails_존재하지_않는_게시물() {
+    // given
+    Long postId = RandomValue.getRandomLong(-999,-1);
+
+    String url = "http://localhost:" + port + "/api/v1/sns/getPostDetails/" + postId;
+
+    NotFoundPostException exception = new NotFoundPostException();
+
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
+
+    ApiResponse<GetPostDetailsDto.Response> apiResponse = gson.fromJson(
+            responseEntity.getBody(),
+            new TypeToken<ApiResponse<GetPostDetailsDto.Response>>() {}.getType()
+    );
+
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertNull(apiResponse.getData());
+    assertThat(apiResponse.getCode()).isEqualTo(exception.getCode());
+    assertThat(apiResponse.getMessage()).isEqualTo(exception.getMessage());
+
+  }
+
 
 
   // note. PostType 랜덤 지정하도록 변경 필요

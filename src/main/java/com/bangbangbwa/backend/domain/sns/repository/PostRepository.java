@@ -32,10 +32,10 @@ public class PostRepository {
     return mysql.selectList("PostMapper.findPostsWithinLast24Hours", postType);
   }
 
-  public GetPostDetailsDto.Response getPostDetails(Long postId, Long memberId) {
+  public Optional<GetPostDetailsDto.Response> getPostDetails(Long postId, Long memberId) {
     Map<String, Object> params = new HashMap<>();
     params.put("postId", postId);
     params.put("memberId", memberId);
-    return mysql.selectOne("PostMapper.getPostDetails", params);
+    return Optional.ofNullable(mysql.selectOne("PostMapper.getPostDetails", params));
   }
 }
