@@ -13,12 +13,16 @@ import com.bangbangbwa.backend.domain.member.repository.MemberRepository;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import com.bangbangbwa.backend.domain.sns.common.dto.*;
+import com.bangbangbwa.backend.domain.sns.common.entity.Comment;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
+import com.bangbangbwa.backend.domain.sns.common.entity.ReportComment;
 import com.bangbangbwa.backend.domain.sns.common.entity.ReportPost;
 import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
 import com.bangbangbwa.backend.domain.sns.exception.DuplicateReportException;
 import com.bangbangbwa.backend.domain.sns.exception.InvalidMemberVisibilityException;
+import com.bangbangbwa.backend.domain.sns.repository.CommentRepository;
 import com.bangbangbwa.backend.domain.sns.repository.PostRepository;
+import com.bangbangbwa.backend.domain.sns.repository.ReportCommentRepository;
 import com.bangbangbwa.backend.domain.sns.repository.ReportPostRepository;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
 import com.bangbangbwa.backend.domain.token.common.TokenDto;
@@ -37,6 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.LinkedMultiValueMap;
@@ -58,7 +63,13 @@ class SnsIntegrationTest extends IntegrationTest {
   private PostRepository postRepository;
 
   @Autowired
+  private CommentRepository commentRepository;
+
+  @Autowired
   private ReportPostRepository reportPostRepository;
+
+  @Autowired
+  private ReportCommentRepository reportCommentRepository;
 
   @Autowired
   private TokenProvider tokenProvider;
@@ -114,6 +125,34 @@ class SnsIntegrationTest extends IntegrationTest {
     reportPostRepository.save(reportPost);
     return reportPost;
   }
+
+  private Comment getComment(Post post, Member member) {
+    return Comment.builder()
+            .content(RandomValue.string(30).setNullable(false).get())
+            .memberId(member.getId())
+            .postId(post.getId())
+            .build();
+  }
+
+  private Comment createComment(Post post, Member member) {
+    Comment comment = getComment(post, member);
+    commentRepository.save(comment);
+    return comment;
+  }
+
+  private ReportComment getReportComment(Comment comment, Member member) {
+    return ReportComment.builder()
+            .commentId(comment.getId())
+            .createdId(member.getId().toString())
+            .build();
+  }
+
+  private ReportComment createReportComment(Comment comment, Member member) {
+    ReportComment reportComment = getReportComment(comment, member);
+    reportCommentRepository.save(reportComment);
+    return reportComment;
+  }
+
 
   // note. 내부 값 검사 필요
   @Test()
@@ -647,5 +686,116 @@ class SnsIntegrationTest extends IntegrationTest {
     // then
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
     assertNull(apiResponse.getData());
+  }
+
+  @Test
+  void reportComment() {
+    // given
+    Member member = createMember();
+    TokenDto tokenDto = tokenProvider.getToken(member);
+
+    Member writeMember = createMember();
+    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    Post post = createPost(postType, writeMember);
+
+    Comment comment = createComment(post, writeMember);
+
+    ReportCommentDto.Request request = new ReportCommentDto.Request(comment.getId());
+
+    String url = "http://localhost:" + port + "/api/v1/sns/reportComment";
+
+    HttpEntity<ReportCommentDto.Request> requestEntity = new HttpEntity<>(request,
+            new HttpHeaders() {{
+              setBearerAuth(tokenDto.getAccessToken());
+            }}
+    );
+
+
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.postForEntity(
+            url,
+            requestEntity,
+            String.class
+    );
+
+    ApiResponse<CreateCommentDto.Response> apiResponse = gson.fromJson(
+            responseEntity.getBody(),
+            new TypeToken<ApiResponse<CreateCommentDto.Response>>() {}.getType()
+    );
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(apiResponse.getData()).isNull();
+  }
+
+  @Test
+  void reportComment_중복_신고() {
+    // given
+    Member member = createMember();
+    TokenDto tokenDto = tokenProvider.getToken(member);
+
+    Member writeMember = createMember();
+    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    Post post = createPost(postType, writeMember);
+
+    Comment comment = createComment(post, writeMember);
+    createReportComment(comment, member);
+
+    ReportCommentDto.Request request = new ReportCommentDto.Request(comment.getId());
+
+    String url = "http://localhost:" + port + "/api/v1/sns/reportComment";
+
+    DuplicateReportException exception = new DuplicateReportException();
+
+    HttpEntity<ReportCommentDto.Request> requestEntity = new HttpEntity<>(request,
+            new HttpHeaders() {{
+              setBearerAuth(tokenDto.getAccessToken());
+            }}
+    );
+
+
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.postForEntity(
+            url,
+            requestEntity,
+            String.class
+    );
+
+    ApiResponse<CreateCommentDto.Response> apiResponse = gson.fromJson(
+            responseEntity.getBody(),
+            new TypeToken<ApiResponse<CreateCommentDto.Response>>() {}.getType()
+    );
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(apiResponse.getCode()).isEqualTo(exception.getCode());
+    assertThat(apiResponse.getMessage()).isEqualTo(exception.getMessage());
+    assertThat(apiResponse.getData()).isNull();
+  }
+
+  @Test
+  void reportComment_토큰_미입력() {
+    // given
+    Long randomLong = RandomValue.getRandomLong(0, 9999);
+    ReportCommentDto.Request request = new ReportCommentDto.Request(randomLong);
+
+    String url = "http://localhost:" + port + "/api/v1/sns/reportComment";
+
+    UnAuthenticationMemberException exception = new UnAuthenticationMemberException();
+
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.postForEntity(
+            url,
+            request,
+            String.class
+    );
+
+    ApiResponse<CreateCommentDto.Response> apiResponse = gson.fromJson(
+            responseEntity.getBody(),
+            new TypeToken<ApiResponse<CreateCommentDto.Response>>() {}.getType()
+    );
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    assertThat(apiResponse.getCode()).isEqualTo(exception.getCode());
+    assertThat(apiResponse.getMessage()).isEqualTo(exception.getMessage());
+    assertThat(apiResponse.getData()).isNull();
   }
 }
