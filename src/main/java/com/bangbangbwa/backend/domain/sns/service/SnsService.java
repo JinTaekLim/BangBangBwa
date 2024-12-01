@@ -6,13 +6,11 @@ import com.bangbangbwa.backend.domain.member.business.MemberValidator;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.sns.business.*;
-import com.bangbangbwa.backend.domain.sns.common.dto.CreateCommentDto;
-import com.bangbangbwa.backend.domain.sns.common.dto.CreatePostDto;
-import com.bangbangbwa.backend.domain.sns.common.dto.GetLatestPostsDto;
-import com.bangbangbwa.backend.domain.sns.common.dto.GetPostDetailsDto;
+import com.bangbangbwa.backend.domain.sns.common.dto.*;
 import com.bangbangbwa.backend.domain.sns.common.entity.Comment;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
 import com.bangbangbwa.backend.domain.sns.common.entity.PostVisibilityMember;
+import com.bangbangbwa.backend.domain.sns.common.entity.ReportPost;
 import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
 import com.bangbangbwa.backend.domain.sns.common.enums.VisibilityType;
 import com.bangbangbwa.backend.global.util.S3Manager;
@@ -42,6 +40,9 @@ public class SnsService {
   private final CommentGenerator commentGenerator;
   private final CommentCreator commentCreator;
   private final PostTypeProvider postTypeProvider;
+  private final ReportValidator reportValidator;
+  private final ReportPostCreator reportPostCreator;
+  private final ReportPostGenerator reportPostGenerator;
 
 
   // 게시글 저장 전, content에서 url을 추출 후 redis 값 삭제하는 과정 필요
@@ -103,5 +104,12 @@ public class SnsService {
 
   public List<GetLatestPostsDto> getLatestPosts(PostType postType) {
     return postReader.findPostsWithinLast24Hours(postType);
+  }
+
+  public void reportPost(ReportPostDto.Request request) {
+    Long memberId = memberProvider.getCurrentMemberId();
+    reportValidator.checkForDuplicateReportPost(request.postId(), memberId);
+    ReportPost reportPost = reportPostGenerator.generate(request, memberId);
+    reportPostCreator.save(reportPost);
   }
 }
