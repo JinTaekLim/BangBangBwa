@@ -19,6 +19,9 @@
     WHERE id = #{id}
   </update>
 
+  <select id="findByMemberIdAndStatus" parameterType="map" resultType="PendingStreamer">
+    SELECT * FROM pending_streamer WHERE member_id = #{memberId} AND status = #{status}
+  </select>
 
 
 </mapper>
