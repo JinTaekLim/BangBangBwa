@@ -4,6 +4,7 @@ import com.bangbangbwa.backend.domain.member.business.MemberProvider;
 import com.bangbangbwa.backend.domain.member.business.MemberReader;
 import com.bangbangbwa.backend.domain.member.business.MemberValidator;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
+import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.sns.business.*;
 import com.bangbangbwa.backend.domain.sns.common.dto.*;
 import com.bangbangbwa.backend.domain.sns.common.entity.*;
@@ -35,6 +36,7 @@ public class SnsService {
   private final S3Manager s3Manager;
   private final CommentGenerator commentGenerator;
   private final CommentCreator commentCreator;
+  private final PostTypeProvider postTypeProvider;
   private final ReportValidator reportValidator;
   private final ReportPostCreator reportPostCreator;
   private final ReportPostGenerator reportPostGenerator;
@@ -92,7 +94,9 @@ public class SnsService {
     return postReader.getPostDetails(postId, memberId);
   }
 
-  public List<Post> getPostList(PostType postType) {
+  public List<Post> getPostList() {
+    Role role = memberProvider.getCurrentRole();
+    PostType postType = postTypeProvider.getInversePostTypeForRole(role);
     return postProvider.getRandomPost(postType);
   }
 

@@ -38,13 +38,13 @@ public class SnsController implements SnsApi{
   private final DailyMessageService dailyMessageService;
 
   @GetMapping("/getPostList")
+  @AuthenticationContext
   public ApiResponse<List<GetPostListDto.Response>> getPostList() {
-    List<Post> postList = snsService.getPostList(PostType.STREAMER);
+    List<Post> postList = snsService.getPostList();
     List<GetPostListDto.Response> response = PostMapper.INSTANCE.dtoToGetPostListResponse(postList);
     return ApiResponse.ok(response);
   }
 
-  //note. 팔로우 관련 작업 필요
   @GetMapping("/getPostDetails/{postId}")
   @AuthenticationContext
   public ApiResponse<GetPostDetailsDto.Response> getPostDetails(@PathVariable("postId") Long postId) {

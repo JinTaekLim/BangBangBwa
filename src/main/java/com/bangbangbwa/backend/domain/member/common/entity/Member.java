@@ -64,4 +64,6 @@ public class Member {
   public void updateProfile(String profile) {
     this.profile = profile;
   }
+
+  public void updateRole(Role role) { this.role = role; }
 }
