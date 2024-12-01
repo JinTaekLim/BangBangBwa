@@ -6,9 +6,11 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import com.bangbangbwa.backend.domain.member.common.entity.Follow;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 
 import com.bangbangbwa.backend.domain.member.exception.UnAuthenticationMemberException;
+import com.bangbangbwa.backend.domain.member.repository.FollowRepository;
 import com.bangbangbwa.backend.domain.member.repository.MemberRepository;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
@@ -32,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -43,6 +46,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 
+@Slf4j
 class SnsIntegrationTest extends IntegrationTest {
 
   @LocalServerPort
@@ -56,6 +60,9 @@ class SnsIntegrationTest extends IntegrationTest {
 
   @Autowired
   private PostRepository postRepository;
+
+  @Autowired
+  private FollowRepository followRepository;
 
   @Autowired
   private ReportPostRepository reportPostRepository;
@@ -100,6 +107,19 @@ class SnsIntegrationTest extends IntegrationTest {
     Post post = getPost(postType, writeMember);
     postRepository.save(post);
     return post;
+  }
+
+  private Follow getFollow(Long followerId, Long followeeId) {
+    return Follow.builder()
+            .followerId(followerId)
+            .followeeId(followeeId)
+            .build();
+  }
+
+  private Follow createFollow(Member followerId, Member followeeId) {
+    Follow follow = getFollow(followerId.getId(), followeeId.getId());
+    followRepository.save(follow);
+    return follow;
   }
 
   private ReportPost getReportPost(Long postId, String memberId) {
@@ -149,14 +169,29 @@ class SnsIntegrationTest extends IntegrationTest {
   @Test
   void getPostDetails() {
     // given
+    Member member = createMember();
+    TokenDto tokenDto = tokenProvider.getToken(member);
+
     Member writeMember = createMember();
     PostType postType = RandomValue.getRandomEnum(PostType.class);
     Post post = createPost(postType, writeMember);
 
+    boolean isFollow = RandomValue.getRandomBoolean();
+    if (isFollow) { createFollow(member, writeMember); }
+
     String url = "http://localhost:" + port + "/api/v1/sns/getPostDetails/" + post.getId();
 
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(tokenDto.getAccessToken());
+    HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
     // when
-    ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
+    ResponseEntity<String> responseEntity = restTemplate.exchange(
+            url,
+            HttpMethod.GET,
+            requestEntity,
+            String.class
+    );
 
     ApiResponse<GetPostDetailsDto.Response> apiResponse = gson.fromJson(
         responseEntity.getBody(),
@@ -172,9 +207,43 @@ class SnsIntegrationTest extends IntegrationTest {
     assertThat(apiResponse.getData().nickname()).isEqualTo(writeMember.getNickname());
     assertThat(apiResponse.getData().profileUrl()).isEqualTo(writeMember.getProfile());
     assertThat(apiResponse.getData().content()).isEqualTo(post.getContent());
-//    assertThat(apiResponse.getData().comment()).isEqualTo();
+    assertThat(apiResponse.getData().isFollowed()).isEqualTo(isFollow);
 
   }
+
+  @Test
+  void getPostDetails_토큰_미입력() {
+    // given
+    Member writeMember = createMember();
+    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    Post post = createPost(postType, writeMember);
+
+    String url = "http://localhost:" + port + "/api/v1/sns/getPostDetails/" + post.getId();
+
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.getForEntity(
+            url,
+            String.class
+    );
+
+    ApiResponse<GetPostDetailsDto.Response> apiResponse = gson.fromJson(
+            responseEntity.getBody(),
+            new TypeToken<ApiResponse<GetPostDetailsDto.Response>>() {}.getType()
+    );
+
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertNotNull(apiResponse.getData());
+    assertThat(apiResponse.getData().postId()).isEqualTo(post.getId());
+    assertThat(apiResponse.getData().writerId()).isEqualTo(writeMember.getId());
+    assertThat(apiResponse.getData().title()).isEqualTo(post.getTitle());
+    assertThat(apiResponse.getData().nickname()).isEqualTo(writeMember.getNickname());
+    assertThat(apiResponse.getData().profileUrl()).isEqualTo(writeMember.getProfile());
+    assertThat(apiResponse.getData().content()).isEqualTo(post.getContent());
+    assertThat(apiResponse.getData().isFollowed()).isEqualTo(false);
+
+  }
+
 
 
   // note. PostType 랜덤 지정하도록 변경 필요
