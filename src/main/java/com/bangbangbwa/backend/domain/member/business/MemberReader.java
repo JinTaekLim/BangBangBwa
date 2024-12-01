@@ -5,7 +5,7 @@ import com.bangbangbwa.backend.domain.member.common.dto.SummaryDto;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.member.exception.NotFoundMemberException;
 import com.bangbangbwa.backend.domain.member.exception.NotSignupMemberException;
-import com.bangbangbwa.backend.domain.member.exception.type.EmptyNicknameException;
+import com.bangbangbwa.backend.domain.member.exception.EmptyNicknameException;
 import com.bangbangbwa.backend.domain.member.repository.MemberRepository;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
