@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS report_comments;
+DROP TABLE IF EXISTS report_posts;
 DROP TABLE IF EXISTS streamers_tags;
 DROP TABLE IF EXISTS streamers_platforms;
 DROP TABLE IF EXISTS members_tags;
@@ -103,6 +105,7 @@ CREATE TABLE posts_visibility_member
 
 CREATE TABLE comments
 (
+    id         BIGINT AUTO_INCREMENT PRIMARY KEY   COMMENT '댓글 ID',
     post_id    BIGINT       NOT NULL COMMENT '게시물_ID',
     member_id  BIGINT       NOT NULL COMMENT '작성자_ID',
     content    VARCHAR(500) NOT NULL COMMENT '내용',
@@ -111,9 +114,9 @@ CREATE TABLE comments
     updated_at DATETIME NULL COMMENT '수정 일시(null)',
     updated_id VARCHAR(255) NULL COMMENT '수정자(null)',
     deleted_at DATETIME NULL COMMENT '삭제 일시(null)',
-    PRIMARY KEY (post_id, member_id),
     FOREIGN KEY (post_id) REFERENCES posts (id),
-    FOREIGN KEY (member_id) REFERENCES members (id)
+    FOREIGN KEY (member_id) REFERENCES members (id),
+    UNIQUE (post_id, member_id)
 );
 
 CREATE TABLE admins
@@ -191,4 +194,26 @@ CREATE TABLE follow (
     created_id      VARCHAR(255)        NOT NULL        COMMENT '생성자',
     updated_at      DATETIME                            COMMENT '수정일시',
     updated_id      VARCHAR(255)                        COMMENT '수정자'
+);
+
+CREATE TABLE report_posts (
+    id              BIGINT AUTO_INCREMENT PRIMARY KEY   COMMENT '게시물 신고 ID',
+    status          VARCHAR(100)        NOT NULL        COMMENT 'CANCEL, PENDING, DELETED',
+    post_id         BIGINT              NOT NULL        COMMENT '게시물 ID',
+    created_at      DATETIME            NOT NULL        COMMENT '생성일시',
+    created_id      VARCHAR(255)        NOT NULL        COMMENT '생성자',
+    updated_at      DATETIME                            COMMENT '수정일시',
+    updated_id      VARCHAR(255)                        COMMENT '수정자',
+    FOREIGN KEY (post_id) REFERENCES posts (id)
+);
+
+CREATE TABLE report_comments (
+    id              BIGINT AUTO_INCREMENT PRIMARY KEY   COMMENT '댓글 신고 ID',
+    status          VARCHAR(100)        NOT NULL        COMMENT 'CANCEL, PENDING, DELETED',
+    comments_id         BIGINT          NOT NULL        COMMENT '댓글 ID',
+    created_at      DATETIME            NOT NULL        COMMENT '생성일시',
+    created_id      VARCHAR(255)        NOT NULL        COMMENT '생성자',
+    updated_at      DATETIME                            COMMENT '수정일시',
+    updated_id      VARCHAR(255)                        COMMENT '수정자',
+    FOREIGN KEY (comments_id) REFERENCES comments (id)
 );

@@ -74,3 +74,13 @@ INSERT INTO streamers_platforms (streamer_id, platform_id, streamer_profile_url)
 VALUES ('3', '1', '1');
 INSERT INTO streamers_platforms (streamer_id, platform_id, streamer_profile_url)
 VALUES ('4', '2', '2');
+
+
+INSERT INTO posts
+(member_id, post_type, status, title, content, created_at, created_id, updated_at, updated_id, deleted_at)
+VALUES (1, 'MEMBER', 'DRAFT', '게시글 제목', '게시글 내용', NOW(), 'admin', NULL, NULL, NULL);
+
+INSERT INTO comments
+(post_id, member_id, content, created_at, created_id, updated_at, updated_id, deleted_at)
+VALUES
+    (1, 1, '댓글댓글댓글입니다.', NOW(), 'admin', NULL, NULL, NULL);
