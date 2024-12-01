@@ -6,17 +6,24 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import com.bangbangbwa.backend.domain.member.common.entity.Follow;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 
+import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.member.exception.UnAuthenticationMemberException;
+import com.bangbangbwa.backend.domain.member.repository.FollowRepository;
 import com.bangbangbwa.backend.domain.member.repository.MemberRepository;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import com.bangbangbwa.backend.domain.sns.common.dto.*;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
+import com.bangbangbwa.backend.domain.sns.common.entity.ReportPost;
 import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
+import com.bangbangbwa.backend.domain.sns.exception.DuplicateReportException;
 import com.bangbangbwa.backend.domain.sns.exception.InvalidMemberVisibilityException;
+import com.bangbangbwa.backend.domain.sns.exception.NotFoundPostException;
 import com.bangbangbwa.backend.domain.sns.repository.PostRepository;
+import com.bangbangbwa.backend.domain.sns.repository.ReportPostRepository;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
 import com.bangbangbwa.backend.domain.token.common.TokenDto;
 import com.bangbangbwa.backend.global.response.ApiResponse;
@@ -28,7 +35,6 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -53,6 +59,12 @@ class SnsIntegrationTest extends IntegrationTest {
 
   @Autowired
   private PostRepository postRepository;
+
+  @Autowired
+  private FollowRepository followRepository;
+
+  @Autowired
+  private ReportPostRepository reportPostRepository;
 
   @Autowired
   private TokenProvider tokenProvider;
@@ -96,12 +108,84 @@ class SnsIntegrationTest extends IntegrationTest {
     return post;
   }
 
+  private Follow getFollow(Long followerId, Long followeeId) {
+    return Follow.builder()
+            .followerId(followerId)
+            .followeeId(followeeId)
+            .build();
+  }
+
+  private Follow createFollow(Member followerId, Member followeeId) {
+    Follow follow = getFollow(followerId.getId(), followeeId.getId());
+    followRepository.save(follow);
+    return follow;
+  }
+
+  private ReportPost getReportPost(Long postId, String memberId) {
+    return ReportPost.builder()
+            .createdId(memberId)
+            .postId(postId)
+            .build();
+  }
+
+  private ReportPost createReportPost(Post post, Member member) {
+    ReportPost reportPost = getReportPost(post.getId() , member.getId().toString());
+    reportPostRepository.save(reportPost);
+    return reportPost;
+  }
 
   // note. 내부 값 검사 필요
-  @Test()
-  void getPostList_성공_게시물_갯수_체크() {
+  @Test
+  void getPostList() {
+    // given
+    Role memberRole = (RandomValue.getInt(2) == 1) ? Role.MEMBER : Role.STREAMER;
+    PostType postType = (memberRole == Role.MEMBER) ? PostType.STREAMER : PostType.MEMBER;
+
+    Member member = getMember();
+    member.updateRole(memberRole);
+    memberRepository.save(member);
+
+    TokenDto tokenDto = tokenProvider.getToken(member);
+
+    Member writeMember = createMember();
+    int postCount = RandomValue.getInt(0,5);
+
+    IntStream.range(0, postCount)
+            .forEach(i -> createPost(postType, writeMember));
+
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(tokenDto.getAccessToken());
+    HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+    String url = "http://localhost:" + port + "/api/v1/sns/getPostList";
+
+
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.exchange(
+            url,
+            HttpMethod.GET,
+            requestEntity,
+            String.class
+    );
+
+    ApiResponse<List<GetPostListDto.Response>> apiResponse = gson.fromJson(
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<List<GetPostListDto.Response>>>() {}.getType()
+    );
+
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertNotNull(apiResponse.getData());
+    assertThat(apiResponse.getData().size()).isEqualTo(postCount);
+  }
+
+
+  @Test
+  void getPostList_토큰_미입력() {
     // given
     PostType postType = PostType.STREAMER;
+
     Member writeMember = createMember();
     int postCount = RandomValue.getInt(0,5);
 
@@ -113,11 +197,14 @@ class SnsIntegrationTest extends IntegrationTest {
 
 
     // when
-    ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
+    ResponseEntity<String> responseEntity = restTemplate.getForEntity(
+            url,
+            String.class
+    );
 
     ApiResponse<List<GetPostListDto.Response>> apiResponse = gson.fromJson(
-        responseEntity.getBody(),
-        new TypeToken<ApiResponse<List<GetPostListDto.Response>>>() {}.getType()
+            responseEntity.getBody(),
+            new TypeToken<ApiResponse<List<GetPostListDto.Response>>>() {}.getType()
     );
 
     // then
@@ -128,17 +215,33 @@ class SnsIntegrationTest extends IntegrationTest {
   }
 
 
+
   @Test
   void getPostDetails() {
     // given
+    Member member = createMember();
+    TokenDto tokenDto = tokenProvider.getToken(member);
+
     Member writeMember = createMember();
     PostType postType = RandomValue.getRandomEnum(PostType.class);
     Post post = createPost(postType, writeMember);
 
+    boolean isFollow = RandomValue.getRandomBoolean();
+    if (isFollow) { createFollow(member, writeMember); }
+
     String url = "http://localhost:" + port + "/api/v1/sns/getPostDetails/" + post.getId();
 
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(tokenDto.getAccessToken());
+    HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
     // when
-    ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
+    ResponseEntity<String> responseEntity = restTemplate.exchange(
+            url,
+            HttpMethod.GET,
+            requestEntity,
+            String.class
+    );
 
     ApiResponse<GetPostDetailsDto.Response> apiResponse = gson.fromJson(
         responseEntity.getBody(),
@@ -154,9 +257,69 @@ class SnsIntegrationTest extends IntegrationTest {
     assertThat(apiResponse.getData().nickname()).isEqualTo(writeMember.getNickname());
     assertThat(apiResponse.getData().profileUrl()).isEqualTo(writeMember.getProfile());
     assertThat(apiResponse.getData().content()).isEqualTo(post.getContent());
-//    assertThat(apiResponse.getData().comment()).isEqualTo();
+    assertThat(apiResponse.getData().isFollowed()).isEqualTo(isFollow);
 
   }
+
+  @Test
+  void getPostDetails_토큰_미입력() {
+    // given
+    Member writeMember = createMember();
+    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    Post post = createPost(postType, writeMember);
+
+    String url = "http://localhost:" + port + "/api/v1/sns/getPostDetails/" + post.getId();
+
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.getForEntity(
+            url,
+            String.class
+    );
+
+    ApiResponse<GetPostDetailsDto.Response> apiResponse = gson.fromJson(
+            responseEntity.getBody(),
+            new TypeToken<ApiResponse<GetPostDetailsDto.Response>>() {}.getType()
+    );
+
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertNotNull(apiResponse.getData());
+    assertThat(apiResponse.getData().postId()).isEqualTo(post.getId());
+    assertThat(apiResponse.getData().writerId()).isEqualTo(writeMember.getId());
+    assertThat(apiResponse.getData().title()).isEqualTo(post.getTitle());
+    assertThat(apiResponse.getData().nickname()).isEqualTo(writeMember.getNickname());
+    assertThat(apiResponse.getData().profileUrl()).isEqualTo(writeMember.getProfile());
+    assertThat(apiResponse.getData().content()).isEqualTo(post.getContent());
+    assertThat(apiResponse.getData().isFollowed()).isEqualTo(false);
+
+  }
+
+
+  @Test
+  void getPostDetails_존재하지_않는_게시물() {
+    // given
+    Long postId = RandomValue.getRandomLong(-999,-1);
+
+    String url = "http://localhost:" + port + "/api/v1/sns/getPostDetails/" + postId;
+
+    NotFoundPostException exception = new NotFoundPostException();
+
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
+
+    ApiResponse<GetPostDetailsDto.Response> apiResponse = gson.fromJson(
+            responseEntity.getBody(),
+            new TypeToken<ApiResponse<GetPostDetailsDto.Response>>() {}.getType()
+    );
+
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertNull(apiResponse.getData());
+    assertThat(apiResponse.getCode()).isEqualTo(exception.getCode());
+    assertThat(apiResponse.getMessage()).isEqualTo(exception.getMessage());
+
+  }
+
 
 
   // note. PostType 랜덤 지정하도록 변경 필요
@@ -494,5 +657,140 @@ class SnsIntegrationTest extends IntegrationTest {
     // then
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(apiResponse.getData()).isNotNull();
+  }
+
+  @Test
+  void reportPost() {
+    // given
+    Member member = createMember();
+    TokenDto tokenDto = tokenProvider.getToken(member);
+    Member writeMember = createMember();
+    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    Post post = createPost(postType, writeMember);
+
+
+    ReportPostDto.Request request = new ReportPostDto.Request(post.getId());
+
+    String url = "http://localhost:" + port + "/api/v1/sns/reportPost";
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(tokenDto.getAccessToken());
+    HttpEntity<ReportPostDto.Request> requestEntity = new HttpEntity<>(request, headers);
+
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.postForEntity(
+            url,
+            requestEntity,
+            String.class
+    );
+
+    ApiResponse<CreateCommentDto.Response> apiResponse = gson.fromJson(
+            responseEntity.getBody(),
+            new TypeToken<ApiResponse<CreateCommentDto.Response>>() {}.getType()
+    );
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(apiResponse.getData()).isNull();
+  }
+
+  @Test
+  void reportPost_중복_신고() {
+    // given
+    Member member = createMember();
+    TokenDto tokenDto = tokenProvider.getToken(member);
+    Member writeMember = createMember();
+    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    Post post = createPost(postType, writeMember);
+    createReportPost(post, member);
+
+
+    ReportPostDto.Request request = new ReportPostDto.Request(post.getId());
+
+    String url = "http://localhost:" + port + "/api/v1/sns/reportPost";
+
+    DuplicateReportException exception = new DuplicateReportException();
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(tokenDto.getAccessToken());
+    HttpEntity<ReportPostDto.Request> requestEntity = new HttpEntity<>(request, headers);
+
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.postForEntity(
+            url,
+            requestEntity,
+            String.class
+    );
+
+    ApiResponse<CreateCommentDto.Response> apiResponse = gson.fromJson(
+            responseEntity.getBody(),
+            new TypeToken<ApiResponse<CreateCommentDto.Response>>() {}.getType()
+    );
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(apiResponse.getCode()).isEqualTo(exception.getCode());
+    assertThat(apiResponse.getMessage()).isEqualTo(exception.getMessage());
+    assertThat(apiResponse.getData()).isNull();
+  }
+
+  @Test
+  void reportPost_토큰_미입력() {
+    // given
+    Member writeMember = createMember();
+    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    Post post = createPost(postType, writeMember);
+
+    ReportPostDto.Request request = new ReportPostDto.Request(post.getId());
+
+    String url = "http://localhost:" + port + "/api/v1/sns/reportPost";
+
+    UnAuthenticationMemberException exception = new UnAuthenticationMemberException();
+
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.postForEntity(
+            url,
+            request,
+            String.class
+    );
+
+    ApiResponse<CreateCommentDto.Response> apiResponse = gson.fromJson(
+            responseEntity.getBody(),
+            new TypeToken<ApiResponse<CreateCommentDto.Response>>() {}.getType()
+    );
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    assertThat(apiResponse.getCode()).isEqualTo(exception.getCode());
+    assertThat(apiResponse.getMessage()).isEqualTo(exception.getMessage());
+    assertNull(apiResponse.getData());
+  }
+
+  @Test
+  void reportPost_존재하지_않는_게시물() {
+    // given
+    TokenDto tokenDto = tokenProvider.getToken(createMember());
+
+    Long postId = RandomValue.getRandomLong(-9999, -1);
+    ReportPostDto.Request request = new ReportPostDto.Request(postId);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(tokenDto.getAccessToken());
+    HttpEntity<ReportPostDto.Request> requestEntity = new HttpEntity<>(request, headers);
+
+    String url = "http://localhost:" + port + "/api/v1/sns/reportPost";
+
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.postForEntity(
+            url,
+            requestEntity,
+            String.class
+    );
+
+    ApiResponse<CreateCommentDto.Response> apiResponse = gson.fromJson(
+            responseEntity.getBody(),
+            new TypeToken<ApiResponse<CreateCommentDto.Response>>() {}.getType()
+    );
+
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    assertNull(apiResponse.getData());
   }
 }

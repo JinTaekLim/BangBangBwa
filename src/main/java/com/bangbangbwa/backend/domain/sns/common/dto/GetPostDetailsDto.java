@@ -18,8 +18,8 @@ public class GetPostDetailsDto {
       @Schema(description = "닉네임")
       String nickname,
       @Schema(description = "내가 작성한 댓글")
-      String comment
-//      @Schema(description = "팔로우 여부")
-//      boolean isFollowed
+      String comment,
+      @Schema(description = "팔로우 여부")
+      boolean isFollowed
   ) {}
 }
