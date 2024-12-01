@@ -21,7 +21,7 @@ public class PostReader {
   }
 
   public GetPostDetailsDto.Response getPostDetails(Long postId, Long memberId) {
-    return postRepository.getPostDetails(postId, memberId);
+    return postRepository.getPostDetails(postId, memberId).orElseThrow(NotFoundPostException::new);
   }
 
   public List<Post> findAllByPostType(PostType postType) {

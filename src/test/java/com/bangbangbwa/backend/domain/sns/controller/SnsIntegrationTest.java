@@ -21,6 +21,7 @@ import com.bangbangbwa.backend.domain.sns.common.entity.ReportPost;
 import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
 import com.bangbangbwa.backend.domain.sns.exception.DuplicateReportException;
 import com.bangbangbwa.backend.domain.sns.exception.InvalidMemberVisibilityException;
+import com.bangbangbwa.backend.domain.sns.exception.NotFoundPostException;
 import com.bangbangbwa.backend.domain.sns.repository.PostRepository;
 import com.bangbangbwa.backend.domain.sns.repository.ReportPostRepository;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
@@ -34,7 +35,6 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -46,7 +46,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 
-@Slf4j
 class SnsIntegrationTest extends IntegrationTest {
 
   @LocalServerPort
@@ -193,6 +192,7 @@ class SnsIntegrationTest extends IntegrationTest {
     IntStream.range(0, postCount)
             .forEach(i -> createPost(postType, writeMember));
 
+
     String url = "http://localhost:" + port + "/api/v1/sns/getPostList";
 
 
@@ -211,6 +211,7 @@ class SnsIntegrationTest extends IntegrationTest {
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertNotNull(apiResponse.getData());
     assertThat(apiResponse.getData().size()).isEqualTo(postCount);
+
   }
 
 
@@ -290,6 +291,32 @@ class SnsIntegrationTest extends IntegrationTest {
     assertThat(apiResponse.getData().profileUrl()).isEqualTo(writeMember.getProfile());
     assertThat(apiResponse.getData().content()).isEqualTo(post.getContent());
     assertThat(apiResponse.getData().isFollowed()).isEqualTo(false);
+
+  }
+
+
+  @Test
+  void getPostDetails_존재하지_않는_게시물() {
+    // given
+    Long postId = RandomValue.getRandomLong(-999,-1);
+
+    String url = "http://localhost:" + port + "/api/v1/sns/getPostDetails/" + postId;
+
+    NotFoundPostException exception = new NotFoundPostException();
+
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
+
+    ApiResponse<GetPostDetailsDto.Response> apiResponse = gson.fromJson(
+            responseEntity.getBody(),
+            new TypeToken<ApiResponse<GetPostDetailsDto.Response>>() {}.getType()
+    );
+
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertNull(apiResponse.getData());
+    assertThat(apiResponse.getCode()).isEqualTo(exception.getCode());
+    assertThat(apiResponse.getMessage()).isEqualTo(exception.getMessage());
 
   }
 
