@@ -23,12 +23,13 @@ public class Tag {
   private LocalDateTime updatedAt;
 
   @Builder
-  public Tag(String name, String createdId, LocalDateTime createdAt, String updatedId,
-      LocalDateTime updatedAt) {
+  public Tag(String name, String createdId) {
     this.name = name;
+
+    LocalDateTime now = LocalDateTime.now();
     this.createdId = createdId;
-    this.createdAt = createdAt;
-    this.updatedId = updatedId;
-    this.updatedAt = updatedAt;
+    this.createdAt = now;
+    this.updatedId = createdId;
+    this.updatedAt = now;
   }
 }

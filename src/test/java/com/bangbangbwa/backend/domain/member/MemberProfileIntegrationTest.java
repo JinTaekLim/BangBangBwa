@@ -12,9 +12,16 @@ import com.bangbangbwa.backend.domain.member.repository.FollowRepository;
 import com.bangbangbwa.backend.domain.member.repository.MemberRepository;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
+import com.bangbangbwa.backend.domain.tag.common.entity.Tag;
+import com.bangbangbwa.backend.domain.tag.repository.TagRepository;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
 import com.bangbangbwa.backend.domain.token.common.TokenDto;
 import com.bangbangbwa.backend.global.test.IntegrationTest;
+import com.bangbangbwa.backend.global.util.randomValue.RandomString;
+import com.bangbangbwa.backend.global.util.randomValue.RandomValue;
+import java.util.ArrayList;
+import java.util.List;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -30,21 +37,24 @@ class MemberProfileIntegrationTest extends IntegrationTest {
   private FollowRepository followRepository;
 
   @Autowired
+  private TagRepository tagRepository;
+
+  @Autowired
   private TokenProvider tokenProvider;
 
   private Member testMember() {
     Member member = Member.builder()
-        .nickname("bbbNickname")
-        .selfIntroduction("bbbSelfIntroduction")
+        .nickname(RandomString.getGenerator().minLength(1).maxLength(100).nullable(false).generate())
+        .selfIntroduction(RandomString.getGenerator().minLength(0).maxLength(100).nullable(true).generate())
         .build();
 
     OAuthInfoDto oAuthInfo = OAuthInfoDto.builder()
-        .snsId("bbbSnsId")
-        .email("bbb@gmail.com")
+        .snsId(RandomString.getGenerator().minLength(1).maxLength(30).nullable(false).generate())
+        .email(RandomString.getGenerator().minLength(1).maxLength(100).nullable(false).generate())
         .snsType(SnsType.GOOGLE)
         .build();
     member.addOAuthInfo(oAuthInfo);
-    member.updateProfile("https://images.khan.co.kr/article/2024/03/05/news-p.v1.20240305.9dc707937ff0483e9f91ee16c87312dd_P1.jpg");
+    member.updateProfile(RandomString.getGenerator().minLength(0).maxLength(255).nullable(true).generate());
 
     return member;
   }
@@ -58,8 +68,64 @@ class MemberProfileIntegrationTest extends IntegrationTest {
     return follow;
   }
 
+  private Tag testTag(Long memberId) {
+    Tag tag = Tag.builder()
+        .name(RandomString.getGenerator()
+            .minLength(3)
+            .maxLength(10)
+            .nullable(false)
+            .generate())
+        .createdId("member:" + memberId)
+        .build();
+
+    return tag;
+  }
+
   @Test
   void getProfile_내_정보() throws Exception {
+    Member member = testMember();
+    memberRepository.save(member);
+    TokenDto token = tokenProvider.getToken(member);
+    String AUTHORIZATION = "Bearer " + token.getAccessToken();
+
+    // 관심태그 1~10개
+    long tagCount = RandomValue.getRandomLong(1, 10);
+    List<String> interests = new ArrayList<>();
+    for (int i = 0; i < tagCount; i++) {
+      Tag tag = testTag(member.getId());
+      tagRepository.save(tag);
+      memberRepository.save(member, tag);
+      interests.add(tag.getName());
+    }
+
+    ProfileDto.Response expected = new ProfileDto.Response(
+        member.getProfile(),
+        member.getNickname(),
+        false,
+        member.getSelfIntroduction(),
+        interests
+    );
+
+    String URL = "/api/v1/members/profile/" + member.getId();
+    mvc.perform(get(URL)
+            .header(HttpHeaders.AUTHORIZATION, AUTHORIZATION))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.code").value(HttpStatus.OK.name()))
+        .andExpect(jsonPath("$.message").value(HttpStatus.OK.getReasonPhrase()))
+        .andExpect(jsonPath("$.data").isNotEmpty())
+        .andExpect(jsonPath("$.data.imageUrl").value(expected.imageUrl()))
+        .andExpect(jsonPath("$.data.nickname").value(expected.nickname()))
+        .andExpect(jsonPath("$.data.isFollowing").value(expected.isFollowing()))
+        .andExpect(jsonPath("$.data.selfIntroduction").value(expected.selfIntroduction()))
+        .andExpect(jsonPath("$.data.interests").isArray())
+        .andExpect(jsonPath("$.data.interests").isNotEmpty())
+        .andExpect(jsonPath("$.data.interests").value(expected.interests()))
+    ;
+  }
+
+  @Test
+  void getProfile_내_정보_관심태그_없음() throws Exception {
     Member member = testMember();
     memberRepository.save(member);
     TokenDto token = tokenProvider.getToken(member);
@@ -85,6 +151,7 @@ class MemberProfileIntegrationTest extends IntegrationTest {
         .andExpect(jsonPath("$.data.nickname").value(expected.nickname()))
         .andExpect(jsonPath("$.data.isFollowing").value(expected.isFollowing()))
         .andExpect(jsonPath("$.data.selfIntroduction").value(expected.selfIntroduction()))
+        .andExpect(jsonPath("$.data.interests").value(Matchers.nullValue()))
     ;
   }
 
@@ -102,12 +169,22 @@ class MemberProfileIntegrationTest extends IntegrationTest {
     Follow follow = testFollow(member1.getId(), member2.getId());
     followRepository.save(follow);
 
+    // 관심태그 1~10개
+    long tagCount = RandomValue.getRandomLong(1, 10);
+    List<String> interests = new ArrayList<>();
+    for (int i = 0; i < tagCount; i++) {
+      Tag tag = testTag(member2.getId());
+      tagRepository.save(tag);
+      memberRepository.save(member2, tag);
+      interests.add(tag.getName());
+    }
+
     ProfileDto.Response expected = new ProfileDto.Response(
         member2.getProfile(),
         member2.getNickname(),
         true,
         member2.getSelfIntroduction(),
-        null
+        interests
     );
 
     String URL = "/api/v1/members/profile/" + member2.getId();
@@ -122,6 +199,9 @@ class MemberProfileIntegrationTest extends IntegrationTest {
         .andExpect(jsonPath("$.data.nickname").value(expected.nickname()))
         .andExpect(jsonPath("$.data.isFollowing").value(expected.isFollowing()))
         .andExpect(jsonPath("$.data.selfIntroduction").value(expected.selfIntroduction()))
+        .andExpect(jsonPath("$.data.interests").isArray())
+        .andExpect(jsonPath("$.data.interests").isNotEmpty())
+        .andExpect(jsonPath("$.data.interests").value(expected.interests()))
     ;
   }
 
@@ -135,15 +215,25 @@ class MemberProfileIntegrationTest extends IntegrationTest {
     Member member2 = testMember();
     memberRepository.save(member2);
 
+    // 관심태그 1~10개
+    long tagCount = RandomValue.getRandomLong(1, 10);
+    List<String> interests = new ArrayList<>();
+    for (int i = 0; i < tagCount; i++) {
+      Tag tag = testTag(member2.getId());
+      tagRepository.save(tag);
+      memberRepository.save(member2, tag);
+      interests.add(tag.getName());
+    }
+
     ProfileDto.Response expected = new ProfileDto.Response(
         member2.getProfile(),
         member2.getNickname(),
         false,
         member2.getSelfIntroduction(),
-        null
+        interests
     );
 
-    String URL = "/api/v1/members/profile/" + member1.getId();
+    String URL = "/api/v1/members/profile/" + member2.getId();
     mvc.perform(get(URL)
             .header(HttpHeaders.AUTHORIZATION, AUTHORIZATION))
         .andExpect(status().isOk())
@@ -155,6 +245,9 @@ class MemberProfileIntegrationTest extends IntegrationTest {
         .andExpect(jsonPath("$.data.nickname").value(expected.nickname()))
         .andExpect(jsonPath("$.data.isFollowing").value(expected.isFollowing()))
         .andExpect(jsonPath("$.data.selfIntroduction").value(expected.selfIntroduction()))
+        .andExpect(jsonPath("$.data.interests").isArray())
+        .andExpect(jsonPath("$.data.interests").isNotEmpty())
+        .andExpect(jsonPath("$.data.interests").value(expected.interests()))
     ;
   }
 
@@ -163,12 +256,22 @@ class MemberProfileIntegrationTest extends IntegrationTest {
     Member member = testMember();
     memberRepository.save(member);
 
+    // 관심태그 1~10개
+    long tagCount = RandomValue.getRandomLong(1, 10);
+    List<String> interests = new ArrayList<>();
+    for (int i = 0; i < tagCount; i++) {
+      Tag tag = testTag(member.getId());
+      tagRepository.save(tag);
+      memberRepository.save(member, tag);
+      interests.add(tag.getName());
+    }
+
     ProfileDto.Response expected = new ProfileDto.Response(
         member.getProfile(),
         member.getNickname(),
         false,
         member.getSelfIntroduction(),
-        null
+        interests
     );
 
     String URL = "/api/v1/members/profile/" + member.getId();
@@ -182,6 +285,9 @@ class MemberProfileIntegrationTest extends IntegrationTest {
         .andExpect(jsonPath("$.data.nickname").value(expected.nickname()))
         .andExpect(jsonPath("$.data.isFollowing").value(expected.isFollowing()))
         .andExpect(jsonPath("$.data.selfIntroduction").value(expected.selfIntroduction()))
+        .andExpect(jsonPath("$.data.interests").isArray())
+        .andExpect(jsonPath("$.data.interests").isNotEmpty())
+        .andExpect(jsonPath("$.data.interests").value(expected.interests()))
     ;
   }
 }

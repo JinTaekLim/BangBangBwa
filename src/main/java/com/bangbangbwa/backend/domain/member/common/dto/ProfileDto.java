@@ -1,6 +1,6 @@
 package com.bangbangbwa.backend.domain.member.common.dto;
 
-import com.bangbangbwa.backend.domain.member.common.enums.Interest;
+import com.bangbangbwa.backend.domain.tag.common.entity.Tag;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -18,7 +18,7 @@ public class ProfileDto {
   private String nickname;
   private Boolean isFollowing;
   private String selfIntroduction;
-  private List<Interest> interests;
+  private List<Tag> interests;
 
   public ProfileDto(Long memberId, Long currentMemberId) {
     this.memberId = memberId;
@@ -36,7 +36,7 @@ public class ProfileDto {
     @Schema(description = "자기소개")
     String selfIntroduction,
     @Schema(description = "관심분야 목록")
-    List<Interest> interests
+    List<String> interests
   ) {
   }
 }
