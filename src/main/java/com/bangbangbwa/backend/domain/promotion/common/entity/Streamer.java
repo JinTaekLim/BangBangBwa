@@ -19,7 +19,7 @@ public class Streamer {
     tags = new ArrayList<>();
     platforms = new ArrayList<>();
   }
-
+  
   private Long id;
   private List<Tag> tags;
   private List<Platform> platforms;

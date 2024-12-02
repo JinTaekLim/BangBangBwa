@@ -42,13 +42,15 @@ public class Member {
 
   @Builder
   public Member(
-      String nickname
+      String nickname,
+      String selfIntroduction
   ) {
     this.nickname = nickname;
+    this.selfIntroduction = selfIntroduction;
+
     this.role = Role.MEMBER;
 
     LocalDateTime now = LocalDateTime.now();
-
     this.createdAt = now;
     this.updatedAt = now;
     this.createdId = SELF;
@@ -64,4 +66,6 @@ public class Member {
   public void updateProfile(String profile) {
     this.profile = profile;
   }
+
+  public void updateRole(Role role) { this.role = role; }
 }
