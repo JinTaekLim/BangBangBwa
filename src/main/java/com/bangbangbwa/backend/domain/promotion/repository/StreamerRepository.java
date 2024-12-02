@@ -1,5 +1,6 @@
 package com.bangbangbwa.backend.domain.promotion.repository;
 
+import com.bangbangbwa.backend.domain.promotion.common.dto.StreamerDto;
 import com.bangbangbwa.backend.domain.promotion.common.entity.Streamer;
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +14,7 @@ public class StreamerRepository {
 
   private final SqlSession mysql;
 
-  public List<Streamer> findAll() {
+  public List<StreamerDto> findAll() {
     return mysql.selectList("StreamerMapper.selectAll");
   }
 

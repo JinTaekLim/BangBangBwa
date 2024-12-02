@@ -149,10 +149,6 @@ CREATE TABLE streamers
 (
     id                BIGINT AUTO_INCREMENT NOT NULL COMMENT '스트리머_ID',
     member_id         BIGINT              NOT NULL COMMENT '멤버_ID',
-    today_comment     VARCHAR(20) NULL COMMENT '스트리머_오늘의_한마디',
-    self_introduction VARCHAR(100) NULL COMMENT '스트리머_자기_소개',
-    image_url         LONGTEXT     NULL COMMENT '스트리머_이미지_URL',
-    name              VARCHAR(10)  NULL COMMENT '스트리머_이름',
     PRIMARY KEY (id),
     FOREIGN KEY (member_id) REFERENCES members (id)
 );
