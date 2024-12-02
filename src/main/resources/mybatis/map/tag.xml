@@ -8,7 +8,7 @@
   </select>
 
   <select id="findAllByName" parameterType="String" resultType="String">
-    SELECT DISTINCT name
+    SELECT name
     FROM tags t
     WHERE 1=1
     AND name LIKE CONCAT('%', #{keyword}, '%')
