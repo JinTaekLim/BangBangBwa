@@ -18,7 +18,9 @@ public class ProfileDto {
   private String nickname;
   private Boolean isFollowing;
   private String selfIntroduction;
-  private List<Tag> interests;
+  private Boolean isStreamer;
+  private List<Tag> interestTags;
+  private List<Tag> streamerTags;
 
   public ProfileDto(Long memberId, Long currentMemberId) {
     this.memberId = memberId;
@@ -35,8 +37,8 @@ public class ProfileDto {
     boolean isFollowing,
     @Schema(description = "자기소개")
     String selfIntroduction,
-    @Schema(description = "관심분야 목록")
-    List<String> interests
+    @Schema(description = "(일반인)관심분야 목록 / (스트리머)방송분야 목록")
+    List<String> tags
   ) {
   }
 }

@@ -90,12 +90,12 @@ class MemberProfileIntegrationTest extends IntegrationTest {
 
     // 관심태그 1~10개
     long tagCount = RandomValue.getRandomLong(1, 10);
-    List<String> interests = new ArrayList<>();
+    List<String> tags = new ArrayList<>();
     for (int i = 0; i < tagCount; i++) {
       Tag tag = testTag(member.getId());
       tagRepository.save(tag);
       memberRepository.save(member, tag);
-      interests.add(tag.getName());
+      tags.add(tag.getName());
     }
 
     ProfileDto.Response expected = new ProfileDto.Response(
@@ -103,7 +103,7 @@ class MemberProfileIntegrationTest extends IntegrationTest {
         member.getNickname(),
         false,
         member.getSelfIntroduction(),
-        interests
+        tags
     );
 
     String URL = "/api/v1/members/profile/" + member.getId();
@@ -118,9 +118,9 @@ class MemberProfileIntegrationTest extends IntegrationTest {
         .andExpect(jsonPath("$.data.nickname").value(expected.nickname()))
         .andExpect(jsonPath("$.data.isFollowing").value(expected.isFollowing()))
         .andExpect(jsonPath("$.data.selfIntroduction").value(expected.selfIntroduction()))
-        .andExpect(jsonPath("$.data.interests").isArray())
-        .andExpect(jsonPath("$.data.interests").isNotEmpty())
-        .andExpect(jsonPath("$.data.interests").value(expected.interests()))
+        .andExpect(jsonPath("$.data.tags").isArray())
+        .andExpect(jsonPath("$.data.tags").isNotEmpty())
+        .andExpect(jsonPath("$.data.tags").value(expected.tags()))
     ;
   }
 
@@ -151,7 +151,7 @@ class MemberProfileIntegrationTest extends IntegrationTest {
         .andExpect(jsonPath("$.data.nickname").value(expected.nickname()))
         .andExpect(jsonPath("$.data.isFollowing").value(expected.isFollowing()))
         .andExpect(jsonPath("$.data.selfIntroduction").value(expected.selfIntroduction()))
-        .andExpect(jsonPath("$.data.interests").value(Matchers.nullValue()))
+        .andExpect(jsonPath("$.data.tags").value(Matchers.nullValue()))
     ;
   }
 
@@ -171,12 +171,12 @@ class MemberProfileIntegrationTest extends IntegrationTest {
 
     // 관심태그 1~10개
     long tagCount = RandomValue.getRandomLong(1, 10);
-    List<String> interests = new ArrayList<>();
+    List<String> tags = new ArrayList<>();
     for (int i = 0; i < tagCount; i++) {
       Tag tag = testTag(member2.getId());
       tagRepository.save(tag);
       memberRepository.save(member2, tag);
-      interests.add(tag.getName());
+      tags.add(tag.getName());
     }
 
     ProfileDto.Response expected = new ProfileDto.Response(
@@ -184,7 +184,7 @@ class MemberProfileIntegrationTest extends IntegrationTest {
         member2.getNickname(),
         true,
         member2.getSelfIntroduction(),
-        interests
+        tags
     );
 
     String URL = "/api/v1/members/profile/" + member2.getId();
@@ -199,9 +199,9 @@ class MemberProfileIntegrationTest extends IntegrationTest {
         .andExpect(jsonPath("$.data.nickname").value(expected.nickname()))
         .andExpect(jsonPath("$.data.isFollowing").value(expected.isFollowing()))
         .andExpect(jsonPath("$.data.selfIntroduction").value(expected.selfIntroduction()))
-        .andExpect(jsonPath("$.data.interests").isArray())
-        .andExpect(jsonPath("$.data.interests").isNotEmpty())
-        .andExpect(jsonPath("$.data.interests").value(expected.interests()))
+        .andExpect(jsonPath("$.data.tags").isArray())
+        .andExpect(jsonPath("$.data.tags").isNotEmpty())
+        .andExpect(jsonPath("$.data.tags").value(expected.tags()))
     ;
   }
 
@@ -217,12 +217,12 @@ class MemberProfileIntegrationTest extends IntegrationTest {
 
     // 관심태그 1~10개
     long tagCount = RandomValue.getRandomLong(1, 10);
-    List<String> interests = new ArrayList<>();
+    List<String> tags = new ArrayList<>();
     for (int i = 0; i < tagCount; i++) {
       Tag tag = testTag(member2.getId());
       tagRepository.save(tag);
       memberRepository.save(member2, tag);
-      interests.add(tag.getName());
+      tags.add(tag.getName());
     }
 
     ProfileDto.Response expected = new ProfileDto.Response(
@@ -230,7 +230,7 @@ class MemberProfileIntegrationTest extends IntegrationTest {
         member2.getNickname(),
         false,
         member2.getSelfIntroduction(),
-        interests
+        tags
     );
 
     String URL = "/api/v1/members/profile/" + member2.getId();
@@ -245,9 +245,9 @@ class MemberProfileIntegrationTest extends IntegrationTest {
         .andExpect(jsonPath("$.data.nickname").value(expected.nickname()))
         .andExpect(jsonPath("$.data.isFollowing").value(expected.isFollowing()))
         .andExpect(jsonPath("$.data.selfIntroduction").value(expected.selfIntroduction()))
-        .andExpect(jsonPath("$.data.interests").isArray())
-        .andExpect(jsonPath("$.data.interests").isNotEmpty())
-        .andExpect(jsonPath("$.data.interests").value(expected.interests()))
+        .andExpect(jsonPath("$.data.tags").isArray())
+        .andExpect(jsonPath("$.data.tags").isNotEmpty())
+        .andExpect(jsonPath("$.data.tags").value(expected.tags()))
     ;
   }
 
@@ -258,12 +258,12 @@ class MemberProfileIntegrationTest extends IntegrationTest {
 
     // 관심태그 1~10개
     long tagCount = RandomValue.getRandomLong(1, 10);
-    List<String> interests = new ArrayList<>();
+    List<String> tags = new ArrayList<>();
     for (int i = 0; i < tagCount; i++) {
       Tag tag = testTag(member.getId());
       tagRepository.save(tag);
       memberRepository.save(member, tag);
-      interests.add(tag.getName());
+      tags.add(tag.getName());
     }
 
     ProfileDto.Response expected = new ProfileDto.Response(
@@ -271,7 +271,7 @@ class MemberProfileIntegrationTest extends IntegrationTest {
         member.getNickname(),
         false,
         member.getSelfIntroduction(),
-        interests
+        tags
     );
 
     String URL = "/api/v1/members/profile/" + member.getId();
@@ -285,9 +285,9 @@ class MemberProfileIntegrationTest extends IntegrationTest {
         .andExpect(jsonPath("$.data.nickname").value(expected.nickname()))
         .andExpect(jsonPath("$.data.isFollowing").value(expected.isFollowing()))
         .andExpect(jsonPath("$.data.selfIntroduction").value(expected.selfIntroduction()))
-        .andExpect(jsonPath("$.data.interests").isArray())
-        .andExpect(jsonPath("$.data.interests").isNotEmpty())
-        .andExpect(jsonPath("$.data.interests").value(expected.interests()))
+        .andExpect(jsonPath("$.data.tags").isArray())
+        .andExpect(jsonPath("$.data.tags").isNotEmpty())
+        .andExpect(jsonPath("$.data.tags").value(expected.tags()))
     ;
   }
 }

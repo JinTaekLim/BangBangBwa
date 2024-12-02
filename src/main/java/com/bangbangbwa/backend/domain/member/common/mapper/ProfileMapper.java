@@ -13,15 +13,22 @@ public interface ProfileMapper {
 
   ProfileMapper INSTANCE = Mappers.getMapper(ProfileMapper.class);
 
-  @Mapping(target = "interests", source = "interests", qualifiedByName = "interestsToString")
+  @Mapping(target = "tags", expression = "java(selectTags(dto))")
   ProfileDto.Response dtoToResponse(ProfileDto dto);
 
-  @Named("interestsToString")
-  static List<String> interestsToString(List<Tag> interests) {
-    if (interests == null || interests.isEmpty()) {
+  @Named("selectTags")
+  default List<String> selectTags(ProfileDto dto) {
+    if (dto.getIsStreamer()) {
+      return getTags(dto.getStreamerTags());
+    }
+    return getTags(dto.getInterestTags());
+  }
+
+  default List<String> getTags(List<Tag> tags) {
+    if (tags == null || tags.isEmpty()) {
       return null;
     }
-    return interests.stream()
+    return tags.stream()
         .map(Tag::getName)
         .toList();
   }
