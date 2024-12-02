@@ -1,6 +1,7 @@
 package com.bangbangbwa.backend.domain.member.business;
 
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
+import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.member.exception.AuthenticationNameNullException;
 import com.bangbangbwa.backend.domain.member.exception.AuthenticationNullException;
 import com.bangbangbwa.backend.domain.member.exception.NotParsedValueException;
@@ -11,7 +12,9 @@ import com.bangbangbwa.backend.domain.promotion.common.entity.Streamer;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -64,4 +67,18 @@ public class MemberProvider {
       return null;
     }
   }
+
+  public Role getCurrentRole() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication.getPrincipal().equals(GUEST)) return Role.GUEST;
+
+    User userDetails = (User) authentication.getPrincipal();
+    String authority = userDetails.getAuthorities().stream()
+            .map(GrantedAuthority::getAuthority)
+            .findFirst()
+            .orElse(null);
+
+    return Role.valueOf(authority);
+  }
+
 }

@@ -35,7 +35,7 @@ abstract public class IntegrationTest {
 
   @BeforeAll
   static void setUpAll() throws IOException {
-    EmbeddedServer.startRedis(6379);
+    EmbeddedServer.startRedis();
   }
 
   @AfterAll

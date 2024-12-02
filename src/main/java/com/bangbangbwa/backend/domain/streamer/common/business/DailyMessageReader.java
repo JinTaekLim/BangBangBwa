@@ -16,4 +16,8 @@ public class DailyMessageReader {
     return dailyMessageRepository.findByIds(idList);
   }
 
+  public String getMessage(Long streamerId) {
+    return dailyMessageRepository.getDailyMessage(streamerId);
+  }
+
 }
