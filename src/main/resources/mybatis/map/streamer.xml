@@ -51,27 +51,6 @@
     s.id
   </select>
 
-  <!--  SELECT-->
-  <!--  s.id AS streamer_id,-->
-  <!--  s.name AS streamer_name,-->
-  <!--  s.today_comment,-->
-  <!--  s.self_introduction,-->
-  <!--  s.image_url,-->
-  <!--  t.id AS tag_id,-->
-  <!--  t.name AS tag_name,-->
-  <!--  p.id AS platform_id,-->
-  <!--  p.name AS platform_name,-->
-  <!--  p.image_url AS platform_image_url,-->
-  <!--  sp.streamer_profile_url-->
-  <!--  FROM-->
-  <!--  streamers s-->
-  <!--  LEFT JOIN streamers_tags st ON s.id = st.streamer_id-->
-  <!--  LEFT JOIN tags t ON st.tag_id = t.id-->
-  <!--  LEFT JOIN streamers_platforms sp ON s.id = sp.streamer_id-->
-  <!--  LEFT JOIN platforms p ON sp.platform_id = p.id-->
-  <!--  ORDER BY-->
-  <!--  s.id-->
-
   <select id="findByMemberId" parameterType="Long" resultType="streamer">
     SELECT * FROM streamers WHERE member_id = #{memberId}
   </select>

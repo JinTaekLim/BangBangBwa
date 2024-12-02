@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import org.apache.ibatis.type.Alias;
 
@@ -21,6 +22,14 @@ public class Streamer {
   }
   
   private Long id;
+  private Long memberId;
   private List<Tag> tags;
   private List<Platform> platforms;
+
+  @Builder
+  public Streamer(
+      Long memberId
+  ) {
+    this.memberId = memberId;
+  }
 }
