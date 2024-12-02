@@ -36,7 +36,7 @@
     LEFT JOIN
     streamers s ON m.id = s.member_id
     WHERE
-    p.created_at >= NOW() - INTERVAL 1 DAY
+    p.created_at >= NOW() - INTERVAL '1' DAY
     AND p.post_type = #{postType}
     GROUP BY
     s.id, m.profile
@@ -53,10 +53,15 @@
     p.content,
     m.profile AS profileUrl,
     m.nickname,
-    c.content AS comment
+    c.content AS comment,
+    CASE
+      WHEN f.follower_id IS NOT NULL THEN true
+      ELSE false
+    END AS isFollowed
     FROM posts p
     LEFT JOIN members m ON p.member_id = m.id
     LEFT JOIN comments c ON c.post_id = p.id AND c.member_id = #{memberId}
+    LEFT JOIN follow f ON f.follower_id = #{memberId} AND f.followee_id = p.member_id
     WHERE p.id = #{postId}
   </select>
 

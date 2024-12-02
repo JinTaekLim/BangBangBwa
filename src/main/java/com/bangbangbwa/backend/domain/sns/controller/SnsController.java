@@ -2,19 +2,12 @@ package com.bangbangbwa.backend.domain.sns.controller;
 
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.member.common.mapper.MemberMapper;
-import com.bangbangbwa.backend.domain.member.service.MemberService;
-import com.bangbangbwa.backend.domain.sns.common.dto.CreateCommentDto;
-import com.bangbangbwa.backend.domain.sns.common.dto.GetLatestPostsDto;
-import com.bangbangbwa.backend.domain.sns.common.dto.SearchMemberDto;
-import com.bangbangbwa.backend.domain.sns.common.dto.UploadPostMediaDto;
+import com.bangbangbwa.backend.domain.sns.common.dto.*;
 import com.bangbangbwa.backend.domain.sns.common.entity.Comment;
 import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
 import com.bangbangbwa.backend.domain.sns.common.mapper.CommentMapper;
 import com.bangbangbwa.backend.domain.sns.common.mapper.PostMapper;
 import com.bangbangbwa.backend.domain.sns.service.SnsService;
-import com.bangbangbwa.backend.domain.sns.common.dto.CreatePostDto;
-import com.bangbangbwa.backend.domain.sns.common.dto.GetPostDetailsDto;
-import com.bangbangbwa.backend.domain.sns.common.dto.GetPostListDto;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
 import com.bangbangbwa.backend.domain.streamer.common.entity.DailyMessage;
 import com.bangbangbwa.backend.domain.streamer.service.DailyMessageService;
@@ -45,16 +38,16 @@ public class SnsController implements SnsApi{
   private final DailyMessageService dailyMessageService;
 
   @GetMapping("/getPostList")
+  @AuthenticationContext
   public ApiResponse<List<GetPostListDto.Response>> getPostList() {
-    List<Post> postList = snsService.getPostList(PostType.MEMBER);
+    List<Post> postList = snsService.getPostList();
     List<GetPostListDto.Response> response = PostMapper.INSTANCE.dtoToGetPostListResponse(postList);
     return ApiResponse.ok(response);
   }
 
-  //note. 팔로우 관련 작업 필요
   @GetMapping("/getPostDetails/{postId}")
   @AuthenticationContext
-  public ApiResponse<GetPostDetailsDto.Response> getPostDetails(@PathVariable Long postId) {
+  public ApiResponse<GetPostDetailsDto.Response> getPostDetails(@PathVariable("postId") Long postId) {
     GetPostDetailsDto.Response response = snsService.getPostDetails(postId);
     return ApiResponse.ok(response);
   }
@@ -93,7 +86,7 @@ public class SnsController implements SnsApi{
 
   @GetMapping("/searchMember/{nickname}")
   @PreAuthorize("hasAuthority('MEMBER')")
-  public ApiResponse<List<SearchMemberDto.Response>> searchMember(@PathVariable String nickname) {
+  public ApiResponse<List<SearchMemberDto.Response>> searchMember(@PathVariable("nickname") String nickname) {
     List<Member> memberList = snsService.searchMember(nickname);
     List<SearchMemberDto.Response> response = MemberMapper
         .INSTANCE
@@ -117,5 +110,14 @@ public class SnsController implements SnsApi{
         .collect(Collectors.toList());
 
     return ApiResponse.ok(response);
+  }
+
+  @PostMapping("/reportPost")
+  @PreAuthorize("hasAuthority('MEMBER')")
+  public ApiResponse<?> reportPost(
+          @RequestBody @Valid ReportPostDto.Request request
+  ) {
+    snsService.reportPost(request);
+    return ApiResponse.ok();
   }
 }
