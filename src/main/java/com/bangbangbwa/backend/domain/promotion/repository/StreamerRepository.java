@@ -20,4 +20,8 @@ public class StreamerRepository {
   public Optional<Streamer> findByMemberId(Long memberId) {
     return Optional.of(mysql.selectOne("StreamerMapper.findByMemberId", memberId));
   }
+
+  public void save(Streamer streamer) {
+    mysql.insert("StreamerMapper.save", streamer);
+  }
 }

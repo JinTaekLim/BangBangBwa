@@ -1,5 +1,6 @@
 package com.bangbangbwa.backend.domain.member.business;
 
+import com.bangbangbwa.backend.domain.member.common.dto.SummaryDto;
 import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.member.exception.DuplicatedNicknameException;
 import com.bangbangbwa.backend.domain.member.repository.MemberRepository;
@@ -39,7 +40,9 @@ public class MemberValidator {
     }
   }
 
-  public boolean isFollowing(Long memberId) {
-    return false;
+  // 다른 사용자를 조회할 경우 불필요한 정보는 제거한다.
+  public void removeData(SummaryDto dto) {
+    dto.setFollowingCount(0L);
+    dto.setIsSubmittedToStreamer(false);
   }
 }

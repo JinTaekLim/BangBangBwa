@@ -59,14 +59,10 @@ public class MemberProvider {
   }
 
   public Long getCurrentMemberIdOrNull() {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (authentication.getPrincipal().equals(GUEST)) return null;
-    return getCurrentMemberId();
-  }
-
-  public Long getCurrentMemberIdIfLogin() {
     try {
-      return this.getCurrentMemberId();
+      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+      if (authentication.getPrincipal().equals(GUEST)) return null;
+      return getCurrentMemberId();
     } catch (Exception e) {
       return null;
     }

@@ -1,10 +1,34 @@
 package com.bangbangbwa.backend.domain.member.common.dto;
 
 import com.bangbangbwa.backend.domain.promotion.common.entity.Platform;
+import com.bangbangbwa.backend.domain.streamer.common.enums.PendingType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 public class SummaryDto {
+
+  private Long memberId;
+  private Long currentMemberId;
+  private Long followerCount;
+  @Setter private Long followingCount;
+  private Long postCount;
+  private Boolean isStreamer;
+  @Setter private Boolean isSubmittedToStreamer;
+  private String pendingType;
+  private List<Platform> platforms;
+
+  public SummaryDto(Long memberId, Long currentMemberId) {
+    this.memberId = memberId;
+    this.currentMemberId = currentMemberId;
+    this.pendingType = PendingType.PENDING.name();
+  }
 
   @Schema(name = "SummaryResponse", description = "프로필 요약 조회 응답")
   public record Response(

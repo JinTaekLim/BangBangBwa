@@ -25,6 +25,7 @@ CREATE TABLE members
     profile    VARCHAR(255) NULL COMMENT 'storage URL',
     nickname   VARCHAR(255) NOT NULL COMMENT '닉네임(null시 랜덤값 생성)',
     role       VARCHAR(20)  NOT NULL COMMENT '회원 권한',
+    self_introduction VARCHAR(100) NULL COMMENT '자기소개',
     deleted_at DATETIME NULL COMMENT '탈퇴일시(null)',
     created_at DATETIME     NOT NULL COMMENT '생성일시',
     created_id VARCHAR(255) NOT NULL COMMENT '생성자',
@@ -149,9 +150,9 @@ CREATE TABLE streamers
     id                BIGINT AUTO_INCREMENT NOT NULL COMMENT '스트리머_ID',
     member_id         BIGINT              NOT NULL COMMENT '멤버_ID',
     today_comment     VARCHAR(20) NULL COMMENT '스트리머_오늘의_한마디',
-    self_introduction VARCHAR(100) NOT NULL COMMENT '스트리머_자기_소개',
-    image_url         LONGTEXT     NOT NULL COMMENT '스트리머_이미지_URL',
-    name              VARCHAR(10)  NOT NULL COMMENT '스트리머_이름',
+    self_introduction VARCHAR(100) NULL COMMENT '스트리머_자기_소개',
+    image_url         LONGTEXT     NULL COMMENT '스트리머_이미지_URL',
+    name              VARCHAR(10)  NULL COMMENT '스트리머_이름',
     PRIMARY KEY (id),
     FOREIGN KEY (member_id) REFERENCES members (id)
 );

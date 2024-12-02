@@ -1,13 +1,13 @@
-INSERT INTO members (sns_type, sns_id, email, nickname, role, created_id, created_at)
-VALUES ('GOOGLE', '12345', 'user@example.com', 'nickname123', 'MEMBER', 'admin', NOW());
-INSERT INTO members (sns_type, sns_id, email, nickname, role, created_id, created_at)
-VALUES ('GOOGLE', '12345', 'user@example.com', 'nickname123', 'MEMBER', 'admin', NOW());
-INSERT INTO members (sns_type, sns_id, email, nickname, role, created_id, created_at)
-VALUES ('GOOGLE', '12345', 'user@example.com', 'nickname123', 'MEMBER', 'admin', NOW());
-INSERT INTO members (sns_type, sns_id, email, nickname, role, created_id, created_at)
-VALUES ('GOOGLE', '12345', 'user@example.com', 'nickname123', 'MEMBER', 'admin', NOW());
-INSERT INTO members (sns_type, sns_id, email, nickname, role, created_id, created_at)
-VALUES ('GOOGLE', '12345', 'user@example.com', 'nickname123', 'MEMBER', 'admin', NOW());
+INSERT INTO members (sns_type, sns_id, email, profile, nickname, role, self_introduction, created_id, created_at)
+VALUES ('GOOGLE', '11111', 'user@example.com', 'https://as2.ftcdn.net/v2/jpg/02/50/30/59/1000_F_250305943_sDC6la1N1fDl3bLgfLxOkQwItIodsdMb.jpg', 'nickname111', 'MEMBER', '저는 테스트1입니다.', 'admin', NOW());
+INSERT INTO members (sns_type, sns_id, email, profile, nickname, role, self_introduction, created_id, created_at)
+VALUES ('GOOGLE', '22222', 'user@example.com', 'https://as2.ftcdn.net/v2/jpg/02/50/30/59/1000_F_250305943_sDC6la1N1fDl3bLgfLxOkQwItIodsdMb.jpg', 'nickname222', 'MEMBER', '저는 테스트2입니다.', 'admin', NOW());
+INSERT INTO members (sns_type, sns_id, email, profile, nickname, role, self_introduction, created_id, created_at)
+VALUES ('GOOGLE', '33333', 'user@example.com', 'https://as2.ftcdn.net/v2/jpg/02/50/30/59/1000_F_250305943_sDC6la1N1fDl3bLgfLxOkQwItIodsdMb.jpg', 'nickname333', 'MEMBER', '저는 테스트3입니다.', 'admin', NOW());
+INSERT INTO members (sns_type, sns_id, email, profile, nickname, role, self_introduction, created_id, created_at)
+VALUES ('GOOGLE', '44444', 'user@example.com', 'https://as2.ftcdn.net/v2/jpg/02/50/30/59/1000_F_250305943_sDC6la1N1fDl3bLgfLxOkQwItIodsdMb.jpg', 'nickname444', 'MEMBER', '저는 테스트4입니다.', 'admin', NOW());
+INSERT INTO members (sns_type, sns_id, email, profile, nickname, role, self_introduction, created_id, created_at)
+VALUES ('GOOGLE', '55555', 'user@example.com', 'https://as2.ftcdn.net/v2/jpg/02/50/30/59/1000_F_250305943_sDC6la1N1fDl3bLgfLxOkQwItIodsdMb.jpg', 'nickname555', 'MEMBER', '저는 테스트5입니다.', 'admin', NOW());
 
 INSERT INTO streamers (member_id, today_comment, self_introduction, image_url, name)
 VALUES ('1','1', '1', '1', '1');

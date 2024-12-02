@@ -42,13 +42,15 @@ public class Member {
 
   @Builder
   public Member(
-      String nickname
+      String nickname,
+      String selfIntroduction
   ) {
     this.nickname = nickname;
+    this.selfIntroduction = selfIntroduction;
+
     this.role = Role.MEMBER;
 
     LocalDateTime now = LocalDateTime.now();
-
     this.createdAt = now;
     this.updatedAt = now;
     this.createdId = SELF;
