@@ -1,6 +1,5 @@
 package com.bangbangbwa.backend.domain.member.common.entity;
 
-import com.bangbangbwa.backend.domain.member.common.enums.Interest;
 import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
@@ -35,7 +34,6 @@ public class Member {
   private String updatedId;
   private LocalDateTime updatedAt;
   private String selfIntroduction;
-  private List<Interest> interests;
   private List<Post> posts;
   private List<Follow> followers;
   private List<Follow> followings;
@@ -51,10 +49,8 @@ public class Member {
     this.role = Role.MEMBER;
 
     LocalDateTime now = LocalDateTime.now();
-    this.createdAt = now;
-    this.updatedAt = now;
     this.createdId = SELF;
-    this.updatedId = SELF;
+    this.createdAt = now;
   }
 
   public void addOAuthInfo(OAuthInfoDto oAuthInfo) {

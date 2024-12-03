@@ -9,27 +9,8 @@ VALUES ('GOOGLE', '44444', 'user@example.com', 'https://as2.ftcdn.net/v2/jpg/02/
 INSERT INTO members (sns_type, sns_id, email, profile, nickname, role, self_introduction, created_id, created_at)
 VALUES ('GOOGLE', '55555', 'user@example.com', 'https://as2.ftcdn.net/v2/jpg/02/50/30/59/1000_F_250305943_sDC6la1N1fDl3bLgfLxOkQwItIodsdMb.jpg', 'nickname555', 'MEMBER', '저는 테스트5입니다.', 'admin', NOW());
 
-INSERT INTO follow
-SELECT 1,
-       1,
-       2,
-       now(),
-       now(),
-       'SYSTEM',
-       now(),
-       'SYSTEM'
-;
-
-INSERT INTO follow
-SELECT 2,
-       2,
-       1,
-       now(),
-       now(),
-       'SYSTEM',
-       now(),
-       'SYSTEM'
-;
+INSERT INTO follow SELECT 1, 1, 2, now(), now(), 'SYSTEM', now(), 'SYSTEM';
+INSERT INTO follow SELECT 2, 2, 1, now(), now(), 'SYSTEM', now(), 'SYSTEM';
 
 INSERT INTO streamers (member_id)
 VALUES ('1');
