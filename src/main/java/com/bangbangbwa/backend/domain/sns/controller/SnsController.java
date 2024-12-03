@@ -95,7 +95,7 @@ public class SnsController implements SnsApi{
   }
 
   @GetMapping("/getLatestPosts")
-  @AuthenticationContext
+  @PreAuthorize("permitAll()")
   public ApiResponse<List<GetLatestPostsDto.Response>> getLatestPosts() {
     List<GetLatestPostsDto> getLatestPostsDto = snsService.getLatestPosts(PostType.STREAMER);
 
