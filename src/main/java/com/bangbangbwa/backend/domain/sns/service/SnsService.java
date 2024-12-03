@@ -10,8 +10,16 @@ import com.bangbangbwa.backend.domain.sns.common.dto.*;
 import com.bangbangbwa.backend.domain.sns.common.entity.*;
 import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
 import com.bangbangbwa.backend.domain.sns.common.enums.VisibilityType;
+import com.bangbangbwa.backend.domain.streamer.common.business.DailyMessageReader;
+import com.bangbangbwa.backend.domain.streamer.common.entity.DailyMessage;
 import com.bangbangbwa.backend.global.util.S3Manager;
+
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -42,6 +50,8 @@ public class SnsService {
   private final ReportPostGenerator reportPostGenerator;
   private final ReportCommentGenerator reportCommentGenerator;
   private final ReportCommentCreator reportCommentCreator;
+  private final DailyMessageReader dailyMessageReader;
+  private final ReaderPostReader readerPostReader;
 
   // 게시글 저장 전, content에서 url을 추출 후 redis 값 삭제하는 과정 필요
   @Transactional
@@ -100,10 +110,11 @@ public class SnsService {
     return postProvider.getRandomPost(postType);
   }
 
-  public List<GetLatestPostsDto> getLatestPosts(PostType postType) {
-    return postReader.findPostsWithinLast24Hours(postType);
   public List<GetLatestPostsDto.Response> getLatestPosts(PostType postType) {
     Set<String> readerPostList = new HashSet<>();
+    Long memberId = memberProvider.getCurrentMemberIdOrNull();
+    if (memberId != null) readerPostList = readerPostReader.findAllReadPostsByMemberId(memberId);
+
     List<GetLatestPostsDto> getLatestPostsDto = postReader.findPostsWithinLast24Hours(postType, readerPostList);
     List<Long> memberIds = getLatestPostsDto.stream()
             .map(GetLatestPostsDto::getMemberId)
