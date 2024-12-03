@@ -37,7 +37,5 @@ public class Follow {
     this.followedAt = now;
     this.createdAt = now;
     this.createdId = SELF;
-    this.updatedAt = now;
-    this.updatedId = SELF;
   }
 }

@@ -29,7 +29,5 @@ public class Tag {
     LocalDateTime now = LocalDateTime.now();
     this.createdId = createdId;
     this.createdAt = now;
-    this.updatedId = createdId;
-    this.updatedAt = now;
   }
 }

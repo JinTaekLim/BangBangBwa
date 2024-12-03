@@ -49,10 +49,8 @@ public class Member {
     this.role = Role.MEMBER;
 
     LocalDateTime now = LocalDateTime.now();
-    this.createdAt = now;
-    this.updatedAt = now;
     this.createdId = SELF;
-    this.updatedId = SELF;
+    this.createdAt = now;
   }
 
   public void addOAuthInfo(OAuthInfoDto oAuthInfo) {
