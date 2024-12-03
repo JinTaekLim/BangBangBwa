@@ -21,6 +21,7 @@ import com.bangbangbwa.backend.domain.sns.common.entity.Post;
 import com.bangbangbwa.backend.domain.sns.common.entity.ReportComment;
 import com.bangbangbwa.backend.domain.sns.common.entity.ReportPost;
 import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
+import com.bangbangbwa.backend.domain.sns.common.enums.ReportStatus;
 import com.bangbangbwa.backend.domain.sns.exception.DuplicateReportException;
 import com.bangbangbwa.backend.domain.sns.exception.InvalidMemberVisibilityException;
 import com.bangbangbwa.backend.domain.sns.repository.CommentRepository;
@@ -36,6 +37,8 @@ import com.bangbangbwa.backend.global.util.S3Manager;
 import com.bangbangbwa.backend.global.util.randomValue.Language;
 import com.bangbangbwa.backend.global.util.randomValue.RandomValue;
 import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -872,7 +875,7 @@ class SnsIntegrationTest extends IntegrationTest {
   }
 
   @Test
-  void reportComment_중복_신고() {
+  void reportComment_신고_처리_중_중복_신고() {
     // given
     Member member = createMember();
     TokenDto tokenDto = tokenProvider.getToken(member);
@@ -883,6 +886,60 @@ class SnsIntegrationTest extends IntegrationTest {
 
     Comment comment = createComment(post, writeMember);
     createReportComment(comment, member);
+
+
+    ReportCommentDto.Request request = new ReportCommentDto.Request(comment.getId());
+
+    String url = "http://localhost:" + port + "/api/v1/sns/reportComment";
+
+    DuplicateReportException exception = new DuplicateReportException();
+
+    HttpEntity<ReportCommentDto.Request> requestEntity = new HttpEntity<>(request,
+            new HttpHeaders() {{
+              setBearerAuth(tokenDto.getAccessToken());
+            }}
+    );
+
+
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.postForEntity(
+            url,
+            requestEntity,
+            String.class
+    );
+
+    ApiResponse<CreateCommentDto.Response> apiResponse = gson.fromJson(
+            responseEntity.getBody(),
+            new TypeToken<ApiResponse<CreateCommentDto.Response>>() {}.getType()
+    );
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(apiResponse.getCode()).isEqualTo(exception.getCode());
+    assertThat(apiResponse.getMessage()).isEqualTo(exception.getMessage());
+    assertThat(apiResponse.getData()).isNull();
+  }
+
+  @Test
+  void reportComment_신고_처리_후_중복_신고() throws NoSuchFieldException, IllegalAccessException {
+    // given
+    Member member = createMember();
+    TokenDto tokenDto = tokenProvider.getToken(member);
+
+    Member writeMember = createMember();
+    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    Post post = createPost(postType, writeMember);
+
+    Comment comment = createComment(post, writeMember);
+    ReportComment reportComment = createReportComment(comment, member);
+
+    int randomInt = RandomValue.getInt(0,2);
+    ReportStatus status = (randomInt == 0) ? ReportStatus.CANCEL : ReportStatus.DELETED;
+
+    Field contentField = ReportComment.class.getDeclaredField("status");
+    contentField.setAccessible(true);
+    contentField.set(reportComment, status);
+
+    System.out.println("status : " + reportComment.getStatus());
 
     ReportCommentDto.Request request = new ReportCommentDto.Request(comment.getId());
 
