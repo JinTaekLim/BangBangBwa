@@ -7,6 +7,14 @@
     SELECT * FROM tags WHERE name = #{value}
   </select>
 
+  <select id="findAllByName" parameterType="String" resultType="String">
+    SELECT name
+    FROM tags t
+    WHERE 1=1
+    AND name LIKE CONCAT('%', #{keyword}, '%')
+    ORDER BY name
+  </select>
+
   <insert id="save" parameterType="Tag" keyProperty="id" useGeneratedKeys="true">
     INSERT INTO tags (name, created_id, created_at)
     VALUES (#{name}, #{createdId}, #{createdAt})
