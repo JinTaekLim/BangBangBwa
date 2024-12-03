@@ -90,8 +90,7 @@
         SUM(CASE WHEN type = 'following' THEN cnt ELSE 0 END) AS following_count,
         SUM(CASE WHEN type = 'post' THEN cnt ELSE 0 END) AS post_count,
         MAX(is_streamer) AS is_streamer,
-        MAX(is_submitted_to_streamer) AS is_submitted_to_streamer,
-        NULL AS platforms
+        MAX(is_submitted_to_streamer) AS is_submitted_to_streamer
     FROM (
         SELECT
             'follower' AS type,

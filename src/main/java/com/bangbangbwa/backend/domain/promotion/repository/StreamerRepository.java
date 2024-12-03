@@ -18,6 +18,10 @@ public class StreamerRepository {
     return mysql.selectList("StreamerMapper.selectAll");
   }
 
+  public StreamerDto findStreamer(Long memberId) {
+    return mysql.selectOne("StreamerMapper.findStreamer", memberId);
+  }
+
   public Optional<Streamer> findByMemberId(Long memberId) {
     return Optional.of(mysql.selectOne("StreamerMapper.findByMemberId", memberId));
   }

@@ -1,5 +1,6 @@
 package com.bangbangbwa.backend.domain.promotion.business;
 
+import com.bangbangbwa.backend.domain.promotion.common.dto.PlatformDto;
 import com.bangbangbwa.backend.domain.promotion.common.dto.StreamerDto;
 import com.bangbangbwa.backend.domain.promotion.common.entity.Streamer;
 import com.bangbangbwa.backend.domain.promotion.repository.StreamerRepository;
@@ -21,5 +22,10 @@ public class StreamerReader {
   public Streamer findByMemberId(Long memberId) {
     return streamerRepository.findByMemberId(memberId)
         .orElseThrow(NotFoundStreamerException::new);
+  }
+
+  public List<PlatformDto> findStreamerPlatforms(Long memberId) {
+    StreamerDto streamer = streamerRepository.findStreamer(memberId);
+    return streamer.getPlatforms();
   }
 }

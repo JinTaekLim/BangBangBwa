@@ -14,7 +14,9 @@ import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
 import com.bangbangbwa.backend.domain.member.common.dto.SummaryDto;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
+import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
+import com.bangbangbwa.backend.domain.promotion.business.StreamerReader;
 import com.bangbangbwa.backend.domain.tag.business.TagManager;
 import com.bangbangbwa.backend.domain.tag.common.entity.Tag;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
@@ -40,6 +42,7 @@ public class MemberService {
   private final NicknameProvider nicknameProvider;
   private final MemberProvider memberProvider;
   private final TagManager tagManager;
+  private final StreamerReader streamerReader;
 
   @Transactional
   public TokenDto signup(OAuthInfoDto oAuthInfo, MemberSignupDto.Request request,
@@ -80,7 +83,12 @@ public class MemberService {
   public SummaryDto getSummary(Long memberId) {
     Long currentMemberId = memberProvider.getCurrentMemberIdOrNull();
     SummaryDto request = new SummaryDto(memberId, currentMemberId);
+
     SummaryDto summaryDto = memberReader.getSummary(request);
+
+    if (Objects.equals(memberProvider.getCurrentRoleOrNull(), Role.STREAMER)) {
+      summaryDto.setPlatforms(streamerReader.findStreamerPlatforms(memberId));
+    }
 
     if (!Objects.equals(memberId, currentMemberId)) {
       memberValidator.removeData(summaryDto);
