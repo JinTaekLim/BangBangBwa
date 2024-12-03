@@ -1,7 +1,6 @@
 package com.bangbangbwa.backend.domain.streamer.service;
 
 import com.bangbangbwa.backend.domain.member.business.MemberProvider;
-import com.bangbangbwa.backend.domain.promotion.common.entity.Streamer;
 import com.bangbangbwa.backend.domain.streamer.common.business.DailyMessageCreator;
 import com.bangbangbwa.backend.domain.streamer.common.business.DailyMessageGenerator;
 import com.bangbangbwa.backend.domain.streamer.common.business.DailyMessageReader;
@@ -21,8 +20,8 @@ public class DailyMessageService {
   private final DailyMessageReader dailyMessageReader;
 
   public DailyMessage createDailyMessage(CreateDailyMessageDto.Request request) {
-    Streamer streamer = memberProvider.getCurrentStreamer();
-    DailyMessage dailyMessage = dailyMessageGenerator.generate(request, streamer);
+    Long memberId = memberProvider.getCurrentMemberId();
+    DailyMessage dailyMessage = dailyMessageGenerator.generate(request, memberId);
     dailyMessageCreator.save(dailyMessage);
     return dailyMessage;
   }

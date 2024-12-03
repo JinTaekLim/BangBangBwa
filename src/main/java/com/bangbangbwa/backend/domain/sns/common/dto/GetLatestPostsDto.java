@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GetLatestPostsDto {
 
-  @Schema(description = "방송인ID")
-  Long streamerId;
+  @Schema(description = "멤버ID")
+  Long memberId;
   @Schema(description = "프로필 사진")
   String profileUrl;
   @Schema(description = "최근 게시물")
@@ -21,7 +21,7 @@ public class GetLatestPostsDto {
 
   public Response toResponse(DailyMessage dailyMessage) {
     return new Response(
-        this.streamerId,
+        this.memberId,
         this.profileUrl,
         dailyMessage.getMessage(),
         convertPostIdsToList(this.postIdList)
@@ -37,8 +37,8 @@ public class GetLatestPostsDto {
 
   @Schema(name = "GetLatestPostsDto_Response", description = "사용자 최신글 조회 반환")
   public record Response(
-      @Schema(description = "방송인ID")
-      Long streamerId,
+      @Schema(description = "멤버ID")
+      Long memberId,
       @Schema(description = "프로필 사진")
       String profileUrl,
       @Schema(description = "오늘의 한마디")
