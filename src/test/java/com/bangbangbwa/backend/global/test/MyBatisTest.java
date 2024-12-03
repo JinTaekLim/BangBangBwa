@@ -10,7 +10,7 @@ import org.springframework.test.context.TestPropertySource;
 @ActiveProfiles("test")
 @MybatisTest
 @TestPropertySource(properties = "logging.config=classpath:logback-spring-test.xml")
-@Import(MyBatisConfig.class)
+@Import({MyBatisConfig.class, DatabaseCleaner.class})
 abstract public class MyBatisTest {
 
 }
