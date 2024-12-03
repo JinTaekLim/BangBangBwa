@@ -7,6 +7,8 @@ import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
 import com.bangbangbwa.backend.domain.sns.exception.NotFoundPostException;
 import com.bangbangbwa.backend.domain.sns.repository.PostRepository;
 import java.util.List;
+import java.util.Set;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +30,7 @@ public class PostReader {
     return postRepository.findAllByPostType(postType);
   }
 
-  public List<GetLatestPostsDto> findPostsWithinLast24Hours(PostType postType) {
-    return postRepository.findPostsWithinLast24Hours(postType);
+  public List<GetLatestPostsDto> findPostsWithinLast24Hours(PostType postType, Set<String> readerPostList) {
+    return postRepository.findPostsWithinLast24Hours(postType, readerPostList);
   }
 }

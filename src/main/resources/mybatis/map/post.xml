@@ -38,6 +38,9 @@
     WHERE
     p.created_at >= NOW() - INTERVAL '1' DAY
     AND p.post_type = #{postType}
+    <foreach item="postId" collection="readerPostList" open="AND p.id NOT IN (" close=")" separator=",">
+      #{postId}
+    </foreach>
     GROUP BY
     s.id, m.profile
     ORDER BY

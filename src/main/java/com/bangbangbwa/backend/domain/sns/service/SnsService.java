@@ -102,6 +102,18 @@ public class SnsService {
 
   public List<GetLatestPostsDto> getLatestPosts(PostType postType) {
     return postReader.findPostsWithinLast24Hours(postType);
+  public List<GetLatestPostsDto.Response> getLatestPosts(PostType postType) {
+    Set<String> readerPostList = new HashSet<>();
+    List<GetLatestPostsDto> getLatestPostsDto = postReader.findPostsWithinLast24Hours(postType, readerPostList);
+    List<Long> memberIds = getLatestPostsDto.stream()
+            .map(GetLatestPostsDto::getMemberId)
+            .toList();
+
+    List<DailyMessage> dailyMessageList = dailyMessageReader.findByIds(memberIds);
+
+      return IntStream.range(0, getLatestPostsDto.size())
+              .mapToObj(i -> getLatestPostsDto.get(i).toResponse(dailyMessageList.get(i)))
+              .collect(Collectors.toList());
   }
 
   public void reportPost(ReportPostDto.Request request) {

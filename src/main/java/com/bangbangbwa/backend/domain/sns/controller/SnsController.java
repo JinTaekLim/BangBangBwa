@@ -97,18 +97,7 @@ public class SnsController implements SnsApi{
   @GetMapping("/getLatestPosts")
   @PreAuthorize("permitAll()")
   public ApiResponse<List<GetLatestPostsDto.Response>> getLatestPosts() {
-    List<GetLatestPostsDto> getLatestPostsDto = snsService.getLatestPosts(PostType.STREAMER);
-
-    List<Long> streamerIds = getLatestPostsDto.stream()
-        .map(GetLatestPostsDto::getStreamerId)
-        .collect(Collectors.toList());
-
-    List<DailyMessage> dailyMessageList = dailyMessageService.getDailyMessagesByIds(streamerIds);
-
-    List<GetLatestPostsDto.Response> response = IntStream.range(0, getLatestPostsDto.size())
-        .mapToObj(i -> getLatestPostsDto.get(i).toResponse(dailyMessageList.get(i)))
-        .collect(Collectors.toList());
-
+    List<GetLatestPostsDto.Response> response = snsService.getLatestPosts(PostType.STREAMER);
     return ApiResponse.ok(response);
   }
 
