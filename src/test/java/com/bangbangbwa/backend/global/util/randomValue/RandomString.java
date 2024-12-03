@@ -1,11 +1,10 @@
 package com.bangbangbwa.backend.global.util.randomValue;
 
-public class RandomString {
-    private RandomString() {
-        throw new AssertionError("Utility class should not be instantiated");
-    }
+import lombok.Getter;
 
-    public static RandomStringGenerator getGenerator() {
-        return new RandomStringGenerator();
-    }
+public class RandomString {
+
+  @Getter
+  private static final RandomStringGenerator generator = new RandomStringGenerator();
+
 }

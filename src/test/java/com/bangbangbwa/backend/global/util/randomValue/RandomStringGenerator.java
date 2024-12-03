@@ -99,13 +99,26 @@ public class RandomStringGenerator {
   }
 
   /**
-   * null 값 허용 여부를 설정합니다.
+   * null 값을 허용하지 않도록 설정합니다.
    *
-   * @param nullable null 값 허용 여부
    * @return 현재 RandomStringGenerator 인스턴스
    */
-  public RandomStringGenerator nullable(boolean nullable) {
-    this.nullable = nullable;
+  public RandomStringGenerator notnull() {
+    this.nullable = false;
+    return this;
+  }
+
+  /**
+   * 생성될 문자열의 최소 길이와 최대 길이를 설정합니다.
+   *
+   * @param minLength 최소 길이 (0 이상이어야 함)
+   * @param maxLength 최대 길이 (0 이상이어야 함)
+   * @return 현재 RandomStringGenerator 인스턴스
+   * @throws IllegalArgumentException minLength가 0보다 작거나 maxLength가 0보다 작은 경우
+   */
+  public RandomStringGenerator length(int minLength, int maxLength) {
+    this.minLength(minLength);
+    this.maxLength(maxLength);
     return this;
   }
 
@@ -147,7 +160,7 @@ public class RandomStringGenerator {
    * @throws IllegalStateException minLength가 maxLength보다 큰 경우
    * @throws IllegalStateException 사용 가능한 문자 유형이 하나도 없는 경우
    */
-  public String generate() {
+  public String get() {
     // 먼저 모든 유효성 검증을 수행
     validateGeneration();
 
