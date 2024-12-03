@@ -24,11 +24,9 @@ import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
 import com.bangbangbwa.backend.domain.sns.common.enums.ReportStatus;
 import com.bangbangbwa.backend.domain.sns.exception.DuplicateReportException;
 import com.bangbangbwa.backend.domain.sns.exception.InvalidMemberVisibilityException;
-import com.bangbangbwa.backend.domain.sns.repository.CommentRepository;
+import com.bangbangbwa.backend.domain.sns.repository.*;
 import com.bangbangbwa.backend.domain.sns.exception.NotFoundPostException;
-import com.bangbangbwa.backend.domain.sns.repository.PostRepository;
-import com.bangbangbwa.backend.domain.sns.repository.ReportCommentRepository;
-import com.bangbangbwa.backend.domain.sns.repository.ReportPostRepository;
+import com.bangbangbwa.backend.domain.streamer.repository.DailyMessageRepository;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
 import com.bangbangbwa.backend.domain.token.common.TokenDto;
 import com.bangbangbwa.backend.global.response.ApiResponse;
@@ -40,6 +38,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
@@ -78,6 +77,12 @@ class SnsIntegrationTest extends IntegrationTest {
 
   @Autowired
   private ReportCommentRepository reportCommentRepository;
+
+  @Autowired
+  private DailyMessageRepository dailyMessageRepository;
+
+  @Autowired
+  private ReaderPostRepository readerPostRepository;
 
   @Autowired
   private TokenProvider tokenProvider;
@@ -175,7 +180,7 @@ class SnsIntegrationTest extends IntegrationTest {
   }
 
 
-  // note. 내부 값 검사 필요
+  // note. 이미지/동영상 여부 값 비교 필요
   @Test
   void getPostList() {
     // given
@@ -191,8 +196,9 @@ class SnsIntegrationTest extends IntegrationTest {
     Member writeMember = createMember();
     int postCount = RandomValue.getInt(0,5);
 
-    IntStream.range(0, postCount)
-            .forEach(i -> createPost(postType, writeMember));
+    List<Post> postList = IntStream.range(0, postCount)
+            .mapToObj(i -> createPost(postType, writeMember))
+            .toList();
 
 
     HttpHeaders headers = new HttpHeaders();
@@ -219,8 +225,22 @@ class SnsIntegrationTest extends IntegrationTest {
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertNotNull(apiResponse.getData());
     assertThat(apiResponse.getData().size()).isEqualTo(postCount);
-  }
 
+
+    Comparator<GetPostListDto.Response> getPostId = Comparator.comparing(GetPostListDto.Response::postId);
+    List<GetPostListDto.Response> actualList = apiResponse.getData().stream().sorted(getPostId).toList();
+
+    List<GetPostListDto.Response> expectedList = postList.stream()
+            .map(post -> new GetPostListDto.Response(
+                    post.getId(),
+                    post.getTitle(),
+                    false,
+                    false
+                    )
+            ).sorted(getPostId).toList();
+
+    assertThat(actualList).usingRecursiveComparison().isEqualTo(expectedList);
+  }
 
   @Test
   void getPostList_토큰_미입력() {
@@ -629,7 +649,7 @@ class SnsIntegrationTest extends IntegrationTest {
 
     HttpHeaders headers = new HttpHeaders();
     headers.setBearerAuth(tokenDto.getAccessToken());
-    HttpEntity<String> requestEntity = new HttpEntity<>(headers); // headers만 포함
+    HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
     // when
     ResponseEntity<String> responseEntity = restTemplate.getForEntity(
@@ -675,30 +695,143 @@ class SnsIntegrationTest extends IntegrationTest {
 //    assertNull(apiResponse.getData());
 //  }
 
-  // note. 스트리머 관련 작업 필요
   @Test
-  void getLatestPosts() {
+  void getLatestPosts_토큰_미보유() {
     // given
-    Member member = createMember();
-    Post post = createPost(PostType.STREAMER, member);
+    int memberCount = RandomValue.getInt(0, 5);
+
+    List<GetLatestPostsDto.Response> expectedList = new ArrayList<>();
+
+    for (int i = 0; i < memberCount; i++) {
+      Member writeMember = createMember();
+      writeMember.updateRole(Role.STREAMER);
+
+      String dailyMessage = (RandomValue.getInt(0,2) == 1) ? null : RandomValue.string(1, 50).setNullable(false).get();
+      if (dailyMessage != null)  {
+        dailyMessageRepository.save(writeMember.getId(), dailyMessage, 24);
+      }
+
+      int postCount = RandomValue.getInt(0, 5);
+      List<Long> postList = IntStream.range(0, postCount)
+              .mapToObj(a -> createPost(PostType.STREAMER, writeMember))
+              .map(Post::getId)
+              .sorted()
+              .toList();
+
+      if (!postList.isEmpty()) {
+        expectedList.add(new GetLatestPostsDto.Response(
+                writeMember.getId(),
+                writeMember.getProfile(),
+                dailyMessage,
+                postList
+        ));
+      }
+    }
 
     String url = "http://localhost:" + port + "/api/v1/sns/getLatestPosts";
-
-    // when
-    ResponseEntity<String> responseEntity = restTemplate.getForEntity(
-        url,
-        String.class
-    );
+    ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
 
     ApiResponse<List<GetLatestPostsDto.Response>> apiResponse = gson.fromJson(
-        responseEntity.getBody(),
-        new TypeToken<ApiResponse<List<GetLatestPostsDto.Response>>>() {}.getType()
+            responseEntity.getBody(),
+            new TypeToken<ApiResponse<List<GetLatestPostsDto.Response>>>() {}.getType()
     );
 
     // then
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(apiResponse.getData()).isNotNull();
+
+    Comparator<GetLatestPostsDto.Response> getMemberId = Comparator.comparing(GetLatestPostsDto.Response::memberId);
+    List<GetLatestPostsDto.Response> actualList = apiResponse.getData().stream()
+            .map(dto -> new GetLatestPostsDto.Response(
+                    dto.memberId(),
+                    dto.profileUrl(),
+                    dto.dailyMessage(),
+                    dto.postIdList().stream().sorted().toList()
+            ))
+            .sorted(getMemberId)
+            .toList();
+
+    assertThat(actualList).usingRecursiveComparison().isEqualTo(expectedList);
   }
+
+
+  @Test
+  void getLatestPosts_토큰_보유() {
+    // given
+    Member member = createMember();
+    TokenDto tokenDto = tokenProvider.getToken(member);
+
+    Member writeMember = createMember();
+    writeMember.updateRole(Role.STREAMER);
+
+    List<GetLatestPostsDto.Response> expectedList = new ArrayList<>();
+    int readPostCount = RandomValue.getInt(0, 5);
+    int newPostCount = RandomValue.getInt(0, 5);
+
+    IntStream.range(0, readPostCount)
+            .forEach(a -> {
+              Post post = createPost(PostType.STREAMER, writeMember);
+              readerPostRepository.addReadPost(member.getId().toString(), post.getId().toString());
+            });
+
+    List<Long> postList = IntStream.range(0, newPostCount)
+            .mapToObj(a -> createPost(PostType.STREAMER, writeMember))
+            .map(Post::getId)
+            .sorted()
+            .toList();
+
+
+    String dailyMessage = dailyMessageRepository.getDailyMessage(writeMember.getId());
+
+    if (!postList.isEmpty()) {
+      expectedList.add(new GetLatestPostsDto.Response(
+              writeMember.getId(),
+              writeMember.getProfile(),
+              dailyMessage,
+              postList
+      ));
+    }
+
+
+    String url = "http://localhost:" + port + "/api/v1/sns/getLatestPosts";
+
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(tokenDto.getAccessToken());
+    HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.exchange(
+            url,
+            HttpMethod.GET,
+            requestEntity,
+            String.class
+    );
+
+
+    ApiResponse<List<GetLatestPostsDto.Response>> apiResponse = gson.fromJson(
+            responseEntity.getBody(),
+            new TypeToken<ApiResponse<List<GetLatestPostsDto.Response>>>() {}.getType()
+    );
+
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(apiResponse.getData()).isNotNull();
+
+    Comparator<GetLatestPostsDto.Response> getMemberId = Comparator.comparing(GetLatestPostsDto.Response::memberId);
+    List<GetLatestPostsDto.Response> actualList = apiResponse.getData().stream()
+            .map(dto -> new GetLatestPostsDto.Response(
+                    dto.memberId(),
+                    dto.profileUrl(),
+                    dto.dailyMessage(),
+                    dto.postIdList().stream().sorted().toList()
+            ))
+            .sorted(getMemberId)
+            .toList();
+
+    assertThat(actualList).usingRecursiveComparison().isEqualTo(expectedList);
+  }
+
 
   @Test
   void reportPost() {
