@@ -15,6 +15,7 @@ public class Comment {
 
   private final String SELF = "SELF";
 
+  private Long id;
   private Long postId;
   private Long memberId;
   private String content;

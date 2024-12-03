@@ -9,10 +9,18 @@ import org.springframework.stereotype.Component;
 public class ReportValidator {
 
     private final ReportPostReader reportPostReader;
+    private final ReportCommentReader reportCommentReader;
 
     public void checkForDuplicateReportPost(Long postId, Long createdId) {
         reportPostReader.findPendingReportByPostIdAndCreatedId(postId, createdId)
                 .ifPresent(reportPost -> {
+                    throw new DuplicateReportException();
+                });
+    }
+
+    public void checkForDuplicateReportComment(Long commentId, Long createdId) {
+        reportCommentReader.findPendingReportByCommentIdAndCreatedId(commentId, createdId)
+                .ifPresent(reportComment -> {
                     throw new DuplicateReportException();
                 });
     }

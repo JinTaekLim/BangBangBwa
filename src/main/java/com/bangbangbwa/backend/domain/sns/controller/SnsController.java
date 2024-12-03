@@ -120,4 +120,13 @@ public class SnsController implements SnsApi{
     snsService.reportPost(request);
     return ApiResponse.ok();
   }
+
+  @PostMapping("/reportComment")
+  @PreAuthorize("hasAuthority('MEMBER')")
+  public ApiResponse<?> reportComment(
+          @RequestBody @Valid ReportCommentDto.Request request
+  ) {
+    snsService.reportComment(request);
+    return ApiResponse.ok();
+  }
 }

@@ -7,10 +7,7 @@ import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.sns.business.*;
 import com.bangbangbwa.backend.domain.sns.common.dto.*;
-import com.bangbangbwa.backend.domain.sns.common.entity.Comment;
-import com.bangbangbwa.backend.domain.sns.common.entity.Post;
-import com.bangbangbwa.backend.domain.sns.common.entity.PostVisibilityMember;
-import com.bangbangbwa.backend.domain.sns.common.entity.ReportPost;
+import com.bangbangbwa.backend.domain.sns.common.entity.*;
 import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
 import com.bangbangbwa.backend.domain.sns.common.enums.VisibilityType;
 import com.bangbangbwa.backend.global.util.S3Manager;
@@ -43,7 +40,8 @@ public class SnsService {
   private final ReportValidator reportValidator;
   private final ReportPostCreator reportPostCreator;
   private final ReportPostGenerator reportPostGenerator;
-
+  private final ReportCommentGenerator reportCommentGenerator;
+  private final ReportCommentCreator reportCommentCreator;
 
   // 게시글 저장 전, content에서 url을 추출 후 redis 값 삭제하는 과정 필요
   @Transactional
@@ -111,5 +109,12 @@ public class SnsService {
     reportValidator.checkForDuplicateReportPost(request.postId(), memberId);
     ReportPost reportPost = reportPostGenerator.generate(request, memberId);
     reportPostCreator.save(reportPost);
+  }
+
+  public void reportComment(ReportCommentDto.Request request) {
+    Long memberId = memberProvider.getCurrentMemberId();
+    reportValidator.checkForDuplicateReportComment(request.commentId(), memberId);
+    ReportComment reportComment = reportCommentGenerator.generate(request, memberId);
+    reportCommentCreator.save(reportComment);
   }
 }
