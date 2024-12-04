@@ -9,14 +9,10 @@ import com.bangbangbwa.backend.domain.sns.common.mapper.CommentMapper;
 import com.bangbangbwa.backend.domain.sns.common.mapper.PostMapper;
 import com.bangbangbwa.backend.domain.sns.service.SnsService;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
-import com.bangbangbwa.backend.domain.streamer.common.entity.DailyMessage;
-import com.bangbangbwa.backend.domain.streamer.service.DailyMessageService;
 import com.bangbangbwa.backend.global.annotation.authentication.AuthenticationContext;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import jakarta.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,7 +31,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class SnsController implements SnsApi{
 
   private final SnsService snsService;
-  private final DailyMessageService dailyMessageService;
 
   @GetMapping("/getPostList")
   @AuthenticationContext
@@ -95,20 +90,9 @@ public class SnsController implements SnsApi{
   }
 
   @GetMapping("/getLatestPosts")
-  @AuthenticationContext
+  @PreAuthorize("permitAll()")
   public ApiResponse<List<GetLatestPostsDto.Response>> getLatestPosts() {
-    List<GetLatestPostsDto> getLatestPostsDto = snsService.getLatestPosts(PostType.STREAMER);
-
-    List<Long> streamerIds = getLatestPostsDto.stream()
-        .map(GetLatestPostsDto::getStreamerId)
-        .collect(Collectors.toList());
-
-    List<DailyMessage> dailyMessageList = dailyMessageService.getDailyMessagesByIds(streamerIds);
-
-    List<GetLatestPostsDto.Response> response = IntStream.range(0, getLatestPostsDto.size())
-        .mapToObj(i -> getLatestPostsDto.get(i).toResponse(dailyMessageList.get(i)))
-        .collect(Collectors.toList());
-
+    List<GetLatestPostsDto.Response> response = snsService.getLatestPosts(PostType.STREAMER);
     return ApiResponse.ok(response);
   }
 

@@ -10,18 +10,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DailyMessage {
 
-  private Long streamerId;
+  private Long memberId;
   private String message;
   private Long expirationTime;
 
   @Builder
-  public DailyMessage(Long streamerId, String message) {
-    this.streamerId = streamerId;
+  public DailyMessage(Long memberId, String message) {
+    this.memberId = memberId;
     this.message = message;
     this.expirationTime = 24L;
   }
 
-  public void updateStreamerId(Long streamerId) {
-    this.streamerId = streamerId;
+  public void updateMemberId(Long streamerId) {
+    this.memberId = streamerId;
   }
 }

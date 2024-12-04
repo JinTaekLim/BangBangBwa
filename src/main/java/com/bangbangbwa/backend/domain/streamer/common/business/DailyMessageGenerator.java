@@ -1,6 +1,5 @@
 package com.bangbangbwa.backend.domain.streamer.common.business;
 
-import com.bangbangbwa.backend.domain.promotion.common.entity.Streamer;
 import com.bangbangbwa.backend.domain.streamer.common.dto.CreateDailyMessageDto;
 import com.bangbangbwa.backend.domain.streamer.common.entity.DailyMessage;
 import lombok.RequiredArgsConstructor;
@@ -12,9 +11,9 @@ public class DailyMessageGenerator {
 
   private final DailyMessageParser dailyMessageParser;
 
-  public DailyMessage generate(CreateDailyMessageDto.Request request, Streamer streamer) {
+  public DailyMessage generate(CreateDailyMessageDto.Request request, Long memberId) {
     DailyMessage dailyMessage = dailyMessageParser.requestToEntity(request);
-    dailyMessage.updateStreamerId(streamer.getId());
+    dailyMessage.updateMemberId(memberId);
     return dailyMessage;
   }
 

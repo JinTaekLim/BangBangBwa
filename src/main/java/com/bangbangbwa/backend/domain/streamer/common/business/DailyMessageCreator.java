@@ -13,7 +13,7 @@ public class DailyMessageCreator {
 
   public void save(DailyMessage dailyMessage) {
     dailyMessageRepository.save(
-        dailyMessage.getStreamerId(),
+        dailyMessage.getMemberId(),
         dailyMessage.getMessage(),
         dailyMessage.getExpirationTime()
     );

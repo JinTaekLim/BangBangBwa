@@ -38,14 +38,14 @@ public class DailyMessageRepository {
 
     return IntStream.range(0, ids.size())
         .mapToObj(i -> DailyMessage.builder()
-            .streamerId(ids.get(i))
+            .memberId(ids.get(i))
             .message(messages != null ? messages.get(i) : null)
             .build())
         .collect(Collectors.toList());
   }
 
-  public String getDailyMessage(Long streamerId) {
-    String key = PREFIX + streamerId;
+  public String getDailyMessage(Long memberId) {
+    String key = PREFIX + memberId;
     return redisTemplate.opsForValue().get(key);
   }
 }
