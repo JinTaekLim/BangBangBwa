@@ -1,8 +1,8 @@
 package com.bangbangbwa.backend.domain.member.business;
 
-import com.bangbangbwa.backend.domain.member.common.dto.SummaryDto;
 import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.member.exception.DuplicatedNicknameException;
+import com.bangbangbwa.backend.domain.member.exception.UnAuthenticationMemberException;
 import com.bangbangbwa.backend.domain.member.repository.MemberRepository;
 import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
 import com.bangbangbwa.backend.domain.sns.exception.NoPostPermissionException;
@@ -40,9 +40,9 @@ public class MemberValidator {
     }
   }
 
-  // 다른 사용자를 조회할 경우 불필요한 정보는 제거한다.
-  public void removeData(SummaryDto dto) {
-    dto.setFollowingCount(0L);
-    dto.setIsSubmittedToStreamer(false);
+  public void checkIsMyMemberId(Long memberId) {
+    if (!isMyMemberId(memberId)) {
+      throw new UnAuthenticationMemberException();
+    }
   }
 }

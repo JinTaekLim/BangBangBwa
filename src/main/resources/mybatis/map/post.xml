@@ -65,5 +65,18 @@
     WHERE p.id = #{postId}
   </select>
 
+  <select id ="findAllPost" resultType="com.bangbangbwa.backend.domain.member.common.dto.PostDto">
+    select p.id as post_id,
+           true as isPinned,
+           p.title,
+           p.content,
+           p.write_at as createdDate,
+           true as hasImage,
+           true as hasVideo
+    FROM posts p
+        INNER JOIN members m
+                ON m.id = p.member_id
+    where m.id = #{memberId}
+  </select>
 
 </mapper>

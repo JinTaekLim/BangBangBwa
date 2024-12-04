@@ -2,8 +2,14 @@ package com.bangbangbwa.backend.domain.member.common.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-public class FollowerDto {
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+public class FollowDto {
 
   @Schema(name = "FollowerResponse", description = "팔로워 목록 조회 응답")
   public record Response(

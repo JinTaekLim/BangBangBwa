@@ -1,5 +1,6 @@
 package com.bangbangbwa.backend.domain.sns.business;
 
+import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.GetLatestPostsDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.GetPostDetailsDto;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
@@ -30,5 +31,9 @@ public class PostReader {
 
   public List<GetLatestPostsDto> findPostsWithinLast24Hours(PostType postType) {
     return postRepository.findPostsWithinLast24Hours(postType);
+  }
+
+  public List<PostDto> findAllPost(Long memberId) {
+    return postRepository.findAllPost(memberId);
   }
 }

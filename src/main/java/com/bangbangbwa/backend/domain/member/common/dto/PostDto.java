@@ -2,8 +2,22 @@ package com.bangbangbwa.backend.domain.member.common.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 public class PostDto {
+
+  private Long postId;
+  private boolean isPinned;
+  private String title;
+  private String content;
+  private String createdDate;
+  private boolean hasImage;
+  private boolean hasVideo;
 
   @Schema(name = "PostResponse", description = "게시글 목록 조회 응답")
   public record Response(

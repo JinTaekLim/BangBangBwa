@@ -1,7 +1,9 @@
 package com.bangbangbwa.backend.domain.sns.common.mapper;
 
+import com.bangbangbwa.backend.domain.member.common.dto.CommentDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.CreateCommentDto;
 import com.bangbangbwa.backend.domain.sns.common.entity.Comment;
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -20,4 +22,5 @@ public interface CommentMapper {
   @Mapping(target = "content", source = "comment.content")
   CreateCommentDto.Response dtoToCreateCommentResponse(Comment comment);
 
+  CommentDto.Response dtoToResponse(List<CommentDto> commentDto);
 }

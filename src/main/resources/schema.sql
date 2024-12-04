@@ -82,6 +82,7 @@ CREATE TABLE posts
     status     VARCHAR(100) NOT NULL COMMENT 'DRAFT, PUBLISHED, DELETED',
     title      VARCHAR(100) COMMENT '제목',
     content    VARCHAR(4000) COMMENT '내용',
+    write_at   DATETIME     NOT NULL COMMENT '작성일시',
     created_at DATETIME     NOT NULL COMMENT '생성 일시',
     created_id VARCHAR(255) NOT NULL COMMENT '생성자',
     updated_at DATETIME NULL COMMENT '수정 일시(null)',

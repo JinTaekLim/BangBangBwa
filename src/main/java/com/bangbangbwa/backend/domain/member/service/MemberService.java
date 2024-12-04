@@ -1,28 +1,30 @@
 package com.bangbangbwa.backend.domain.member.service;
 
+import com.bangbangbwa.backend.domain.member.business.FollowReader;
 import com.bangbangbwa.backend.domain.member.business.MemberCreator;
 import com.bangbangbwa.backend.domain.member.business.MemberGenerator;
+import com.bangbangbwa.backend.domain.member.business.MemberProcessor;
 import com.bangbangbwa.backend.domain.member.business.MemberProvider;
 import com.bangbangbwa.backend.domain.member.business.MemberReader;
 import com.bangbangbwa.backend.domain.member.business.MemberTagRelation;
 import com.bangbangbwa.backend.domain.member.business.MemberValidator;
 import com.bangbangbwa.backend.domain.member.business.NicknameProvider;
 import com.bangbangbwa.backend.domain.member.common.dto.CommentDto;
-import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto;
+import com.bangbangbwa.backend.domain.member.common.dto.FollowDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
 import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
 import com.bangbangbwa.backend.domain.member.common.dto.SummaryDto;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
-import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
-import com.bangbangbwa.backend.domain.promotion.business.StreamerReader;
+import com.bangbangbwa.backend.domain.sns.business.CommentReader;
+import com.bangbangbwa.backend.domain.sns.business.PostReader;
+import com.bangbangbwa.backend.domain.streamer.business.PlatformProcessor;
 import com.bangbangbwa.backend.domain.tag.business.TagManager;
 import com.bangbangbwa.backend.domain.tag.common.entity.Tag;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
 import com.bangbangbwa.backend.domain.token.common.TokenDto;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,7 +44,11 @@ public class MemberService {
   private final NicknameProvider nicknameProvider;
   private final MemberProvider memberProvider;
   private final TagManager tagManager;
-  private final StreamerReader streamerReader;
+  private final PlatformProcessor platformProcessor;
+  private final MemberProcessor memberProcessor;
+  private final PostReader postReader;
+  private final CommentReader commentReader;
+  private final FollowReader followReader;
 
   @Transactional
   public TokenDto signup(OAuthInfoDto oAuthInfo, MemberSignupDto.Request request,
@@ -82,32 +88,30 @@ public class MemberService {
 
   public SummaryDto getSummary(Long memberId) {
     Long currentMemberId = memberProvider.getCurrentMemberIdOrNull();
-    SummaryDto request = new SummaryDto(memberId, currentMemberId);
 
+    SummaryDto request = new SummaryDto(memberId, currentMemberId);
     SummaryDto summaryDto = memberReader.getSummary(request);
 
-    if (Objects.equals(memberProvider.getCurrentRoleOrNull(), Role.STREAMER)) {
-      summaryDto.setPlatforms(streamerReader.findStreamerPlatforms(memberId));
-    }
+    platformProcessor.setPlatforms(summaryDto, memberId);
 
-    if (!Objects.equals(memberId, currentMemberId)) {
-      memberValidator.removeData(summaryDto);
-    }
+    memberProcessor.removeDataIfAnotherMember(summaryDto, memberId, currentMemberId);
+
     return summaryDto;
   }
 
   public List<PostDto> getPosts(Long memberId) {
-    memberReader.findById(memberId);
-    return null;
+    return postReader.findAllPost(memberId);
   }
 
-  public CommentDto getComments(Long memberId) {
-    memberReader.findById(memberId);
-    return null;
+  public List<CommentDto> getComments(Long memberId) {
+    memberValidator.checkIsMyMemberId(memberId);
+
+    return commentReader.findAllComments(memberId);
   }
 
-  public List<FollowerDto> getFollowers(Long memberId) {
-    memberReader.findById(memberId);
-    return null;
+  public List<FollowDto> getFollowers(Long memberId) {
+    memberValidator.checkIsMyMemberId(memberId);
+
+    return followReader.findAllFollowers(memberId);
   }
 }

@@ -9,4 +9,26 @@
     VALUES (#{postId}, #{memberId}, #{content}, #{createdId}, #{createdAt})
   </insert>
 
+  <select id="findAllComments" resultType="com.bangbangbwa.backend.domain.member.common.dto.CommentDto">
+    SELECT p.id as post_id,
+           p.title as post_title,
+           p.member_id as post_member_id,
+           m1.profile as post_member_profile_image_url,
+           m1.name as post_member_name
+           true as hasImage,
+           true as hasVideo,
+           c.id as comment_id,
+           c.content as comment_content,
+           null as reply_comment_id,
+           null as reply_comment_content
+    FROM comments c
+        INNER JOIN posts p
+                ON p.id = c.post_id
+        INNER JOIN members m1
+                ON m1.id = p.member_id
+        INNER JOIN members m2
+                on m2.id = c.member_id
+    WHERE c.member_id = #{memberId}
+  </select>
+
 </mapper>

@@ -1,7 +1,7 @@
 package com.bangbangbwa.backend.domain.member.controller;
 
 import com.bangbangbwa.backend.domain.member.common.dto.CommentDto;
-import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto;
+import com.bangbangbwa.backend.domain.member.common.dto.FollowDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberLoginDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberNicknameDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
@@ -296,11 +296,11 @@ public interface MemberApi {
               description = "OK",
               content = @Content(
                   mediaType = MediaType.APPLICATION_JSON_VALUE,
-                  schema = @Schema(implementation = FollowerDto.Response.class)
+                  schema = @Schema(implementation = FollowDto.Response.class)
               )
           ),
       }
   )
-  ApiResponse<FollowerDto.Response> getFollowers(Long memberId);
+  ApiResponse<FollowDto.Response> getFollowers(Long memberId);
 
 }

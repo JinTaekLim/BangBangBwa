@@ -1,6 +1,8 @@
 package com.bangbangbwa.backend.domain.member.repository;
 
+import com.bangbangbwa.backend.domain.member.common.dto.FollowDto;
 import com.bangbangbwa.backend.domain.member.common.entity.Follow;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
@@ -15,4 +17,7 @@ public class FollowRepository {
     mysql.insert("FollowMapper.save", follow);
   }
 
+  public List<FollowDto> findAllFollowers(Long memberId) {
+    return mysql.selectList("FollowMapper.findAllFollowers", memberId);
+  }
 }

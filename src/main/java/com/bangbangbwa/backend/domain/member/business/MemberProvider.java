@@ -88,5 +88,4 @@ public class MemberProvider {
       return null;
     }
   }
-
 }

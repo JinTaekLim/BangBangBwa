@@ -2,7 +2,13 @@ package com.bangbangbwa.backend.domain.member.common.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 public class CommentDto {
 
   @Schema(name = "CommentResponse", description = "댓글 목록 조회 응답")

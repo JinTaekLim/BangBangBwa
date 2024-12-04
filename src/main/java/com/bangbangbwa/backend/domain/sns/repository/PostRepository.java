@@ -1,5 +1,6 @@
 package com.bangbangbwa.backend.domain.sns.repository;
 
+import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.GetLatestPostsDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.GetPostDetailsDto;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
@@ -37,5 +38,9 @@ public class PostRepository {
     params.put("postId", postId);
     params.put("memberId", memberId);
     return Optional.ofNullable(mysql.selectOne("PostMapper.getPostDetails", params));
+  }
+
+  public List<PostDto> findAllPost(Long memberId) {
+    return mysql.selectList("PostMapper.findAllPost", memberId);
   }
 }
