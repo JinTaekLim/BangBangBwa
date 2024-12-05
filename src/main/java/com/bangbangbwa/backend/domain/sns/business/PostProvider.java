@@ -35,7 +35,8 @@ public class PostProvider {
 
     List<Post> followPost = getPostsByMemberIds(followPostSize, memberIds, readPostIds);
     List<Post> tagPost = getTagPost(tagPostSize, tagIds, readPostIds);
-    int randomPostSize = POST_SIZE - followPost.size() - tagPost.size();
+    int totalPosts = followPost.size() + tagPost.size();
+    int randomPostSize = Math.max(POST_SIZE - totalPosts, postProbability[2]);
     List<Post> randomPost = getRandomPost(postType, randomPostSize, readPostIds);
 
     return mergeUniquePosts(followPost, tagPost, randomPost);
