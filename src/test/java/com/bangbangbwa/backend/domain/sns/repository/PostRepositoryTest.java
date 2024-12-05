@@ -174,9 +174,13 @@ class PostRepositoryTest extends MyBatisTest {
 
         // then
         assertThat(posts.size()).isEqualTo(newPostCount);
-        IntStream.range(0, posts.size())
-                .forEach(i -> assertThat(posts.get(i).getId()).isEqualTo(newPostList.get(i)));
 
+        List<Post> sortedPosts = posts.stream().sorted(Comparator.comparing(Post::getId)).toList();
+        List<Long> sortedNewPostList = newPostList.stream().sorted().toList();
+
+        IntStream.range(0, sortedPosts.size())
+                .forEach(i -> assertThat(sortedPosts.get(i).getId())
+                        .isEqualTo(sortedNewPostList.get(i)));
     }
 
     @Test
