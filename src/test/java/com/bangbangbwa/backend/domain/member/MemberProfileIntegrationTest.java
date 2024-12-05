@@ -53,17 +53,17 @@ class MemberProfileIntegrationTest extends IntegrationTest {
 
   private Member testMember() {
     Member member = Member.builder()
-        .nickname(RandomString.getGenerator().minLength(1).maxLength(100).nullable(false).generate())
-        .selfIntroduction(RandomString.getGenerator().minLength(0).maxLength(100).nullable(true).generate())
+        .nickname(RandomString.getGenerator().length(1, 100).notnull().get())
+        .selfIntroduction(RandomString.getGenerator().length(0, 100).get())
         .build();
 
     OAuthInfoDto oAuthInfo = OAuthInfoDto.builder()
-        .snsId(RandomString.getGenerator().minLength(1).maxLength(30).nullable(false).generate())
-        .email(RandomString.getGenerator().minLength(1).maxLength(100).nullable(false).generate())
+        .snsId(RandomString.getGenerator().length(1, 30).notnull().get())
+        .email(RandomString.getGenerator().length(1, 100).notnull().get())
         .snsType(SnsType.GOOGLE)
         .build();
     member.addOAuthInfo(oAuthInfo);
-    member.updateProfile(RandomString.getGenerator().minLength(0).maxLength(255).nullable(true).generate());
+    member.updateProfile(RandomString.getGenerator().length(0, 255).notnull().get());
 
     return member;
   }
@@ -87,11 +87,7 @@ class MemberProfileIntegrationTest extends IntegrationTest {
 
   private Tag testTag(Long memberId) {
     Tag tag = Tag.builder()
-        .name(RandomString.getGenerator()
-            .minLength(3)
-            .maxLength(10)
-            .nullable(false)
-            .generate())
+        .name(RandomString.getGenerator().length(3, 10).notnull().get())
         .createdId("member:" + memberId)
         .build();
 

@@ -29,6 +29,18 @@
   </resultMap>
 
   <select id="selectAll" resultMap="streamerMap">
+    SELECT *
+    FROM (
+    <include refid="findStreamerSQL" />
+    ) a
+    ORDER BY a.id
+  </select>
+
+  <select id="findStreamer" resultMap="streamerMap">
+    <include refid="findStreamerSQL" />
+  </select>
+
+  <sql id="findStreamerSQL">
     SELECT
     s.id AS streamer_id,
     m.nickname AS streamer_name,
@@ -47,9 +59,11 @@
     LEFT JOIN tags t ON st.tag_id = t.id
     LEFT JOIN streamers_platforms sp ON s.id = sp.streamer_id
     LEFT JOIN platforms p ON sp.platform_id = p.id
-    ORDER BY
-    s.id
-  </select>
+    WHERE 1=1
+    <if test="memberId != null and memberId != ''">
+      AND m.id = #{memberId}
+    </if>
+  </sql>
 
   <select id="findByMemberId" parameterType="Long" resultType="streamer">
     SELECT * FROM streamers WHERE member_id = #{memberId}

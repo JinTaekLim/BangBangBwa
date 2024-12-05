@@ -74,11 +74,19 @@ public class MemberProvider {
 
     User userDetails = (User) authentication.getPrincipal();
     String authority = userDetails.getAuthorities().stream()
-            .map(GrantedAuthority::getAuthority)
-            .findFirst()
-            .orElse(null);
+        .map(GrantedAuthority::getAuthority)
+        .findFirst()
+        .orElse(null);
 
     return Role.valueOf(authority);
+  }
+
+  public Role getCurrentRoleOrNull() {
+    try {
+      return getCurrentRole();
+    } catch (Exception e) {
+      return null;
+    }
   }
 
 }
