@@ -3,6 +3,7 @@ package com.bangbangbwa.backend.domain.sns.business;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
 import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
 import java.util.*;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -34,16 +35,18 @@ public class PostProvider {
     int tagPostSize = postProbability[1];
 
     List<Post> followPost = getPostsByMemberIds(followPostSize, memberIds, readPostIds);
+    Set<String> excludedPostIds = getExcludedPostIds(followPost);
     List<Post> tagPost = getTagPost(tagPostSize, tagIds, readPostIds);
-    int totalPosts = followPost.size() + tagPost.size();
-    int randomPostSize = Math.max(POST_SIZE - totalPosts, postProbability[2]);
-    List<Post> randomPost = getRandomPost(postType, randomPostSize, readPostIds);
+
+    excludedPostIds = addExcludedPostIds(excludedPostIds, tagPost);
+    int randomPostSize = POST_SIZE - excludedPostIds.size();
+    List<Post> randomPost = getRandomPost(postType, randomPostSize, excludedPostIds);
 
     return mergeUniquePosts(followPost, tagPost, randomPost);
   }
 
-  private List<Post> getRandomPost(PostType postType, int randomPostSize, Set<String> readPostIds) {
-    return postReader.findRandomPostsExcludingReadIds(postType,randomPostSize, readPostIds);
+  private List<Post> getRandomPost(PostType postType, int randomPostSize, Set<String> excludedPostIds) {
+    return postReader.findRandomPostsExcludingReadIds(postType,randomPostSize, excludedPostIds);
   }
 
 
@@ -58,6 +61,23 @@ public class PostProvider {
 //    return postReader.findPostsByStreamerTagsExcludingReadIds(tagPostSize, tagIds, readPostIds);
     return new ArrayList<>();
   }
+
+  public Set<String> getExcludedPostIds(List<Post> postList) {
+    return postList.stream()
+            .map(post -> Long.toString(post.getId()))
+            .collect(Collectors.toSet());
+  }
+
+
+  public Set<String> addExcludedPostIds(Set<String> excludedPostIds, List<Post> postList) {
+    postList.stream()
+            .map(post -> Long.toString(post.getId()))
+            .forEach(excludedPostIds::add);
+    return excludedPostIds;
+  }
+
+
+
 
   private List<Post> mergeUniquePosts(List<Post> followPost, List<Post> tagPost, List<Post> randomPost) {
     Set<Post> uniquePosts = new HashSet<>();

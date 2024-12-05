@@ -38,19 +38,19 @@ public class PostReader {
     return postRepository.findPostsWithinLast24Hours(postType, readPostIds);
   }
 
-  public List<Post> findRandomPostsExcludingReadIds(PostType postType, int limit, Set<String> readPostIds) {
-    return postRepository.findByPostTypeAndRandomPostsExcludingReadIds(postType, limit, readPostIds);
+  public List<Post> findRandomPostsExcludingReadIds(PostType postType, int limit, Set<String> excludedPostIds) {
+    return postRepository.findByPostTypeAndRandomPostsExcludingReadIds(postType, limit, excludedPostIds);
   }
 
-  public List<Post> findPostsByStreamerTagsExcludingReadIds(int limit, List<Long> tagIds, Set<String> readPostIds) {
-    return postRepository.findPostsByStreamerTagsExcludingReadIds(limit, tagIds, readPostIds);
+  public List<Post> findPostsByStreamerTagsExcludingReadIds(int limit, List<Long> tagIds, Set<String> excludedPostIds) {
+    return postRepository.findPostsByStreamerTagsExcludingReadIds(limit, tagIds, excludedPostIds);
   }
 
   public List<Post> findPostsByStreamerAndMemberIdsExcludingReadIds(
           int limit,
           List<Long> memberIds,
-          Set<String> readPostIds
+          Set<String> excludedPostIds
   ) {
-    return postRepository.findPostsByStreamerAndMemberIdsExcludingReadIds(limit, memberIds, readPostIds);
+    return postRepository.findPostsByStreamerAndMemberIdsExcludingReadIds(limit, memberIds, excludedPostIds);
   }
 }
