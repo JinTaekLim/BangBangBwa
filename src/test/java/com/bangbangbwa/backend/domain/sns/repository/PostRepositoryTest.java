@@ -213,15 +213,14 @@ class PostRepositoryTest extends MyBatisTest {
     void findPostsByStreamerAndMemberIds() {
         // given
         int postLimit = 3;
-        int postCount = RandomValue.getInt(0,5);
-        int readPostCount = RandomValue.getInt(2);
+        int readPostCount = RandomValue.getInt(0,5);
         int nonReturnedPostCount = RandomValue.getInt(0,5);
         PostType postType = PostType.STREAMER;
 
         IntStream.range(0, nonReturnedPostCount)
                 .forEach(i->createPost(postType, createMember()));
 
-        List<Long> membersId = IntStream.range(0, postCount)
+        List<Long> membersId = IntStream.range(0, readPostCount)
                 .mapToObj(i -> {
                     Member writeMember = createMember();
                     Post post = createPost(PostType.STREAMER, writeMember);
@@ -243,7 +242,7 @@ class PostRepositoryTest extends MyBatisTest {
         );
 
         //then
-        int expectedPostCount = Math.min(postCount, postLimit);
+        int expectedPostCount = Math.min(readPostCount, postLimit);
         assertThat(postList.size()).isEqualTo(expectedPostCount);
         IntStream.range(0, expectedPostCount)
                 .forEach(i -> assertThat(postList.get(i).getMemberId()).isEqualTo(membersId.get(i)));
