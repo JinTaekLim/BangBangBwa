@@ -27,6 +27,13 @@ public class PostRepository {
     return mysql.selectList("PostMapper.findAllByPostType", postType);
   }
 
+  public List<Post> findPostsByPostTypeWithLimit(PostType postType, int size) {
+    Map<String, Object> params = new HashMap<>();
+    params.put("postType", postType);
+    params.put("size", size);
+    return mysql.selectList("PostMapper.findAllByPostType", params);
+  }
+
   public List<GetLatestPostsDto> findPostsWithinLast24Hours(PostType postType, Set<String> readerPostList) {
     Map<String, Object> params = new HashMap<>();
     params.put("postType", postType);
@@ -40,4 +47,34 @@ public class PostRepository {
     params.put("memberId", memberId);
     return Optional.ofNullable(mysql.selectOne("PostMapper.getPostDetails", params));
   }
+
+  public List<Post> findByPostTypeAndRandomPostsExcludingReadIds(PostType postType, int limit, Set<String> readPostIds) {
+    Map<String, Object> params = new HashMap<>();
+    params.put("postType", postType);
+    params.put("limit", limit);
+    params.put("readPostIds", readPostIds);
+    return mysql.selectList("PostMapper.findByPostTypeAndRandomPostsExcludingReadIds", params);
+  }
+
+  public List<Post> findPostsByStreamerTagsExcludingReadIds(int limit, List<Long> tagIds, Set<String> readPostIds) {
+    Map<String, Object> params = new HashMap<>();
+    params.put("limit", limit);
+    params.put("tagIds", tagIds);
+    params.put("readPostIds", readPostIds);
+    return mysql.selectList("PostMapper.findPostsByStreamerTagsExcludingReadIds", params);
+  }
+
+  public List<Post> findPostsByStreamerAndMemberIdsExcludingReadIds(
+          int limit,
+          List<Long> memberIds,
+          Set<String> readPostIds
+  ) {
+    Map<String, Object> params = new HashMap<>();
+    params.put("limit", limit);
+    params.put("memberIds", memberIds);
+    params.put("readPostIds", readPostIds);
+    return mysql.selectList("PostMapper.findPostsByStreamerAndMemberIdsExcludingReadIds", params);
+  }
+
 }
+
