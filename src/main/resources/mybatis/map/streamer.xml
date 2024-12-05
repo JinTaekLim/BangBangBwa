@@ -33,7 +33,7 @@
     FROM (
     <include refid="findStreamerSQL" />
     ) a
-    ORDER BY a.id
+    ORDER BY a.streamer_id
   </select>
 
   <select id="findStreamer" resultMap="streamerMap">
