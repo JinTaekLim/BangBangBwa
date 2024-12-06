@@ -1132,4 +1132,62 @@ class SnsIntegrationTest extends IntegrationTest {
     assertThat(apiResponse.getMessage()).isEqualTo(exception.getMessage());
     assertThat(apiResponse.getData()).isNull();
   }
+
+
+  @Test
+  void getPostDetails_후_getLatestPosts() {
+    // given
+    int postCount = 0;
+
+    Member member = createMember();
+    TokenDto tokenDto = tokenProvider.getToken(member);
+
+    Member writeMember = createMember();
+    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    Post post = createPost(postType, writeMember);
+
+    String getPostDetailsUrl = "http://localhost:" + port + "/api/v1/sns/getPostDetails/" + post.getId();
+    String getLatestPostsUrl = "http://localhost:" + port + "/api/v1/sns/getLatestPosts";
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(tokenDto.getAccessToken());
+    HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+    // when
+    ResponseEntity<String> getPostDetailsResponse = restTemplate.exchange(
+            getPostDetailsUrl,
+            HttpMethod.GET,
+            requestEntity,
+            String.class);
+
+    ApiResponse<GetPostDetailsDto.Response> postDetailsApiResponse = gson.fromJson(
+            getPostDetailsResponse.getBody(),
+            new TypeToken<ApiResponse<GetPostDetailsDto.Response>>() {}.getType()
+    );
+
+    ResponseEntity<String> getLatestPostsResponse = restTemplate.exchange(
+            getLatestPostsUrl,
+            HttpMethod.GET,
+            requestEntity,
+            String.class
+    );
+
+    ApiResponse<List<GetLatestPostsDto.Response>> latestPostsApiResponse = gson.fromJson(
+            getLatestPostsResponse.getBody(),
+            new TypeToken<ApiResponse<List<GetLatestPostsDto.Response>>>() {}.getType()
+    );
+
+    // then
+    assertThat(getPostDetailsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertNotNull(postDetailsApiResponse.getData());
+    assertThat(postDetailsApiResponse.getData().postId()).isEqualTo(post.getId());
+    assertThat(postDetailsApiResponse.getData().writerId()).isEqualTo(writeMember.getId());
+    assertThat(postDetailsApiResponse.getData().title()).isEqualTo(post.getTitle());
+    assertThat(postDetailsApiResponse.getData().nickname()).isEqualTo(writeMember.getNickname());
+    assertThat(postDetailsApiResponse.getData().profileUrl()).isEqualTo(writeMember.getProfile());
+    assertThat(postDetailsApiResponse.getData().content()).isEqualTo(post.getContent());
+
+    assertThat(latestPostsApiResponse.getData().size()).isEqualTo(postCount);
+
+  }
 }

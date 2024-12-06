@@ -41,7 +41,7 @@ public class SnsController implements SnsApi{
   }
 
   @GetMapping("/getPostDetails/{postId}")
-  @AuthenticationContext
+  @PreAuthorize("permitAll()")
   public ApiResponse<GetPostDetailsDto.Response> getPostDetails(@PathVariable("postId") Long postId) {
     GetPostDetailsDto.Response response = snsService.getPostDetails(postId);
     return ApiResponse.ok(response);

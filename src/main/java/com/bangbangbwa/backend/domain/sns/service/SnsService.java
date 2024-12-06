@@ -52,6 +52,7 @@ public class SnsService {
   private final ReportCommentCreator reportCommentCreator;
   private final DailyMessageReader dailyMessageReader;
   private final ReaderPostReader readerPostReader;
+  private final ReaderPostCreator readerPostCreator;
 
   // 게시글 저장 전, content에서 url을 추출 후 redis 값 삭제하는 과정 필요
   @Transactional
@@ -101,7 +102,9 @@ public class SnsService {
 
   public GetPostDetailsDto.Response getPostDetails(Long postId) {
     Long memberId = memberProvider.getCurrentMemberIdOrNull();
-    return postReader.getPostDetails(postId, memberId);
+    GetPostDetailsDto.Response response = postReader.getPostDetails(postId, memberId);
+    if (memberId != null) readerPostCreator.addReadPost(memberId, response.postId());
+    return response;
   }
 
   public List<Post> getPostList() {
