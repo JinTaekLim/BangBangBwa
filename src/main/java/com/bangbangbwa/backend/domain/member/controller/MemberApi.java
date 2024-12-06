@@ -55,7 +55,7 @@ public interface MemberApi {
                           "data" : [
                             "oAuthToken : oAuth 토큰을 입력해주세요.",
                             "nickname : 닉네임을 입력해주세요.",
-                            "nickname : 최대 12자 이하로 입력해주세요.",
+                            "nickname : 최대 14자 이하로 입력해주세요.",
                             "nickname : 한글,영문,숫자, 특수문자('(',')','-','_')만 사용 가능합니다.",
                             "usageAgree : 이용 약관 동의 여부 확인 바랍니다." ,
                             "personalAgree : 개인 정보 수집 및 저장 동의 여부 확인 바랍니다.",
@@ -164,7 +164,7 @@ public interface MemberApi {
           )
       }
   )
-  ApiResponse<MemberNicknameDto.Response> randomNicknames(@Parameter int count);
+  ApiResponse<MemberNicknameDto.Response> randomNicknames();
 
 
   @Operation(summary = "토큰 재발급", tags = {"MemberAPI"})

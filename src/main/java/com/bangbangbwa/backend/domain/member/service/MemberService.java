@@ -66,8 +66,9 @@ public class MemberService {
     memberValidator.validateNicknameDuplication(nickname);
   }
 
-  public Set<String> serveRandomNicknames(Integer count) {
-    return nicknameProvider.provideRandomNicknames(count);
+  public String serveRandomNickname() {
+    Set<String> nicknames = nicknameProvider.provideRandomNicknames(1);
+    return String.valueOf(nicknames.toArray()[0]);
   }
 
   public Boolean isMyMemberId(Long memberId) {
