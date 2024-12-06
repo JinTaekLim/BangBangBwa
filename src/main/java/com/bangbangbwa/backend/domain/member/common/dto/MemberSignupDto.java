@@ -1,6 +1,7 @@
 package com.bangbangbwa.backend.domain.member.common.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -11,15 +12,25 @@ public class MemberSignupDto {
   @Schema(name = "SignupRequest", description = "회원가입 요청 DTO")
   public record Request(
 
-      @Schema(description = "OAuth 토큰", example = "AV)$M@LC>D>GM12)c(faEF")
+      @Schema(description = "이용 약관 동의", example = "true")
+      @AssertTrue(message = "이용 약관 동의 여부 확인 바랍니다.")
+      boolean usageAgree,
 
+      @Schema(description = "개인 정보 수집 및 저장 동의", example = "true")
+      @AssertTrue(message = "개인 정보 수집 및 저장 동의 여부 확인 바랍니다.")
+      boolean personalAgree,
+
+      @Schema(description = "회원 탈퇴 시 처리 방안", example = "true")
+      @AssertTrue(message = "회원 탈퇴 시 처리 방안 동의 여부 확인 바랍니다.")
+      boolean withdrawalAgree,
+
+      @Schema(description = "OAuth 토큰", example = "AV)$M@LC>D>GM12)c(faEF")
       @NotBlank(message = "oauth 토큰을 입력해주세요.")
       String oauthToken,
 
       @Schema(description = "닉네임", example = "nick")
-
       @NotBlank(message = "닉네임을 입력해주세요.")
-      @Size(max = 12, message = "최대 {max}자 이하로 입력해주세요.")
+      @Size(max = 14, message = "최대 {max}자 이하로 입력해주세요.")
       @Pattern(regexp = "^[A-Za-z가-힣0-9()\\-_]+$", message = "한글,영문,숫자, 특수문자('(',')','-','_')만 사용 가능합니다.")
       String nickname,
 

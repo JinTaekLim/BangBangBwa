@@ -17,7 +17,9 @@ public interface MemberMapper {
   MemberMapper INSTANCE = Mappers.getMapper(MemberMapper.class);
 
   @Mapping(target = "nickname", source = "request.nickname")
-//  @Mapping(target = "interests", source = "request.interests")
+  @Mapping(target = "usageAgree", source = "request.usageAgree")
+  @Mapping(target = "personalAgree", source = "request.personalAgree")
+  @Mapping(target = "withdrawalAgree", source = "request.withdrawalAgree")
   Member dtoToEntity(Request request);
 
   @Mapping(target = "accessToken", source = "token.accessToken")
@@ -32,5 +34,6 @@ public interface MemberMapper {
   @Mapping(target = "memberId", source = "id")
   @Mapping(target = "nickname", source = "nickname")
   SearchMemberDto.Response dtoToSearchNicknameResponse(Member member);
+
   List<SearchMemberDto.Response> dtoToSearchNicknameResponse(List<Member> members);
 }

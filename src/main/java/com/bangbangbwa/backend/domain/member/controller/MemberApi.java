@@ -55,8 +55,11 @@ public interface MemberApi {
                           "data" : [
                             "oAuthToken : oAuth 토큰을 입력해주세요.",
                             "nickname : 닉네임을 입력해주세요.",
-                            "nickname : 최대 12자 이하로 입력해주세요.",
-                            "nickname : 한글,영문,숫자, 특수문자('(',')','-','_')만 사용 가능합니다."
+                            "nickname : 최대 14자 이하로 입력해주세요.",
+                            "nickname : 한글,영문,숫자, 특수문자('(',')','-','_')만 사용 가능합니다.",
+                            "usageAgree : 이용 약관 동의 여부 확인 바랍니다." ,
+                            "personalAgree : 개인 정보 수집 및 저장 동의 여부 확인 바랍니다.",
+                            "withdrawalAgree : 회원 탈퇴 시 처리 방안 동의 여부 확인 바랍니다."
                           ]
                           }
                           """)
@@ -161,8 +164,7 @@ public interface MemberApi {
           )
       }
   )
-  ApiResponse<MemberNicknameDto.Response> randomNicknames(@Parameter int count);
-
+  ApiResponse<MemberNicknameDto.Response> randomNicknames();
 
 
   @Operation(summary = "토큰 재발급", tags = {"MemberAPI"})
@@ -183,14 +185,14 @@ public interface MemberApi {
               examples = {
                   @ExampleObject(
                       value = """
-                      {
-                      "code": "BAD_REQUEST",
-                      "message": "유효하지 않은 토큰입니다.",
-                      "data" : [
-                        "refreshToken 토큰을 입력해주세요."
-                      ]
-                      }
-                      """
+                          {
+                          "code": "BAD_REQUEST",
+                          "message": "유효하지 않은 토큰입니다.",
+                          "data" : [
+                            "refreshToken 토큰을 입력해주세요."
+                          ]
+                          }
+                          """
                   )
               }
           )
@@ -201,20 +203,20 @@ public interface MemberApi {
   );
 
   @Operation(
-    tags = {"MemberAPI"},
-    summary = "마이페이지 > memberId 일치여부 조회",
-    description = "현재 사용자와 memberId가 일치하는지 조회합니다." +
-            "\n비로그인 사용자일 경우에는 false를 리턴합니다.",
-    responses = {
-        @io.swagger.v3.oas.annotations.responses.ApiResponse(
-            responseCode = "200",
-            description = "OK",
-            content = @Content(
-                mediaType = MediaType.APPLICATION_JSON_VALUE,
-                schema = @Schema(implementation = Boolean.class)
-            )
-        ),
-    }
+      tags = {"MemberAPI"},
+      summary = "마이페이지 > memberId 일치여부 조회",
+      description = "현재 사용자와 memberId가 일치하는지 조회합니다." +
+          "\n비로그인 사용자일 경우에는 false를 리턴합니다.",
+      responses = {
+          @io.swagger.v3.oas.annotations.responses.ApiResponse(
+              responseCode = "200",
+              description = "OK",
+              content = @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = Boolean.class)
+              )
+          ),
+      }
   )
   ApiResponse<Boolean> isMyMemberId(Long memberId);
 

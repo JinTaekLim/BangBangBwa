@@ -8,31 +8,65 @@ public class NicknameGenerator {
 
   private final Random random = new Random();
 
+  private static final String[] adjectives = {
+      "달콤한", "엉뚱한", "똑똑한", "신비로운", "당당한",
+      "귀여운", "행복한", "차분한", "열정적인", "깜찍한",
+      "우아한", "활기찬", "은은한", "씩씩한", "자유로운",
+      "재미있는", "다정한", "순수한", "용감한", "친절한",
+      "평화로운", "예쁜", "즐거운", "밝은", "따뜻한",
+      "푸른", "맑은", "고요한", "향기로운", "싱그러운",
+      "조용한", "반짝이는", "단단한", "부드러운", "포근한",
+      "신선한", "건강한", "튼튼한", "멋진", "아름다운",
+      "영리한", "훌륭한", "특별한", "재치있는", "상쾌한",
+      "희망찬", "낭만적인", "환상적인", "매력적인", "화려한",
+      "은밀한", "장난스러운", "기분좋은", "든든한", "고운",
+      "정직한", "충실한", "빛나는", "넓은", "깊은",
+      "날카로운", "능숙한", "유능한", "섬세한", "진실한",
+      "성실한", "신중한", "절묘한", "강인한", "온화한",
+      "사랑스러운", "정겨운", "소중한", "귀중한", "신뢰로운",
+      "원대한", "자랑스러운", "담대한", "경쾌한", "화사한",
+      "선명한", "풍요로운", "창의적인", "독창적인", "혁신적인",
+      "명랑한", "쾌활한", "순둥한", "두근두근한", "반가운",
+      "산뜻한", "새콤달콤한", "알록달록한", "은하수같은", "하늘같은",
+      "구름같은", "바다같은", "별같은", "꿈같은", "찬란한"
+  };
+
+  private static final String[] animals = {
+      "고양이", "강아지", "토끼", "사자", "호랑이",
+      "팬더", "코알라", "기린", "코끼리", "하마",
+      "펭귄", "북극곰", "참새", "독수리", "비둘기",
+      "하이에나", "늑대", "여우", "치타", "표범",
+      "앵무새", "고릴라", "침팬지", "오랑우탄", "캥거루",
+      "고슴도치", "다람쥐", "햄스터", "수달", "비버",
+      "순록", "물개", "바다사자", "돌고래", "고래",
+      "상어", "문어", "오징어", "거북이", "뱀",
+      "도마뱀", "이구아나", "카멜레온", "악어", "하늘다람쥐",
+      "나비", "무당벌레", "반딧불이", "잠자리", "매미",
+      "기러기", "백조", "공작새", "칠면조", "앵무새",
+      "판다", "알파카", "라마", "낙타", "타조",
+      "까마귀", "까치", "참새", "제비", "딱따구리",
+      "부엉이", "올빼미", "두더지", "청설모", "염소",
+      "양", "말", "당나귀", "얼룩말", "하늘소",
+      "사슴", "기린", "코뿔소", "하마", "수달",
+      "해달", "너구리", "스컹크", "미어캣", "왈라비",
+      "타란튤라", "전갈", "카피바라", "아르마딜로", "이구아나",
+      "플라밍고", "백상아리", "해마", "불가사리", "해파리",
+      "랫서판다", "직박구리", "쥐라기", "큰뿔소", "맹꽁이"
+  };
+
   public String generate() {
-    return randomLowers(3) + randomSpecial("_-") + randomUppers(3) + "(" + randomNums() + ")";
+    return randomAdjective() + randomAnimal() + "_" + randomNums();
+  }
+
+  private String randomAdjective() {
+    return adjectives[random.nextInt(adjectives.length)];
+  }
+
+  private String randomAnimal() {
+    return animals[random.nextInt(animals.length)];
   }
 
   private String randomNums() {
     return String.valueOf(random.nextInt(100, 999));
-  }
-
-  private String randomLowers(final int count) {
-    StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < count; i++) {
-      sb.append((char) (random.nextInt(26) + 'a'));
-    }
-    return sb.toString();
-  }
-
-  private String randomUppers(final int count) {
-    StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < count; i++) {
-      sb.append((char) (random.nextInt(26) + 'A'));
-    }
-    return sb.toString();
-  }
-
-  private String randomSpecial(final String special) {
-    return String.valueOf(special.charAt(random.nextInt(special.length())));
   }
 }
