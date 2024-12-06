@@ -22,7 +22,7 @@ public class RandomValue {
    * 해당 메소드는 StringGenerator을 생성하기 위한 메소드로,
    * StringGenerator 내부 .get() 메소드를 호출해야만 실제 값 생성 가능
    */
-  public static StringGenerator string() {
+  public static StringGenerator getString() {
     return new StringGenerator();
   }
 
@@ -31,7 +31,7 @@ public class RandomValue {
    * 해당 메소드는 최소,최대 길이 설정만을 위한 메소드로, 실제 값 생성은
    * StringGenerator 내부 .get() 메소드를 호출해야만 생성 됨
    */
-  public static StringGenerator string(int minSize, int maxSize) {
+  public static StringGenerator getString(int minSize, int maxSize) {
     return new StringGenerator(minSize, maxSize);
   }
 
@@ -41,7 +41,7 @@ public class RandomValue {
    * StringGenerator 내부 .get() 메소드를 호출해야만 생성 됨
    */
 
-  public static StringGenerator string(int maxSize) {
+  public static StringGenerator getString(int maxSize) {
     return new StringGenerator(maxSize);
   }
 
@@ -58,41 +58,41 @@ public class RandomValue {
   }
 
 
-  public static long getRandomLong(int max) {
+  public static long getLong(int max) {
     return randomValueGenerator.getRandomLong(max); }
 
-  public static long getRandomLong(int min, int max) {
+  public static long getLong(int min, int max) {
     return randomValueGenerator.getRandomLong(min, max);
   }
 
-  public static boolean getRandomBoolean() {
+  public static boolean getBoolean() {
 
     return randomValueGenerator.getRandomBoolean();
   }
 
-  public static <T> T getRandomBoolean(T a, T b) {
+  public static <T> T getBoolean(T a, T b) {
     return randomValueGenerator.getRandomBoolean(a,b);
   }
 
 
-  public static double getRandomDouble(double max) {
+  public static double getDouble(double max) {
     return randomValueGenerator.getRandomDouble(max);
   }
 
-  public static double getRandomDouble(double min, double max) {
+  public static double getDouble(double min, double max) {
     return randomValueGenerator.getRandomDouble(min, max);
   }
 
 
-  public static LocalDateTime getRandomLocalDateTime() {
+  public static LocalDateTime getLocalDateTime() {
     return randomValueGenerator.getRandomLocalDateTime();
   }
 
-  public static LocalDate getRandomLocalDate() {
+  public static LocalDate getLocalDate() {
     return randomValueGenerator.getRandomLocalDate();
   }
 
-  public static <T> T getRandomEnum(Class<T> clazz) {
+  public static <T> T getEnum(Class<T> clazz) {
     return randomValueGenerator.getRandomEnum(clazz);
   }
 

@@ -87,15 +87,15 @@ class SnsIntegrationTest extends IntegrationTest {
 
   private Member getMember() {
     Member member = Member.builder()
-        .nickname(RandomValue.string(255).setNullable(false).get())
+        .nickname(RandomValue.getString(255).setNullable(false).get())
         .build();
     OAuthInfoDto oAuthInfo = OAuthInfoDto.builder()
-        .snsId(RandomValue.string(255).setNullable(false).get())
-        .email(RandomValue.string(255).setNullable(false).getEmail())
-        .snsType(RandomValue.getRandomEnum(SnsType.class))
+        .snsId(RandomValue.getString(255).setNullable(false).get())
+        .email(RandomValue.getString(255).setNullable(false).getEmail())
+        .snsType(RandomValue.getEnum(SnsType.class))
         .build();
     member.addOAuthInfo(oAuthInfo);
-    member.updateProfile(RandomValue.string(255).get());
+    member.updateProfile(RandomValue.getString(255).get());
 
     return member;
   }
@@ -110,8 +110,8 @@ class SnsIntegrationTest extends IntegrationTest {
     return Post.builder()
         .postType(postType)
         .memberId(member.getId())
-        .title(RandomValue.string(100).setNullable(false).get())
-        .content(RandomValue.string(2000).setNullable(false).get())
+        .title(RandomValue.getString(100).setNullable(false).get())
+        .content(RandomValue.getString(2000).setNullable(false).get())
         .build();
   }
 
@@ -149,7 +149,7 @@ class SnsIntegrationTest extends IntegrationTest {
 
   private Comment getComment(Post post, Member member) {
     return Comment.builder()
-            .content(RandomValue.string(30).setNullable(false).get())
+            .content(RandomValue.getString(30).setNullable(false).get())
             .memberId(member.getId())
             .postId(post.getId())
             .build();
@@ -264,10 +264,10 @@ class SnsIntegrationTest extends IntegrationTest {
     TokenDto tokenDto = tokenProvider.getToken(member);
 
     Member writeMember = createMember();
-    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    PostType postType = RandomValue.getEnum(PostType.class);
     Post post = createPost(postType, writeMember);
 
-    boolean isFollow = RandomValue.getRandomBoolean();
+    boolean isFollow = RandomValue.getBoolean();
     if (isFollow) { createFollow(member, writeMember); }
 
     String url = "http://localhost:" + port + "/api/v1/sns/getPostDetails/" + post.getId();
@@ -306,7 +306,7 @@ class SnsIntegrationTest extends IntegrationTest {
   void getPostDetails_토큰_미입력() {
     // given
     Member writeMember = createMember();
-    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    PostType postType = RandomValue.getEnum(PostType.class);
     Post post = createPost(postType, writeMember);
 
     String url = "http://localhost:" + port + "/api/v1/sns/getPostDetails/" + post.getId();
@@ -339,7 +339,7 @@ class SnsIntegrationTest extends IntegrationTest {
   @Test
   void getPostDetails_존재하지_않는_게시물() {
     // given
-    Long postId = RandomValue.getRandomLong(-999,-1);
+    Long postId = RandomValue.getLong(-999,-1);
 
     String url = "http://localhost:" + port + "/api/v1/sns/getPostDetails/" + postId;
 
@@ -373,8 +373,8 @@ class SnsIntegrationTest extends IntegrationTest {
     List<Long> nullList = new ArrayList<>();
     CreatePostDto.Request request = new CreatePostDto.Request(
         PostType.MEMBER,
-        RandomValue.string(100).setNullable(false).get(),
-        RandomValue.string(2000).setNullable(false).get(),
+        RandomValue.getString(100).setNullable(false).get(),
+        RandomValue.getString(2000).setNullable(false).get(),
         nullList,
         nullList
     );
@@ -416,8 +416,8 @@ class SnsIntegrationTest extends IntegrationTest {
     List<Long> memberIds = List.of(1L, 2L);
     CreatePostDto.Request request = new CreatePostDto.Request(
         PostType.MEMBER,
-        RandomValue.string(100).setNullable(false).get(),
-        RandomValue.string(2000).setNullable(false).get(),
+        RandomValue.getString(100).setNullable(false).get(),
+        RandomValue.getString(2000).setNullable(false).get(),
         memberIds,
         memberIds
     );
@@ -455,8 +455,8 @@ class SnsIntegrationTest extends IntegrationTest {
     List<Long> memberIds = List.of(1L, 2L);
     CreatePostDto.Request request = new CreatePostDto.Request(
         PostType.MEMBER,
-        RandomValue.string(100).setNullable(false).get(),
-        RandomValue.string(2000).setNullable(false).get(),
+        RandomValue.getString(100).setNullable(false).get(),
+        RandomValue.getString(2000).setNullable(false).get(),
         memberIds,
         memberIds
     );
@@ -490,7 +490,7 @@ class SnsIntegrationTest extends IntegrationTest {
   void uploadPostMedia() {
     // given
     String url = "http://localhost:" + port + "/api/v1/sns/uploadPostMedia";
-    String returnUrl = "http://" + RandomValue.string(10,50).setNullable(false).setLanguages(Language.ENGLISH).get();
+    String returnUrl = "http://" + RandomValue.getString(10,50).setNullable(false).setLanguages(Language.ENGLISH).get();
 
     MockMultipartFile mockFile = new MockMultipartFile(
             "file",
@@ -533,13 +533,13 @@ class SnsIntegrationTest extends IntegrationTest {
     Member member = createMember();
     TokenDto tokenDto = tokenProvider.getToken(member);
     Member writeMember = createMember();
-    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    PostType postType = RandomValue.getEnum(PostType.class);
     Post post = createPost(postType, writeMember);
 
 
     CreateCommentDto.Request request = new CreateCommentDto.Request(
         post.getId(),
-        RandomValue.string(255).setNullable(false).get()
+        RandomValue.getString(255).setNullable(false).get()
     );
 
     String url = "http://localhost:" + port + "/api/v1/sns/createComment";
@@ -570,12 +570,12 @@ class SnsIntegrationTest extends IntegrationTest {
   void createComment_토큰_미입력() {
     // given
     Member writeMember = createMember();
-    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    PostType postType = RandomValue.getEnum(PostType.class);
     Post post = createPost(postType, writeMember);
 
     CreateCommentDto.Request request = new CreateCommentDto.Request(
         post.getId(),
-        RandomValue.string(255).setNullable(false).get()
+        RandomValue.getString(255).setNullable(false).get()
     );
 
     String url = "http://localhost:" + port + "/api/v1/sns/createComment";
@@ -604,7 +604,7 @@ class SnsIntegrationTest extends IntegrationTest {
   void searchMember() {
     // given
     String nickname = RandomValue
-        .string(1,50)
+        .getString(1,50)
         .setNullable(false)
         .setLanguages(Language.ENGLISH)
         .get();
@@ -613,12 +613,12 @@ class SnsIntegrationTest extends IntegrationTest {
         .nickname(nickname)
         .build();
     OAuthInfoDto oAuthInfo = OAuthInfoDto.builder()
-        .snsId(RandomValue.string(255).setNullable(false).get())
-        .email(RandomValue.string(255).setNullable(false).getEmail())
-        .snsType(RandomValue.getRandomEnum(SnsType.class))
+        .snsId(RandomValue.getString(255).setNullable(false).get())
+        .email(RandomValue.getString(255).setNullable(false).getEmail())
+        .snsType(RandomValue.getEnum(SnsType.class))
         .build();
     searchMember.addOAuthInfo(oAuthInfo);
-    searchMember.updateProfile(RandomValue.string(255).get());
+    searchMember.updateProfile(RandomValue.getString(255).get());
     memberRepository.save(searchMember);
 
     Member member = createMember();
@@ -706,7 +706,7 @@ class SnsIntegrationTest extends IntegrationTest {
     Member member = createMember();
     TokenDto tokenDto = tokenProvider.getToken(member);
     Member writeMember = createMember();
-    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    PostType postType = RandomValue.getEnum(PostType.class);
     Post post = createPost(postType, writeMember);
 
 
@@ -740,7 +740,7 @@ class SnsIntegrationTest extends IntegrationTest {
     Member member = createMember();
     TokenDto tokenDto = tokenProvider.getToken(member);
     Member writeMember = createMember();
-    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    PostType postType = RandomValue.getEnum(PostType.class);
     Post post = createPost(postType, writeMember);
     createReportPost(post, member);
 
@@ -777,7 +777,7 @@ class SnsIntegrationTest extends IntegrationTest {
   void reportPost_토큰_미입력() {
     // given
     Member writeMember = createMember();
-    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    PostType postType = RandomValue.getEnum(PostType.class);
     Post post = createPost(postType, writeMember);
 
     ReportPostDto.Request request = new ReportPostDto.Request(post.getId());
@@ -809,7 +809,7 @@ class SnsIntegrationTest extends IntegrationTest {
     // given
     TokenDto tokenDto = tokenProvider.getToken(createMember());
 
-    Long postId = RandomValue.getRandomLong(-9999, -1);
+    Long postId = RandomValue.getLong(-9999, -1);
     ReportPostDto.Request request = new ReportPostDto.Request(postId);
 
     HttpHeaders headers = new HttpHeaders();
@@ -842,7 +842,7 @@ class SnsIntegrationTest extends IntegrationTest {
     TokenDto tokenDto = tokenProvider.getToken(member);
 
     Member writeMember = createMember();
-    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    PostType postType = RandomValue.getEnum(PostType.class);
     Post post = createPost(postType, writeMember);
 
     Comment comment = createComment(post, writeMember);
@@ -881,7 +881,7 @@ class SnsIntegrationTest extends IntegrationTest {
     TokenDto tokenDto = tokenProvider.getToken(member);
 
     Member writeMember = createMember();
-    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    PostType postType = RandomValue.getEnum(PostType.class);
     Post post = createPost(postType, writeMember);
 
     Comment comment = createComment(post, writeMember);
@@ -926,7 +926,7 @@ class SnsIntegrationTest extends IntegrationTest {
     TokenDto tokenDto = tokenProvider.getToken(member);
 
     Member writeMember = createMember();
-    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    PostType postType = RandomValue.getEnum(PostType.class);
     Post post = createPost(postType, writeMember);
 
     Comment comment = createComment(post, writeMember);
@@ -975,7 +975,7 @@ class SnsIntegrationTest extends IntegrationTest {
   @Test
   void reportComment_토큰_미입력() {
     // given
-    Long randomLong = RandomValue.getRandomLong(0, 9999);
+    Long randomLong = RandomValue.getLong(0, 9999);
     ReportCommentDto.Request request = new ReportCommentDto.Request(randomLong);
 
     String url = "http://localhost:" + port + "/api/v1/sns/reportComment";
