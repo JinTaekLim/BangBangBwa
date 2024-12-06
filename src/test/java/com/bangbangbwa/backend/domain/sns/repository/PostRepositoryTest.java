@@ -1,5 +1,6 @@
 package com.bangbangbwa.backend.domain.sns.repository;
 
+import com.bangbangbwa.backend.domain.member.common.entity.Follow;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.member.repository.FollowRepository;
 import com.bangbangbwa.backend.domain.member.repository.MemberRepository;
@@ -12,6 +13,7 @@ import com.bangbangbwa.backend.domain.sns.common.entity.Post;
 import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
 import com.bangbangbwa.backend.domain.streamer.repository.StreamerTagRepository;
 import com.bangbangbwa.backend.domain.tag.common.entity.Tag;
+import com.bangbangbwa.backend.domain.tag.repository.MemberTagRepository;
 import com.bangbangbwa.backend.domain.tag.repository.TagRepository;
 import com.bangbangbwa.backend.global.test.MyBatisTest;
 import com.bangbangbwa.backend.global.util.randomValue.RandomValue;
@@ -31,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
         MemberRepository.class,
         StreamerRepository.class,
         StreamerTagRepository.class,
+        MemberTagRepository.class,
         TagRepository.class,
         FollowRepository.class,
 })
@@ -47,6 +50,9 @@ class PostRepositoryTest extends MyBatisTest {
 
     @Autowired
     private StreamerTagRepository streamerTagRepository;
+
+    @Autowired
+    private MemberTagRepository memberTagRepository;
 
     @Autowired
     private TagRepository tagRepository;
@@ -184,16 +190,20 @@ class PostRepositoryTest extends MyBatisTest {
     }
 
     @Test
-    void findPostsByStreamerTags() {
+    void findPostsByFollowedStreamerExcludingReadIds() {
         // given
         int postLimit = 3;
         int tagCount = RandomValue.getInt(1, 5);
         int readPostCount = RandomValue.getInt(2);
         int postCount = RandomValue.getInt(0,5);
 
+        Member member = createMember();
+        Tag tag = createTag();
+        memberTagRepository.save(member.getId(), tag.getId());
+
+
         Member writeMember = createMember();
         Streamer streamer = createStreamer(writeMember);
-        Tag tag = createTag();
         List<Long> tagIds = Collections.singletonList(tag.getId());
         IntStream.range(0, tagCount)
                 .forEach(i->streamerTagRepository.save(streamer.getId(), tag));
@@ -207,24 +217,32 @@ class PostRepositoryTest extends MyBatisTest {
 
 
         // when
-        List<Post> posts = postRepository.findPostsByStreamerTagsExcludingReadIds(postLimit, tagIds, readerPostList);
+        List<Post> posts = postRepository.findPostsByFollowedStreamerExcludingReadIds(
+                postLimit,
+                member.getId(),
+                readerPostList
+        );
 
         // then
         assertThat(posts.size()).isEqualTo(Math.min(postCount, postLimit));
     }
 
     @Test()
-    void findPostsByStreamerAndMemberIds() {
+    void findPostsByFollowStreamerExcludingReadIds() {
         // given
         int postLimit = 3;
-        int readPostCount = RandomValue.getInt(0,5);
+        int returnPostCount = RandomValue.getInt(0,5);
+        int postCount = RandomValue.getInt(0,5);
         int nonReturnedPostCount = RandomValue.getInt(0,5);
         PostType postType = PostType.STREAMER;
 
         IntStream.range(0, nonReturnedPostCount)
                 .forEach(i->createPost(postType, createMember()));
 
-        List<Long> membersId = IntStream.range(0, readPostCount)
+        IntStream.range(0, postCount)
+                .forEach(i->createPost(postType, createMember()));
+
+        List<Long> membersId = IntStream.range(0, returnPostCount)
                 .mapToObj(i -> {
                     Member writeMember = createMember();
                     Post post = createPost(PostType.STREAMER, writeMember);
@@ -233,20 +251,30 @@ class PostRepositoryTest extends MyBatisTest {
                 .toList();
 
         Member member = createMember();
-        Set<String> readerPostList = IntStream.range(0, readPostCount)
+
+        membersId.forEach(id -> {
+            Follow follow = Follow.builder()
+                    .followerId(member.getId())
+                    .followeeId(id)
+                    .build();
+            followRepository.save(follow);
+        });
+
+
+        Set<String> readerPostList = IntStream.range(0, returnPostCount)
                 .mapToObj(i -> createPost(PostType.STREAMER, member).getId().toString())
                 .collect(Collectors.toSet());
 
 
         //when
-        List<Post> postList = postRepository.findPostsByStreamerAndMemberIdsExcludingReadIds(
+        List<Post> postList = postRepository.findPostsByFollowStreamerExcludingReadIds(
                 postLimit,
-                membersId,
+                member.getId(),
                 readerPostList
         );
 
         //then
-        int expectedPostCount = Math.min(readPostCount, postLimit);
+        int expectedPostCount = Math.min(returnPostCount, postLimit);
         assertThat(postList.size()).isEqualTo(expectedPostCount);
         IntStream.range(0, expectedPostCount)
                 .forEach(i -> assertThat(postList.get(i).getMemberId()).isEqualTo(membersId.get(i)));
