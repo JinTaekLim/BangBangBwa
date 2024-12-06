@@ -31,6 +31,9 @@ CREATE TABLE members
     created_id VARCHAR(255) NOT NULL COMMENT '생성자',
     updated_at DATETIME NULL COMMENT '수정일시(null)',
     updated_id VARCHAR(255) NULL COMMENT '수정자(null)',
+    usage_agree TINYINT NOT NULL DEFAULT 0 COMMENT '이용약관동의',
+    personal_agree TINYINT NOT NULL DEFAULT 0 COMMENT '개인정보수집동의',
+    withdrawal_agree TINYINT NOT NULL DEFAULT 0 COMMENT '회원탈퇴정책동의',
     PRIMARY KEY (id)
 );
 

@@ -37,17 +37,24 @@ public class Member {
   private List<Post> posts;
   private List<Follow> followers;
   private List<Follow> followings;
+  private boolean usageAgree;
+  private boolean personalAgree;
+  private boolean withdrawalAgree;
 
   @Builder
   public Member(
       String nickname,
-      String selfIntroduction
+      String selfIntroduction,
+      boolean usageAgree,
+      boolean personalAgree,
+      boolean withdrawalAgree
   ) {
     this.nickname = nickname;
     this.selfIntroduction = selfIntroduction;
-
+    this.usageAgree = usageAgree;
+    this.personalAgree = personalAgree;
+    this.withdrawalAgree = withdrawalAgree;
     this.role = Role.MEMBER;
-
     LocalDateTime now = LocalDateTime.now();
     this.createdId = SELF;
     this.createdAt = now;
@@ -63,5 +70,7 @@ public class Member {
     this.profile = profile;
   }
 
-  public void updateRole(Role role) { this.role = role; }
+  public void updateRole(Role role) {
+    this.role = role;
+  }
 }

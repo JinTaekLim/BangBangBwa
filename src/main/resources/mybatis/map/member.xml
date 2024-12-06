@@ -5,13 +5,13 @@
 <mapper namespace="MemberMapper">
   <insert id="save" parameterType="member" keyProperty="id">
     INSERT INTO members (
-      sns_type,     sns_id,               email,        nickname,     profile,
-      role,         self_introduction,    deleted_at,   created_id,   created_at,
-      updated_id,   updated_at
+    sns_type, sns_id, email, nickname, profile,
+    role, self_introduction, deleted_at, created_id, created_at,
+    updated_id, updated_at, usage_agree, personal_agree, withdrawal_agree
     ) VALUES (
-      #{snsType},   #{snsId},             #{email},     #{nickname},  #{profile},
-      #{role},      #{selfIntroduction},  #{deletedAt}, #{createdId}, #{createdAt},
-      #{updatedId}, #{updatedAt}
+    #{snsType}, #{snsId}, #{email}, #{nickname}, #{profile},
+    #{role}, #{selfIntroduction}, #{deletedAt}, #{createdId}, #{createdAt},
+    #{updatedId}, #{updatedAt}, #{usageAgree}, #{personalAgree}, #{withdrawalAgree}
     )
   </insert>
 
@@ -40,11 +40,13 @@
     <result property="isFollowing" column="is_following"/>
     <result property="selfIntroduction" column="self_introduction"/>
     <result property="isStreamer" column="is_streamer"/>
-    <collection property="interestTags" ofType="com.bangbangbwa.backend.domain.tag.common.entity.Tag">
+    <collection property="interestTags"
+      ofType="com.bangbangbwa.backend.domain.tag.common.entity.Tag">
       <id property="id" column="interest_tag_id"/>
       <result property="name" column="interest_tag_name"/>
     </collection>
-    <collection property="streamerTags" ofType="com.bangbangbwa.backend.domain.tag.common.entity.Tag">
+    <collection property="streamerTags"
+      ofType="com.bangbangbwa.backend.domain.tag.common.entity.Tag">
       <id property="id" column="streamer_tag_id"/>
       <result property="name" column="streamer_tag_name"/>
     </collection>
@@ -55,29 +57,29 @@
     resultMap="ProfileMap">
 
     SELECT #{memberId} AS member_id,
-           m.profile AS image_url,
-           m.nickname,
-           (f.id IS NOT NULL) AS is_following,
-           m.self_introduction AS self_introduction,
-           t1.id AS interest_tag_id,
-           t1.name AS interest_tag_name,
-           (s.id IS NOT NULL) AS is_streamer,
-           t2.id AS streamer_tag_id,
-           t2.name AS streamer_tag_name
+    m.profile AS image_url,
+    m.nickname,
+    (f.id IS NOT NULL) AS is_following,
+    m.self_introduction AS self_introduction,
+    t1.id AS interest_tag_id,
+    t1.name AS interest_tag_name,
+    (s.id IS NOT NULL) AS is_streamer,
+    t2.id AS streamer_tag_id,
+    t2.name AS streamer_tag_name
     FROM members m
-        LEFT JOIN follow f
-               ON f.followee_id = m.id
-              AND f.follower_id = #{currentMemberId}
-        LEFT JOIN members_tags mt
-               ON mt.member_id = m.id
-        LEFT JOIN tags t1
-               ON t1.id = mt.tag_id
-        LEFT JOIN streamers s
-               ON s.member_id = m.id
-        LEFT JOIN streamers_tags st
-               ON st.streamer_id = s.id
-        LEFT JOIN tags t2
-               ON t2.id = st.tag_id
+    LEFT JOIN follow f
+    ON f.followee_id = m.id
+    AND f.follower_id = #{currentMemberId}
+    LEFT JOIN members_tags mt
+    ON mt.member_id = m.id
+    LEFT JOIN tags t1
+    ON t1.id = mt.tag_id
+    LEFT JOIN streamers s
+    ON s.member_id = m.id
+    LEFT JOIN streamers_tags st
+    ON st.streamer_id = s.id
+    LEFT JOIN tags t2
+    ON t2.id = st.tag_id
     WHERE m.id = #{memberId};
   </select>
 
@@ -85,60 +87,60 @@
     parameterType="com.bangbangbwa.backend.domain.member.common.dto.SummaryDto"
     resultType="com.bangbangbwa.backend.domain.member.common.dto.SummaryDto">
     SELECT
-        #{memberId} AS member_id,
-        SUM(CASE WHEN type = 'follower' THEN cnt ELSE 0 END) AS follower_count,
-        SUM(CASE WHEN type = 'following' THEN cnt ELSE 0 END) AS following_count,
-        SUM(CASE WHEN type = 'post' THEN cnt ELSE 0 END) AS post_count,
-        MAX(is_streamer) AS is_streamer,
-        MAX(is_submitted_to_streamer) AS is_submitted_to_streamer
+    #{memberId} AS member_id,
+    SUM(CASE WHEN type = 'follower' THEN cnt ELSE 0 END) AS follower_count,
+    SUM(CASE WHEN type = 'following' THEN cnt ELSE 0 END) AS following_count,
+    SUM(CASE WHEN type = 'post' THEN cnt ELSE 0 END) AS post_count,
+    MAX(is_streamer) AS is_streamer,
+    MAX(is_submitted_to_streamer) AS is_submitted_to_streamer
     FROM (
-        SELECT
-            'follower' AS type,
-            COUNT(*) AS cnt,
-            0 AS is_streamer,
-            0 AS is_submitted_to_streamer
-        FROM follow
-        WHERE followee_id = #{memberId}
+    SELECT
+    'follower' AS type,
+    COUNT(*) AS cnt,
+    0 AS is_streamer,
+    0 AS is_submitted_to_streamer
+    FROM follow
+    WHERE followee_id = #{memberId}
 
-        UNION ALL
+    UNION ALL
 
-        SELECT
-            'following' AS type,
-            COUNT(*) AS cnt,
-            0 AS is_streamer,
-            0 AS is_submitted_to_streamer
-        FROM follow
-        WHERE follower_id = #{memberId}
+    SELECT
+    'following' AS type,
+    COUNT(*) AS cnt,
+    0 AS is_streamer,
+    0 AS is_submitted_to_streamer
+    FROM follow
+    WHERE follower_id = #{memberId}
 
-        UNION ALL
+    UNION ALL
 
-        SELECT
-            'post' AS type,
-            COUNT(*) AS cnt,
-            0 AS is_streamer,
-            0 AS is_submitted_to_streamer
-        FROM posts
-        WHERE member_id = #{memberId}
+    SELECT
+    'post' AS type,
+    COUNT(*) AS cnt,
+    0 AS is_streamer,
+    0 AS is_submitted_to_streamer
+    FROM posts
+    WHERE member_id = #{memberId}
 
-        UNION ALL
+    UNION ALL
 
-        SELECT
-            'streamer' AS type,
-            0 AS cnt,
-            1 AS is_streamer,
-            0 AS is_submitted_to_streamer
-        FROM streamers
-        WHERE member_id = #{memberId}
+    SELECT
+    'streamer' AS type,
+    0 AS cnt,
+    1 AS is_streamer,
+    0 AS is_submitted_to_streamer
+    FROM streamers
+    WHERE member_id = #{memberId}
 
-        UNION ALL
+    UNION ALL
 
-        SELECT
-            'pending' AS type,
-            0 AS cnt,
-            0 AS is_streamer,
-            CASE WHEN status = #{pendingType} THEN 1 ELSE 0 END AS is_submitted_to_streamer
-        FROM pending_streamer
-        WHERE member_id = #{memberId}
+    SELECT
+    'pending' AS type,
+    0 AS cnt,
+    0 AS is_streamer,
+    CASE WHEN status = #{pendingType} THEN 1 ELSE 0 END AS is_submitted_to_streamer
+    FROM pending_streamer
+    WHERE member_id = #{memberId}
     ) t;
   </select>
 </mapper>
