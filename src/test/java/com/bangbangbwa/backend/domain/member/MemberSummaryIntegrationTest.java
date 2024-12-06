@@ -29,6 +29,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
+import java.util.stream.LongStream;
+
 class MemberSummaryIntegrationTest extends IntegrationTest {
 
   @Autowired
@@ -113,29 +115,31 @@ class MemberSummaryIntegrationTest extends IntegrationTest {
     String AUTHORIZATION = "Bearer " + token.getAccessToken();
 
     // 팔로워 1~20명
-    long followerCount = RandomValue.getRandomLong(1, 20);
-    for (int i = 0; i < followerCount; i++) {
-      Member m = testMember();
-      memberRepository.save(m);
-      followRepository.save(testFollow(m.getId(), member.getId()));
-    }
+    long followerCount = RandomValue.getLong(1, 20);
+    LongStream.range(0, followerCount)
+            .forEach(i -> {
+              Member m = testMember();
+              memberRepository.save(m);
+              followRepository.save(testFollow(m.getId(), member.getId()));
+            });
+
     // 팔로잉 1~20명
-    long followingCount = RandomValue.getRandomLong(1, 20);
-    for (int i = 0; i < followingCount; i++) {
-      Member m = testMember();
-      memberRepository.save(m);
-      followRepository.save(testFollow(member.getId(), m.getId()));
-    }
+    long followingCount = RandomValue.getLong(1, 20);
+    LongStream.range(0, followingCount)
+            .forEach(i -> {
+              Member m = testMember();
+              memberRepository.save(m);
+              followRepository.save(testFollow(member.getId(), m.getId()));
+            });
 
     // 게시글 1~50개
-    long postCount = RandomValue.getRandomLong(1, 50);
-    for (int i = 0; i < postCount; i++) {
-      postRepository.save(testPost(member.getId()));
-    }
+    long postCount = RandomValue.getLong(1, 50);
+    LongStream.range(0, postCount)
+            .forEach(i -> postRepository.save(testPost(member.getId())));
 
     // 스트리머 등록
     streamerRepository.save(testStreamer(member.getId()));
-    
+
     SummaryDto.Response expected = new SummaryDto.Response(
         followerCount,
         followingCount,
@@ -167,26 +171,28 @@ class MemberSummaryIntegrationTest extends IntegrationTest {
     memberRepository.save(member);
 
     // 팔로워 1~20명
-    long followerCount = RandomValue.getRandomLong(1, 20);
-    for (int i = 0; i < followerCount; i++) {
-      Member m = testMember();
-      memberRepository.save(m);
-      followRepository.save(testFollow(m.getId(), member.getId()));
-    }
+    long followerCount = RandomValue.getLong(1, 20);
+    LongStream.range(0, followerCount)
+            .forEach(i -> {
+              Member m = testMember();
+              memberRepository.save(m);
+              followRepository.save(testFollow(m.getId(), member.getId()));
+            });
+    
     // 팔로잉 1~20명
-    long followingCount = RandomValue.getRandomLong(1, 20);
-    for (int i = 0; i < followingCount; i++) {
-      Member m = testMember();
-      memberRepository.save(m);
-      followRepository.save(testFollow(member.getId(), m.getId()));
-    }
-
+    long followingCount = RandomValue.getLong(1, 20);
+    LongStream.range(0, followingCount)
+            .forEach(i -> {
+              Member m = testMember();
+              memberRepository.save(m);
+              followRepository.save(testFollow(member.getId(), m.getId()));
+            });
+    
     // 게시글 1~50개
-    long postCount = RandomValue.getRandomLong(1, 50);
-    for (int i = 0; i < postCount; i++) {
-      postRepository.save(testPost(member.getId()));
-    }
-
+    long postCount = RandomValue.getLong(1, 50);
+    LongStream.range(0, postCount)
+            .forEach(i -> postRepository.save(testPost(member.getId())));
+    
     // 스트리머 등록
     streamerRepository.save(testStreamer(member.getId()));
 
@@ -222,25 +228,27 @@ class MemberSummaryIntegrationTest extends IntegrationTest {
     String AUTHORIZATION = "Bearer " + token.getAccessToken();
 
     // 팔로워 1~20명
-    long followerCount = RandomValue.getRandomLong(1, 20);
-    for (int i = 0; i < followerCount; i++) {
-      Member m = testMember();
-      memberRepository.save(m);
-      followRepository.save(testFollow(m.getId(), member.getId()));
-    }
+    long followerCount = RandomValue.getLong(1, 20);
+    LongStream.range(0, followerCount)
+            .forEach(i -> {
+              Member m = testMember();
+              memberRepository.save(m);
+              followRepository.save(testFollow(m.getId(), member.getId()));
+            });
+
     // 팔로잉 1~20명
-    long followingCount = RandomValue.getRandomLong(1, 20);
-    for (int i = 0; i < followingCount; i++) {
-      Member m = testMember();
-      memberRepository.save(m);
-      followRepository.save(testFollow(member.getId(), m.getId()));
-    }
+    long followingCount = RandomValue.getLong(1, 20);
+    LongStream.range(0, followingCount)
+            .forEach(i -> {
+              Member m = testMember();
+              memberRepository.save(m);
+              followRepository.save(testFollow(member.getId(), m.getId()));
+            });
 
     // 게시글 1~50개
-    long postCount = RandomValue.getRandomLong(1, 50);
-    for (int i = 0; i < postCount; i++) {
-      postRepository.save(testPost(member.getId()));
-    }
+    long postCount = RandomValue.getLong(1, 50);
+    LongStream.range(0, postCount)
+            .forEach(i -> postRepository.save(testPost(member.getId())));
 
     // 스트리머 신청 등록
     pendingStreamerRepository.save(testPendingStreamer(member.getId()));
@@ -276,25 +284,24 @@ class MemberSummaryIntegrationTest extends IntegrationTest {
     memberRepository.save(member);
 
     // 팔로워 1~20명
-    long followerCount = RandomValue.getRandomLong(1, 20);
-    for (int i = 0; i < followerCount; i++) {
+    long followerCount = RandomValue.getLong(1, 20);
+    LongStream.range(0, followerCount).forEach(i -> {
       Member m = testMember();
       memberRepository.save(m);
       followRepository.save(testFollow(m.getId(), member.getId()));
-    }
+    });
+
     // 팔로잉 1~20명
-    long followingCount = RandomValue.getRandomLong(1, 20);
-    for (int i = 0; i < followingCount; i++) {
+    long followingCount = RandomValue.getLong(1, 20);
+    LongStream.range(0, followingCount).forEach(i -> {
       Member m = testMember();
       memberRepository.save(m);
       followRepository.save(testFollow(member.getId(), m.getId()));
-    }
+    });
 
     // 게시글 1~50개
-    long postCount = RandomValue.getRandomLong(1, 50);
-    for (int i = 0; i < postCount; i++) {
-      postRepository.save(testPost(member.getId()));
-    }
+    long postCount = RandomValue.getLong(1, 50);
+    LongStream.range(0, postCount).forEach(i -> postRepository.save(testPost(member.getId())));
 
     // 스트리머 신청 등록
     pendingStreamerRepository.save(testPendingStreamer(member.getId()));
@@ -331,25 +338,24 @@ class MemberSummaryIntegrationTest extends IntegrationTest {
     String AUTHORIZATION = "Bearer " + token.getAccessToken();
 
     // 팔로워 1~20명
-    long followerCount = RandomValue.getRandomLong(1, 20);
-    for (int i = 0; i < followerCount; i++) {
+    long followerCount = RandomValue.getLong(1, 20);
+    LongStream.range(0, followerCount).forEach(i -> {
       Member m = testMember();
       memberRepository.save(m);
       followRepository.save(testFollow(m.getId(), member.getId()));
-    }
+    });
+
     // 팔로잉 1~20명
-    long followingCount = RandomValue.getRandomLong(1, 20);
-    for (int i = 0; i < followingCount; i++) {
+    long followingCount = RandomValue.getLong(1, 20);
+    LongStream.range(0, followingCount).forEach(i -> {
       Member m = testMember();
       memberRepository.save(m);
       followRepository.save(testFollow(member.getId(), m.getId()));
-    }
+    });
 
     // 게시글 1~50개
-    long postCount = RandomValue.getRandomLong(1, 50);
-    for (int i = 0; i < postCount; i++) {
-      postRepository.save(testPost(member.getId()));
-    }
+    long postCount = RandomValue.getLong(1, 50);
+    LongStream.range(0, postCount).forEach(i -> postRepository.save(testPost(member.getId())));
 
     SummaryDto.Response expected = new SummaryDto.Response(
         followerCount,
@@ -382,25 +388,24 @@ class MemberSummaryIntegrationTest extends IntegrationTest {
     memberRepository.save(member);
 
     // 팔로워 1~20명
-    long followerCount = RandomValue.getRandomLong(1, 20);
-    for (int i = 0; i < followerCount; i++) {
+    long followerCount = RandomValue.getLong(1, 20);
+    LongStream.range(0, followerCount).forEach(i -> {
       Member m = testMember();
       memberRepository.save(m);
       followRepository.save(testFollow(m.getId(), member.getId()));
-    }
+    });
+
     // 팔로잉 1~20명
-    long followingCount = RandomValue.getRandomLong(1, 20);
-    for (int i = 0; i < followingCount; i++) {
+    long followingCount = RandomValue.getLong(1, 20);
+    LongStream.range(0, followingCount).forEach(i -> {
       Member m = testMember();
       memberRepository.save(m);
       followRepository.save(testFollow(member.getId(), m.getId()));
-    }
+    });
 
     // 게시글 1~50개
-    long postCount = RandomValue.getRandomLong(1, 50);
-    for (int i = 0; i < postCount; i++) {
-      postRepository.save(testPost(member.getId()));
-    }
+    long postCount = RandomValue.getLong(1, 50);
+    LongStream.range(0, postCount).forEach(i -> postRepository.save(testPost(member.getId())));
 
     SummaryDto.Response expected = new SummaryDto.Response(
         followerCount,

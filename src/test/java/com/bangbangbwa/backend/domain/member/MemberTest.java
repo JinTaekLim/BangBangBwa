@@ -45,15 +45,15 @@ class MemberTest extends IntegrationTest {
 
     private Member getMember() {
         Member member = Member.builder()
-                .nickname(RandomValue.string(255).setNullable(false).get())
+                .nickname(RandomValue.getString(255).setNullable(false).get())
                 .build();
         OAuthInfoDto oAuthInfo = OAuthInfoDto.builder()
-                .snsId(RandomValue.string(255).setNullable(false).get())
-                .email(RandomValue.string(255).setNullable(false).getEmail())
-                .snsType(RandomValue.getRandomEnum(SnsType.class))
+                .snsId(RandomValue.getString(255).setNullable(false).get())
+                .email(RandomValue.getString(255).setNullable(false).getEmail())
+                .snsType(RandomValue.getEnum(SnsType.class))
                 .build();
         member.addOAuthInfo(oAuthInfo);
-        member.updateProfile(RandomValue.string(255).get());
+        member.updateProfile(RandomValue.getString(255).get());
 
         return member;
     }
@@ -67,7 +67,7 @@ class MemberTest extends IntegrationTest {
     private PendingStreamer getPendingStreamer(Member member) {
         return PendingStreamer.builder()
                 .memberId(member.getId())
-                .platformUrl(RandomValue.string(255).setNullable(false).get())
+                .platformUrl(RandomValue.getString(255).setNullable(false).get())
                 .build();
     }
 
@@ -85,7 +85,7 @@ class MemberTest extends IntegrationTest {
         Member member = createMember();
         TokenDto tokenDto = tokenProvider.getToken(member);
 
-        String profileUrl = RandomValue.string(255).setNullable(false).get();
+        String profileUrl = RandomValue.getString(255).setNullable(false).get();
         PromoteStreamerDto.Request request = new PromoteStreamerDto.Request(profileUrl);
 
         String url = "http://localhost:" + port + "/api/v1/members/promoteStreamer";
@@ -114,7 +114,7 @@ class MemberTest extends IntegrationTest {
     @Test
     void promoteStreamer_토큰_미입력() {
         // given
-        String profileUrl = RandomValue.string(255).setNullable(false).get();
+        String profileUrl = RandomValue.getString(255).setNullable(false).get();
         PromoteStreamerDto.Request request = new PromoteStreamerDto.Request(profileUrl);
 
         String url = "http://localhost:" + port + "/api/v1/members/promoteStreamer";
@@ -146,7 +146,7 @@ class MemberTest extends IntegrationTest {
         createPendingStreamer(member);
         TokenDto tokenDto = tokenProvider.getToken(member);
 
-        String profileUrl = RandomValue.string(255).setNullable(false).get();
+        String profileUrl = RandomValue.getString(255).setNullable(false).get();
         PromoteStreamerDto.Request request = new PromoteStreamerDto.Request(profileUrl);
 
         String url = "http://localhost:" + port + "/api/v1/members/promoteStreamer";

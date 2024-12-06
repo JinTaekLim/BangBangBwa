@@ -24,6 +24,7 @@ import com.bangbangbwa.backend.global.util.randomValue.RandomString;
 import com.bangbangbwa.backend.global.util.randomValue.RandomValue;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.LongStream;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,14 +103,15 @@ class MemberProfileIntegrationTest extends IntegrationTest {
     String AUTHORIZATION = "Bearer " + token.getAccessToken();
 
     // 관심태그 1~10개
-    long tagCount = RandomValue.getRandomLong(1, 10);
+    long tagCount = RandomValue.getLong(1, 10);
     List<String> tags = new ArrayList<>();
-    for (int i = 0; i < tagCount; i++) {
-      Tag tag = testTag(member.getId());
-      tagRepository.save(tag);
-      memberRepository.save(member, tag);
-      tags.add(tag.getName());
-    }
+    LongStream.range(0, tagCount)
+        .forEach(i -> {
+          Tag tag = testTag(member.getId());
+          tagRepository.save(tag);
+          memberRepository.save(member, tag);
+          tags.add(tag.getName());
+        });
 
     ProfileDto.Response expected = new ProfileDto.Response(
         member.getProfile(),
@@ -148,14 +150,14 @@ class MemberProfileIntegrationTest extends IntegrationTest {
     streamerRepository.save(streamer);
 
     // 방송분야 1~10개
-    long tagCount = RandomValue.getRandomLong(1, 10);
+    long tagCount = RandomValue.getLong(1, 10);
     List<String> tags = new ArrayList<>();
-    for (int i = 0; i < tagCount; i++) {
+    LongStream.range(0, tagCount).forEach(i -> {
       Tag tag = testTag(member.getId());
       tagRepository.save(tag);
       streamerTagRepository.save(streamer.getId(), tag);
       tags.add(tag.getName());
-    }
+    });
 
     ProfileDto.Response expected = new ProfileDto.Response(
         member.getProfile(),
@@ -262,14 +264,14 @@ class MemberProfileIntegrationTest extends IntegrationTest {
     streamerRepository.save(streamer);
 
     // 방송분야 1~10개
-    long tagCount = RandomValue.getRandomLong(1, 10);
+    long tagCount = RandomValue.getLong(1, 10);
     List<String> tags = new ArrayList<>();
-    for (int i = 0; i < tagCount; i++) {
+    LongStream.range(0, tagCount).forEach(i -> {
       Tag tag = testTag(member2.getId());
       tagRepository.save(tag);
       streamerTagRepository.save(streamer.getId(), tag);
       tags.add(tag.getName());
-    }
+    });
 
     ProfileDto.Response expected = new ProfileDto.Response(
         member2.getProfile(),
@@ -312,14 +314,14 @@ class MemberProfileIntegrationTest extends IntegrationTest {
     followRepository.save(follow);
 
     // 관심태그 1~10개
-    long tagCount = RandomValue.getRandomLong(1, 10);
+    long tagCount = RandomValue.getLong(1, 10);
     List<String> tags = new ArrayList<>();
-    for (int i = 0; i < tagCount; i++) {
+    LongStream.range(0, tagCount).forEach(i -> {
       Tag tag = testTag(member2.getId());
       tagRepository.save(tag);
       memberRepository.save(member2, tag);
       tags.add(tag.getName());
-    }
+    });
 
     ProfileDto.Response expected = new ProfileDto.Response(
         member2.getProfile(),
@@ -358,14 +360,14 @@ class MemberProfileIntegrationTest extends IntegrationTest {
     memberRepository.save(member2);
 
     // 관심태그 1~10개
-    long tagCount = RandomValue.getRandomLong(1, 10);
+    long tagCount = RandomValue.getLong(1, 10);
     List<String> tags = new ArrayList<>();
-    for (int i = 0; i < tagCount; i++) {
+    LongStream.range(0, tagCount).forEach(i -> {
       Tag tag = testTag(member2.getId());
       tagRepository.save(tag);
       memberRepository.save(member2, tag);
       tags.add(tag.getName());
-    }
+    });
 
     ProfileDto.Response expected = new ProfileDto.Response(
         member2.getProfile(),
@@ -399,14 +401,14 @@ class MemberProfileIntegrationTest extends IntegrationTest {
     memberRepository.save(member);
 
     // 관심태그 1~10개
-    long tagCount = RandomValue.getRandomLong(1, 10);
+    long tagCount = RandomValue.getLong(1, 10);
     List<String> tags = new ArrayList<>();
-    for (int i = 0; i < tagCount; i++) {
+    LongStream.range(0, tagCount).forEach(i -> {
       Tag tag = testTag(member.getId());
       tagRepository.save(tag);
       memberRepository.save(member, tag);
       tags.add(tag.getName());
-    }
+    });
 
     ProfileDto.Response expected = new ProfileDto.Response(
         member.getProfile(),
@@ -442,14 +444,14 @@ class MemberProfileIntegrationTest extends IntegrationTest {
     streamerRepository.save(streamer);
 
     // 방송분야 1~10개
-    long tagCount = RandomValue.getRandomLong(1, 10);
+    long tagCount = RandomValue.getLong(1, 10);
     List<String> tags = new ArrayList<>();
-    for (int i = 0; i < tagCount; i++) {
+    LongStream.range(0, tagCount).forEach(i -> {
       Tag tag = testTag(member.getId());
       tagRepository.save(tag);
       streamerTagRepository.save(streamer.getId(), tag);
       tags.add(tag.getName());
-    }
+    });
 
     ProfileDto.Response expected = new ProfileDto.Response(
         member.getProfile(),
