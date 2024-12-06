@@ -13,6 +13,13 @@ public class PostProvider {
 
   // 게시물 반환 최대 갯수
   private final int POST_SIZE = 7;
+  // 팔로우 게시물 반환 갯수
+  private int FOLLOW_POST_SIZE;
+  // 태그 게시물 반환 갯수
+  private int TAG_POST_SIZE;
+  // 현재까지 조회된 게시물
+  private Set<String> excludedPostIds = new HashSet<>();
+
 
   private final PostRecommendationStrategy postRecommendationStrategy;
   private final PostReader postReader;
@@ -25,59 +32,51 @@ public class PostProvider {
   }
 
   public List<Post> getMemberPersonalizedPosts(Long memberId, Set<String> readPostIds) {
-    PostType postType = PostType.STREAMER;
-    List<Long> memberIds = new ArrayList<>();
-    // 해당 유저가 갖고 있는 tag ID 이 담겨있는 리스트
-    List<Long> tagIds = new ArrayList<>();
-
-    int[] postProbability = postRecommendationStrategy.getPostReturnCount(POST_SIZE);
-    int followPostSize = postProbability[0];
-    int tagPostSize = postProbability[1];
-
-    List<Post> followPost = getPostsByMemberIds(followPostSize, memberIds, readPostIds);
-    Set<String> excludedPostIds = getExcludedPostIds(followPost);
-    List<Post> tagPost = getTagPost(tagPostSize, tagIds, readPostIds);
-
-    excludedPostIds = addExcludedPostIds(excludedPostIds, tagPost);
-    int randomPostSize = POST_SIZE - excludedPostIds.size();
-    List<Post> randomPost = getRandomPost(postType, randomPostSize, excludedPostIds);
-
+    initializePostSetup(readPostIds);
+    List<Post> followPost = getFollowPosts(memberId);
+    List<Post> tagPost = getTagPost(memberId);
+    List<Post> randomPost = getRandomPostsForMissingCount(PostType.STREAMER);
     return mergeUniquePosts(followPost, tagPost, randomPost);
   }
 
-  private List<Post> getRandomPost(PostType postType, int randomPostSize, Set<String> excludedPostIds) {
-    return postReader.findRandomPostsExcludingReadIds(postType,randomPostSize, excludedPostIds);
+  private void initializePostSetup(Set<String> readPostIds) {
+    setPostSize();
+    setExcludedPostIds(readPostIds);
+  }
+
+  private void setPostSize() {
+    int[] postProbability = postRecommendationStrategy.getPostReturnCount(POST_SIZE);
+    FOLLOW_POST_SIZE = postProbability[0];
+    TAG_POST_SIZE = postProbability[1];
+  }
+
+  private void setExcludedPostIds(Set<String> readPostIds) {
+    excludedPostIds.addAll(readPostIds);
   }
 
 
-  // note. 팔로우한 스트리머의 Id 값을 반환하는 작업 이후 추가
-  private List<Post> getPostsByMemberIds(int followPostSize, List<Long> memberIds, Set<String> readPostIds) {
-//    return postReader.findPostsByStreamerAndMemberIdsExcludingReadIds(followPostSize, memberIds, readPostIds);
-    return new ArrayList<>();
+  private List<Post> getFollowPosts(Long memberId) {
+    List<Post> postList = postReader.findPostsByFollowStreamerExcludingReadIds(FOLLOW_POST_SIZE, memberId, excludedPostIds);
+    addExcludedPostIds(postList);
+    return postList;
   }
 
-  // note. Tag 값이 동일한 스트리머의 MemberIds 를 반환하는 작업 이후 추가
-  public List<Post> getTagPost(int tagPostSize, List<Long> tagIds, Set<String> readPostIds) {
-//    return postReader.findPostsByStreamerTagsExcludingReadIds(tagPostSize, tagIds, readPostIds);
-    return new ArrayList<>();
+  public List<Post> getTagPost(Long memberId) {
+    List<Post> postList = postReader.findPostsByFollowedStreamerExcludingReadIds(TAG_POST_SIZE, memberId, excludedPostIds);
+    addExcludedPostIds(postList);
+    return postList;
   }
 
-  public Set<String> getExcludedPostIds(List<Post> postList) {
-    return postList.stream()
+  private List<Post> getRandomPostsForMissingCount(PostType postType) {
+    int postSize = POST_SIZE - excludedPostIds.size();
+    return postReader.findRandomPostsExcludingReadIds(postType,postSize, excludedPostIds);
+  }
+
+  public void addExcludedPostIds(List<Post> postList) {
+    excludedPostIds.addAll(postList.stream()
             .map(post -> Long.toString(post.getId()))
-            .collect(Collectors.toSet());
+            .collect(Collectors.toSet()));
   }
-
-
-  public Set<String> addExcludedPostIds(Set<String> excludedPostIds, List<Post> postList) {
-    postList.stream()
-            .map(post -> Long.toString(post.getId()))
-            .forEach(excludedPostIds::add);
-    return excludedPostIds;
-  }
-
-
-
 
   private List<Post> mergeUniquePosts(List<Post> followPost, List<Post> tagPost, List<Post> randomPost) {
     Set<Post> uniquePosts = new HashSet<>();

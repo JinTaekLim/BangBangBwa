@@ -42,15 +42,15 @@ public class PostReader {
     return postRepository.findByPostTypeAndRandomPostsExcludingReadIds(postType, limit, excludedPostIds);
   }
 
-  public List<Post> findPostsByStreamerTagsExcludingReadIds(int limit, List<Long> tagIds, Set<String> excludedPostIds) {
-    return postRepository.findPostsByStreamerTagsExcludingReadIds(limit, tagIds, excludedPostIds);
+  public List<Post> findPostsByFollowedStreamerExcludingReadIds(int limit, Long memberId, Set<String> excludedPostIds) {
+    return postRepository.findPostsByFollowedStreamerExcludingReadIds(limit, memberId, excludedPostIds);
   }
 
-  public List<Post> findPostsByStreamerAndMemberIdsExcludingReadIds(
+  public List<Post> findPostsByFollowStreamerExcludingReadIds(
           int limit,
-          List<Long> memberIds,
+          Long memberId,
           Set<String> excludedPostIds
   ) {
-    return postRepository.findPostsByStreamerAndMemberIdsExcludingReadIds(limit, memberIds, excludedPostIds);
+    return postRepository.findPostsByFollowStreamerExcludingReadIds(limit, memberId, excludedPostIds);
   }
 }

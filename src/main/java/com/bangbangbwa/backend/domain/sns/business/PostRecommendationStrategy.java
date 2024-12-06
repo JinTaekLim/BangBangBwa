@@ -13,8 +13,7 @@ public class PostRecommendationStrategy {
     private static final int[][] probabilities = {
             {70, 20, 10}, // 첫 번째 게시물
             {60, 25, 15}, // 두 번째 게시물
-            {50, 30, 20}, // 세 번째 게시물
-            {50, 30, 20}  // 네 번째 게시물 이후 고정 확률
+            {50, 30, 20}, // 이후    게시물
     };
 
 
