@@ -68,7 +68,10 @@ public class MemberService {
 
   public String serveRandomNickname() {
     Set<String> nicknames = nicknameProvider.provideRandomNicknames(1);
-    return String.valueOf(nicknames.toArray()[0]);
+    if (nicknames.iterator().hasNext()) {
+      return nicknames.iterator().next();
+    }
+    return null;
   }
 
   public Boolean isMyMemberId(Long memberId) {
