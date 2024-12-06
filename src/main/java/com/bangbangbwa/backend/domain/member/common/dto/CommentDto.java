@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @Getter
 public class CommentDto {
 
+  private Long memberId;
+
   @Schema(name = "CommentResponse", description = "댓글 목록 조회 응답")
   public record Response (
     @Schema(description = "댓글 정보 목록")

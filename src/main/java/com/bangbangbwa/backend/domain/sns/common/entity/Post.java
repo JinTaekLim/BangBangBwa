@@ -27,6 +27,7 @@
     private String createdId;
     private List<Long> publicMembers;
     private List<Long> privateMembers;
+    private LocalDateTime writeAt;
     private LocalDateTime createdAt;
     private String updatedId;
     private LocalDateTime updatedAt;
@@ -43,8 +44,11 @@
       this.content = content;
       this.publicMembers = publicMembers;
       this.privateMembers = privateMembers;
+
+      LocalDateTime now = LocalDateTime.now();
+      this.writeAt = now;
       this.createdId = SELF;
-      this.createdAt = LocalDateTime.now();
+      this.createdAt = now;
     }
 
     public void updateMemberId(Long memberId) {

@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @Getter
 public class FollowDto {
 
+  private Long memberId;
+
   @Schema(name = "FollowerResponse", description = "팔로워 목록 조회 응답")
   public record Response(
     @Schema(description = "팔로워 정보 목록")

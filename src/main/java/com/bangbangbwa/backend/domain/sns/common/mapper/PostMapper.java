@@ -35,5 +35,23 @@ public interface PostMapper {
   GetPostListDto.Response dtoToGetPostListResponse(Post post);
   List<GetPostListDto.Response> dtoToGetPostListResponse(List<Post> postList);
 
-  PostDto.Response dtoToResponse(List<PostDto> postDto);
+  default PostDto.Response dtoToResponse(List<PostDto> postDtos) {
+    if (postDtos == null || postDtos.isEmpty()) {
+      return new PostDto.Response(null);
+    }
+
+    List<PostDto.PostResponse> postResponses = postDtos.stream()
+        .map(dto -> new PostDto.PostResponse(
+            dto.getPostId(),
+            dto.isPinned(),
+            dto.getTitle(),
+            dto.getContent(),
+            dto.getCreatedDate(),
+            dto.isHasImage(),
+            dto.isHasVideo()
+        ))
+        .toList();
+
+    return new PostDto.Response(postResponses);
+  }
 }
