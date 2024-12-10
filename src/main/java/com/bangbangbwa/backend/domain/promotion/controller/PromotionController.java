@@ -9,6 +9,7 @@ import com.bangbangbwa.backend.global.response.ApiResponse;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +22,7 @@ public class PromotionController implements PromotionApi {
   private final BannerService bannerService;
   private final StreamerService streamerService;
 
+  @PreAuthorize("permitAll()")
   @GetMapping("/banners")
   public ApiResponse<PromotionBannerDto.Response> getBanners() {
     List<PromotionBannerDto.PromotionBanner> banners = bannerService.getBanners();
@@ -29,6 +31,7 @@ public class PromotionController implements PromotionApi {
     return ApiResponse.ok(response);
   }
 
+  @PreAuthorize("permitAll()")
   @GetMapping("/streamers")
   public ApiResponse<PromotionStreamerDto.Response> getStreamers() {
     Set<PromotionStreamer> streamerList = streamerService.getRandomStreamers();

@@ -15,6 +15,19 @@
     ORDER BY name
   </select>
 
+  <select id="findByMemberId" parameterType="Long"
+    resultType="com.bangbangbwa.backend.domain.tag.common.dto.TagDto">
+    SELECT
+    id,
+    name
+    FROM tags
+    WHERE id IN (
+    SELECT tag_id AS id
+    FROM members_tags
+    WHERE member_id = #{memberId}
+    )
+  </select>
+
   <insert id="save" parameterType="Tag" keyProperty="id" useGeneratedKeys="true">
     INSERT INTO tags (name, created_id, created_at)
     VALUES (#{name}, #{createdId}, #{createdAt})

@@ -15,7 +15,7 @@ public class StreamerRepository {
   private final SqlSession mysql;
 
   public List<StreamerDto> findAll() {
-    return mysql.selectList("StreamerMapper.selectAll");
+    return mysql.selectList("StreamerMapper.findStreamers10000");
   }
 
   public StreamerDto findStreamer(Long memberId) {
