@@ -109,8 +109,7 @@ public class SnsService {
     Role role = memberProvider.getCurrentRole();
     PostType postType = postTypeProvider.getInversePostTypeForRole(role);
 
-    if (role == Role.GUEST) { return postProvider.getRandomPost(postType); }
-    if (role == Role.STREAMER) { return postProvider.getRandomPost(postType); }
+    if (role == Role.GUEST || role == Role.STREAMER) {return postProvider.getRandomPost(postType);}
     Long memberId = memberProvider.getCurrentMemberId();
     Set<String> readPostIds = readerPostReader.findAllReadPostsByMemberId(memberId);
     return postProvider.getMemberPersonalizedPosts(memberId, readPostIds);
