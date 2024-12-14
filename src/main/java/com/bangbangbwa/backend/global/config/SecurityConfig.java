@@ -55,7 +55,8 @@ public class SecurityConfig {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowedOrigins(Arrays.asList(
         "http://localhost:3000",
-        "https://dev-bangbangbwa.netlify.app"
+        "https://dev-bangbangbwa.netlify.app",
+        "https://bangbangbwa.kro.kr"
     ));
     configuration.setAllowedMethods(Arrays.asList(
         "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"
