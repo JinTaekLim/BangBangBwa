@@ -15,6 +15,8 @@ import com.bangbangbwa.backend.domain.member.repository.FollowRepository;
 import com.bangbangbwa.backend.domain.member.repository.MemberRepository;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
+import com.bangbangbwa.backend.domain.promotion.common.entity.Streamer;
+import com.bangbangbwa.backend.domain.promotion.repository.StreamerRepository;
 import com.bangbangbwa.backend.domain.sns.common.dto.*;
 import com.bangbangbwa.backend.domain.sns.common.entity.Comment;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
@@ -27,6 +29,10 @@ import com.bangbangbwa.backend.domain.sns.exception.InvalidMemberVisibilityExcep
 import com.bangbangbwa.backend.domain.sns.repository.*;
 import com.bangbangbwa.backend.domain.sns.exception.NotFoundPostException;
 import com.bangbangbwa.backend.domain.streamer.repository.DailyMessageRepository;
+import com.bangbangbwa.backend.domain.streamer.repository.StreamerTagRepository;
+import com.bangbangbwa.backend.domain.tag.common.entity.Tag;
+import com.bangbangbwa.backend.domain.tag.repository.MemberTagRepository;
+import com.bangbangbwa.backend.domain.tag.repository.TagRepository;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
 import com.bangbangbwa.backend.domain.token.common.TokenDto;
 import com.bangbangbwa.backend.global.response.ApiResponse;
@@ -86,6 +92,18 @@ class SnsIntegrationTest extends IntegrationTest {
 
   @Autowired
   private TokenProvider tokenProvider;
+
+  @Autowired
+  private TagRepository tagRepository;
+
+  @Autowired
+  private MemberTagRepository memberTagRepository;
+
+  @Autowired
+  private StreamerRepository streamerRepository;
+
+  @Autowired
+  private StreamerTagRepository streamerTagRepository;
 
   @MockBean
   private S3Manager s3Manager;
@@ -179,10 +197,99 @@ class SnsIntegrationTest extends IntegrationTest {
     return reportComment;
   }
 
+  private Tag getTag() {
+    String name = RandomValue.string(10,15).setNullable(false).get();
+    return Tag.builder().createdId("test").name(name).build();
+  }
+
+  private Tag createTag() {
+    Tag tag = getTag();
+    tagRepository.save(tag);
+    return tag;
+  }
+
+  private Streamer getStreamer(Member member) {
+    return Streamer.builder().memberId(member.getId()).build();
+  }
+
+  private Streamer createStreamer(Member member) {
+    Streamer streamer = getStreamer(member);
+    streamerRepository.save(streamer);
+    return streamer;
+  }
+
+
+
+  @Test()
+  void getPostList_토큰_보유_멤버() {
+    // given
+    int POST_SIZE = 7;
+    Role memberRole = Role.MEMBER;
+    PostType postType = PostType.STREAMER;
+    Member member = getMember();
+    member.updateRole(memberRole);
+    memberRepository.save(member);
+
+    Tag tag = createTag();
+    memberTagRepository.save(member.getId(), tag.getId());
+
+    TokenDto tokenDto = tokenProvider.getToken(member);
+
+    Member writeMember = createMember();
+    int postCount = RandomValue.getInt(0,5);
+    List<Post> postList = IntStream.range(0, postCount)
+        .mapToObj(i -> createPost(postType, writeMember))
+        .toList();
+
+    Member writeFollowMember = createMember();
+    createFollow(member, writeFollowMember);
+    int followPostCount = RandomValue.getInt(0,5);
+    List<Post> followPostList = IntStream.range(0, followPostCount)
+        .mapToObj(i -> createPost(postType, writeFollowMember))
+        .toList();
+
+    Member writeTagMember = createMember();
+    Streamer streamer = createStreamer(writeTagMember);
+    streamerRepository.save(streamer);
+    streamerTagRepository.save(streamer.getId(), tag);
+    int tagPostCount = RandomValue.getInt(0,5);
+    List<Post> tagPostList = IntStream.range(0, tagPostCount)
+        .mapToObj(i -> createPost(postType, writeTagMember))
+        .toList();
+
+    int totalPostCount = Math.min(POST_SIZE, tagPostCount + followPostCount + postCount);
+
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(tokenDto.getAccessToken());
+    HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+    String url = "http://localhost:" + port + "/api/v1/sns/getPostList";
+
+
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.exchange(
+        url,
+        HttpMethod.GET,
+        requestEntity,
+        String.class
+    );
+
+    ApiResponse<List<GetPostListDto.Response>> apiResponse = gson.fromJson(
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<List<GetPostListDto.Response>>>() {}.getType()
+    );
+
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertNotNull(apiResponse.getData());
+    assertThat(apiResponse.getData().size()).isEqualTo(totalPostCount);
+
+  }
 
   // note. 이미지/동영상 여부 값 비교 필요
   @Test
-  void getPostList() {
+  void getPostList_토큰_보유() {
     // given
     Role memberRole = (RandomValue.getInt(2) == 1) ? Role.MEMBER : Role.STREAMER;
     PostType postType = (memberRole == Role.MEMBER) ? PostType.STREAMER : PostType.MEMBER;
@@ -241,6 +348,7 @@ class SnsIntegrationTest extends IntegrationTest {
 
     assertThat(actualList).usingRecursiveComparison().isEqualTo(expectedList);
   }
+
 
   @Test
   void getPostList_토큰_미입력() {
