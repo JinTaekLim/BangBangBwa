@@ -1,7 +1,9 @@
 package com.bangbangbwa.backend.domain.member;
 
 import com.bangbangbwa.backend.domain.member.common.dto.FollowDto;
-import com.bangbangbwa.backend.domain.member.common.dto.FollowDto.FollowerResponse;
+import com.bangbangbwa.backend.domain.member.common.dto.FollowDto.FollowResponse;
+import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto;
+import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto.FollowerResponse;
 import com.bangbangbwa.backend.domain.member.common.dto.PromoteStreamerDto;
 import com.bangbangbwa.backend.domain.member.common.entity.Follow;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
@@ -21,7 +23,9 @@ import com.bangbangbwa.backend.global.util.randomValue.RandomValue;
 import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.IntStream;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -201,7 +205,7 @@ class MemberTest extends IntegrationTest {
 
     int followCount = RandomValue.getInt(0, 5);
     List<Member> followMember = new ArrayList<>();
-    List<Follow> followList = IntStream.range(0, followCount)
+    List<Follow> followerList = IntStream.range(0, followCount)
         .mapToObj(i -> {
             followMember.add(createMember());
           Follow follow = getFollow(followMember.get(i).getId(), member.getId());
@@ -218,6 +222,49 @@ class MemberTest extends IntegrationTest {
         String.class
     );
 
+    ApiResponse<FollowerDto.Response> apiResponse = gson.fromJson(
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<FollowerDto.Response>>() {
+        }.getType()
+    );
+
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    for(int i=0; i<followCount; i++) {
+        FollowerResponse followerResponse = apiResponse.getData().followers().get(i);
+        Follow follow = followerList.get(i);
+
+        assertThat(followerResponse.memberId()).isEqualTo(follow.getFollowerId());
+        assertThat(followerResponse.profile()).isEqualTo(followMember.get(i).getProfile());
+        assertThat(followerResponse.nickname()).isEqualTo(followMember.get(i).getNickname());
+    }
+
+  }
+
+
+  @Test()
+  void getFollows() {
+    // given
+    Member member = createMember();
+    int followeeCount = RandomValue.getInt(0, 5);
+    List<Member> followeeMember = new ArrayList<>();
+    List<Follow> followeeList = IntStream.range(0, followeeCount)
+        .mapToObj(i -> {
+          followeeMember.add(createMember());
+          Follow follow = getFollow(member.getId(), followeeMember.get(i).getId());
+          followRepository.save(follow);
+          return follow;
+        })
+        .toList();
+
+    String url = "http://localhost:" + port + "/api/v1/members/follows/" + member.getId();
+
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.getForEntity(
+        url,
+        String.class
+    );
+
     ApiResponse<FollowDto.Response> apiResponse = gson.fromJson(
         responseEntity.getBody(),
         new TypeToken<ApiResponse<FollowDto.Response>>() {
@@ -226,13 +273,14 @@ class MemberTest extends IntegrationTest {
 
     // then
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-    for(int i=0; i<followCount; i++) {
-        FollowerResponse followerResponse = apiResponse.getData().followers().get(i);
-        Follow follow = followList.get(i);
 
-        assertThat(followerResponse.memberId()).isEqualTo(follow.getFollowerId());
-        assertThat(followerResponse.profile()).isEqualTo(followMember.get(i).getProfile());
-        assertThat(followerResponse.nickname()).isEqualTo(followMember.get(i).getNickname());
+    for(int i=0; i<followeeCount; i++) {
+      FollowResponse followeeResponse = apiResponse.getData().follows().get(i);
+      Follow followee = followeeList.get(i);
+
+      assertThat(followeeResponse.memberId()).isEqualTo(followee.getFolloweeId());
+      assertThat(followeeResponse.profile()).isEqualTo(followeeMember.get(i).getProfile());
+      assertThat(followeeResponse.nickname()).isEqualTo(followeeMember.get(i).getNickname());
     }
 
   }

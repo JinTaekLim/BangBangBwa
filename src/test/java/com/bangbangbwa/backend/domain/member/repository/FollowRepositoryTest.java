@@ -1,9 +1,9 @@
 package com.bangbangbwa.backend.domain.member.repository;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
-import com.bangbangbwa.backend.domain.member.common.dto.FollowDto.FollowerResponse;
+import com.bangbangbwa.backend.domain.member.common.dto.FollowDto.FollowResponse;
+import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto.FollowerResponse;
 import com.bangbangbwa.backend.domain.member.common.entity.Follow;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
@@ -71,6 +71,26 @@ class FollowRepositoryTest extends MyBatisTest {
 
     // when
     List<FollowerResponse> responses = followRepository.findFollowersByMemberId(member.getId());
+
+    // then
+    assertThat(responses.size()).isEqualTo(followCount);
+  }
+
+  @Test
+  void findFollowsByMemberId() {
+    // given
+    Member member = createMember();
+
+    int followCount = 3;
+    IntStream.range(0, followCount)
+        .forEach(i -> {
+          Member followeeMember = createMember();
+          Follow follow = getFollow(member.getId(), followeeMember.getId());
+          followRepository.save(follow);
+        });
+
+    // when
+    List<FollowResponse> responses = followRepository.findFollowsByMemberId(member.getId());
 
     // then
     assertThat(responses.size()).isEqualTo(followCount);
