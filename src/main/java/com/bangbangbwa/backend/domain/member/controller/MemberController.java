@@ -5,7 +5,9 @@ import com.bangbangbwa.backend.domain.member.common.dto.CommentDto.CommentRespon
 import com.bangbangbwa.backend.domain.member.common.dto.CommentDto.CommentResponseCommentInfo;
 import com.bangbangbwa.backend.domain.member.common.dto.CommentDto.CommentResponsePostInfo;
 import com.bangbangbwa.backend.domain.member.common.dto.FollowDto;
-import com.bangbangbwa.backend.domain.member.common.dto.FollowDto.FollowerResponse;
+import com.bangbangbwa.backend.domain.member.common.dto.FollowDto.FollowResponse;
+import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto;
+import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto.FollowerResponse;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberLoginDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberNicknameDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
@@ -187,8 +189,16 @@ public class MemberController implements MemberApi {
 
   @GetMapping("/followers/{memberId}")
   @PreAuthorize("permitAll()")
-  public ApiResponse<FollowDto.Response> getFollowers(@PathVariable("memberId") Long memberId) {
+  public ApiResponse<FollowerDto.Response> getFollowers(@PathVariable("memberId") Long memberId) {
     List<FollowerResponse> followerResponses = memberService.getFollowers(memberId);
+    FollowerDto.Response response = new FollowerDto.Response(followerResponses);
+    return ApiResponse.ok(response);
+  }
+
+  @GetMapping("/follows/{memberId}")
+  @PreAuthorize("permitAll()")
+  public ApiResponse<FollowDto.Response> getFollows(@PathVariable("memberId") Long memberId) {
+    List<FollowResponse> followerResponses = memberService.getFollows(memberId);
     FollowDto.Response response = new FollowDto.Response(followerResponses);
     return ApiResponse.ok(response);
   }

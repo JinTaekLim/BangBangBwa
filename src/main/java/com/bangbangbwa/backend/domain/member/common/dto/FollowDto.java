@@ -5,20 +5,20 @@ import java.util.List;
 
 public class FollowDto {
 
-  @Schema(name = "FollowerResponse", description = "팔로워 목록 조회 응답")
+  @Schema(name = "FollowerResponse", description = "팔로우 목록 조회 응답")
   public record Response(
-    @Schema(description = "팔로워 정보 목록")
-    List<FollowerResponse> followers
+    @Schema(description = "팔로우 정보 목록")
+    List<FollowResponse> follows
   ) {
   }
 
   @Schema(name = "FollowerResponses")
-  public record FollowerResponse(
-      @Schema(description = "팔로워 사용자 ID")
+  public record FollowResponse(
+      @Schema(description = "팔로우 사용자 ID")
       Long memberId,
-      @Schema(description = "팔로워 닉네임")
+      @Schema(description = "팔로우 닉네임")
       String nickname,
-      @Schema(description = "팔로워 이미지 URL")
+      @Schema(description = "팔로우 이미지 URL")
       String profile
   ) {
   }

@@ -9,7 +9,8 @@ import com.bangbangbwa.backend.domain.member.business.MemberTagRelation;
 import com.bangbangbwa.backend.domain.member.business.MemberValidator;
 import com.bangbangbwa.backend.domain.member.business.NicknameProvider;
 import com.bangbangbwa.backend.domain.member.common.dto.CommentDto;
-import com.bangbangbwa.backend.domain.member.common.dto.FollowDto.FollowerResponse;
+import com.bangbangbwa.backend.domain.member.common.dto.FollowDto.FollowResponse;
+import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto.FollowerResponse;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
 import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
@@ -114,5 +115,9 @@ public class MemberService {
 
   public List<FollowerResponse> getFollowers(Long memberId) {
     return followReader.findFollowersByMemberId(memberId);
+  }
+
+  public List<FollowResponse> getFollows(Long memberId) {
+    return followReader.findFollowsByMemberId(memberId);
   }
 }
