@@ -1,5 +1,6 @@
 package com.bangbangbwa.backend.domain.sns.repository;
 
+import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.member.common.entity.Follow;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.member.repository.FollowRepository;
@@ -279,6 +280,41 @@ class PostRepositoryTest extends MyBatisTest {
         IntStream.range(0, expectedPostCount)
                 .forEach(i -> assertThat(postList.get(i).getMemberId()).isEqualTo(membersId.get(i)));
     }
+
+
+    @Test()
+    void findPostsByMemberId() {
+        // given
+        Member member = createMember();
+        PostType postType = RandomValue.getRandomEnum(PostType.class);
+        int postCount = 3;
+        List<Post> posts = IntStream.range(0, postCount)
+            .mapToObj(i -> createPost(postType, member))
+            .toList();
+
+
+        // when
+        List<PostDto> postDtos = postRepository.findPostsByMemberId(member.getId());
+
+        // then
+
+        assertThat(postDtos.size()).isEqualTo(postCount);
+
+        IntStream.range(0, posts.size()).forEach(i -> {
+            assertThat(postDtos.get(i).getPostId()).isEqualTo(posts.get(i).getId());
+            assertThat(postDtos.get(i).getCreatedDate()).isEqualTo(posts.get(i).getCreatedAt());
+            assertThat(postDtos.get(i).getTitle()).isEqualTo(posts.get(i).getTitle());
+            assertThat(postDtos.get(i).isPinned()).isEqualTo(posts.get(i).isPinned());
+        });
+
+    }
+
+
+
+
+
+
+
 //    @Test()
 //    void getUnreadAndFilteredPosts() throws Exception {
 //

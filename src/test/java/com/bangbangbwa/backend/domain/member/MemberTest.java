@@ -1,12 +1,16 @@
 package com.bangbangbwa.backend.domain.member;
 
+import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.member.common.dto.PromoteStreamerDto;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.member.exception.UnAuthenticationMemberException;
 import com.bangbangbwa.backend.domain.member.repository.MemberRepository;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
+import com.bangbangbwa.backend.domain.sns.common.entity.Post;
+import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
 import com.bangbangbwa.backend.domain.sns.exception.DuplicatePendingPromotionException;
+import com.bangbangbwa.backend.domain.sns.repository.PostRepository;
 import com.bangbangbwa.backend.domain.streamer.common.entity.PendingStreamer;
 import com.bangbangbwa.backend.domain.streamer.repository.PendingStreamerRepository;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
@@ -15,6 +19,8 @@ import com.bangbangbwa.backend.global.response.ApiResponse;
 import com.bangbangbwa.backend.global.test.IntegrationTest;
 import com.bangbangbwa.backend.global.util.randomValue.RandomValue;
 import com.google.gson.reflect.TypeToken;
+import java.util.List;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -42,6 +48,9 @@ class MemberTest extends IntegrationTest {
 
     @Autowired
     private TokenProvider tokenProvider;
+
+    @Autowired
+    private PostRepository postRepository;
 
     private Member getMember() {
         Member member = Member.builder()
@@ -77,6 +86,20 @@ class MemberTest extends IntegrationTest {
         return pendingStreamer;
     }
 
+    private Post getPost(PostType postType, Member member) {
+        return Post.builder()
+            .postType(postType)
+            .memberId(member.getId())
+            .title(RandomValue.string(100).setNullable(false).get())
+            .content(RandomValue.string(2000).setNullable(false).get())
+            .build();
+    }
+
+    private Post createPost(PostType postType, Member writeMember) {
+        Post post = getPost(postType, writeMember);
+        postRepository.save(post);
+        return post;
+    }
 
 
     @Test
@@ -173,5 +196,42 @@ class MemberTest extends IntegrationTest {
         assertThat(apiResponse.getData()).isNull();
         assertThat(apiResponse.getCode()).isEqualTo(exception.getCode());
         assertThat(apiResponse.getMessage()).isEqualTo(exception.getMessage());
+    }
+
+    @Test()
+    void getPosts() {
+        // given
+        Member member = createMember();
+        PostType postType = RandomValue.getRandomEnum(PostType.class);
+        int postCount = 3;
+        List<Post> posts = IntStream.range(0, postCount)
+            .mapToObj(i -> createPost(postType, member))
+            .toList();
+
+        String url = "http://localhost:" + port + "/api/v1/members/posts/" + member.getId();
+
+        // when
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity(
+            url,
+            String.class
+        );
+
+        ApiResponse<PostDto.Response> apiResponse = gson.fromJson(
+            responseEntity.getBody(),
+            new TypeToken<ApiResponse<PostDto.Response>>() {}.getType()
+        );
+
+        // then
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+
+        IntStream.range(0, posts.size()).forEach(i -> {
+            assertThat(apiResponse.getData().postInfos().get(i).postId()).isEqualTo(posts.get(i).getId());
+//            assertThat(apiResponse.getData().postInfos().get(i).createdDate()).isEqualTo(posts.get(i).getCreatedAt());
+            assertThat(apiResponse.getData().postInfos().get(i).title()).isEqualTo(posts.get(i).getTitle());
+            assertThat(apiResponse.getData().postInfos().get(i).isPinned()).isEqualTo(posts.get(i).isPinned());
+        });
+
+
     }
 }
