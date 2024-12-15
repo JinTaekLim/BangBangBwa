@@ -10,7 +10,6 @@ import com.bangbangbwa.backend.domain.member.common.dto.MemberLoginDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberNicknameDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
 import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
-import com.bangbangbwa.backend.domain.member.common.dto.PostDto.PostResponse;
 import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
 import com.bangbangbwa.backend.domain.member.common.dto.PromoteStreamerDto;
 import com.bangbangbwa.backend.domain.member.common.dto.SummaryDto;
@@ -21,6 +20,7 @@ import com.bangbangbwa.backend.domain.member.service.MemberService;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import com.bangbangbwa.backend.domain.oauth.service.OAuthService;
+import com.bangbangbwa.backend.domain.sns.common.mapper.PostMapper;
 import com.bangbangbwa.backend.domain.streamer.common.entity.PendingStreamer;
 import com.bangbangbwa.backend.domain.streamer.common.mapper.PendingStreamerMapper;
 import com.bangbangbwa.backend.domain.streamer.service.PendingStreamerService;
@@ -30,7 +30,6 @@ import com.bangbangbwa.backend.global.response.ApiResponse;
 import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils.Null;
 import org.springframework.http.MediaType;
@@ -137,15 +136,8 @@ public class MemberController implements MemberApi {
   @GetMapping("/posts/{memberId}")
   @PreAuthorize("permitAll()")
   public ApiResponse<PostDto.Response> getPosts(@PathVariable("memberId") Long memberId) {
-    List<PostResponse> postResponses = new ArrayList<>();
-    postResponses.add(new PostResponse(1L, true, "제목입니다1.", "내용입니다1.", "2024.01.01", true, true));
-    postResponses.add(new PostResponse(2L, true, "제목입니다2.", "내용입니다2.", "2024.04.24", true, false));
-    postResponses.add(
-        new PostResponse(3L, new Random().nextBoolean(), "제목입니다3.", "내용입니다3.", "2024.07.05", false,
-            true));
-    postResponses.add(
-        new PostResponse(4L, false, "제목입니다4.", "내용입니다4.", "2024.09.15", false, false));
-    PostDto.Response response = new PostDto.Response(postResponses);
+    List<PostDto> postDtos = memberService.getPosts(memberId);
+    PostDto.Response response = PostMapper.INSTANCE.dtoToResponse(postDtos);
     return ApiResponse.ok(response);
   }
 

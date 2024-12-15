@@ -24,6 +24,7 @@
     private Long memberId;
     private String title;
     private String content;
+    private boolean pinned;
     private String createdId;
     private List<Long> publicMembers;
     private List<Long> privateMembers;
@@ -45,6 +46,7 @@
       this.privateMembers = privateMembers;
       this.createdId = SELF;
       this.createdAt = LocalDateTime.now();
+      this.pinned = false;
     }
 
     public void updateMemberId(Long memberId) {

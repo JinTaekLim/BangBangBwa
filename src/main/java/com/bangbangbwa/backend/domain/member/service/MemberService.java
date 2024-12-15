@@ -17,6 +17,7 @@ import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.promotion.business.StreamerReader;
+import com.bangbangbwa.backend.domain.sns.business.PostReader;
 import com.bangbangbwa.backend.domain.tag.business.TagManager;
 import com.bangbangbwa.backend.domain.tag.common.entity.Tag;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
@@ -43,6 +44,7 @@ public class MemberService {
   private final MemberProvider memberProvider;
   private final TagManager tagManager;
   private final StreamerReader streamerReader;
+  private final PostReader postReader;
 
   @Transactional
   public TokenDto signup(OAuthInfoDto oAuthInfo, MemberSignupDto.Request request,
@@ -101,8 +103,7 @@ public class MemberService {
   }
 
   public List<PostDto> getPosts(Long memberId) {
-    memberReader.findById(memberId);
-    return null;
+    return postReader.findPostsByMemberId(memberId);
   }
 
   public CommentDto getComments(Long memberId) {

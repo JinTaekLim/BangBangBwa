@@ -1,5 +1,6 @@
 package com.bangbangbwa.backend.domain.sns.business;
 
+import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.GetLatestPostsDto;
 import com.bangbangbwa.backend.domain.sns.common.dto.GetPostDetailsDto;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
@@ -52,5 +53,9 @@ public class PostReader {
           Set<String> excludedPostIds
   ) {
     return postRepository.findPostsByFollowStreamerExcludingReadIds(limit, memberId, excludedPostIds);
+  }
+
+  public List<PostDto> findPostsByMemberId(Long memberId) {
+    return postRepository.findPostsByMemberId(memberId);
   }
 }
