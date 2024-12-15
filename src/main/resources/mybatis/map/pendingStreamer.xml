@@ -24,4 +24,15 @@
   </select>
 
 
+  <select id="findByPendingMembers" resultType="com.bangbangbwa.backend.domain.admin.common.dto.GetPendingMembers$GetPendingMemberResponse">
+    SELECT
+    p.member_id AS memberId,
+    p.platformUrl AS platformUrl,
+    p.created_at AS registrationDate,
+    m.profile AS profile,
+    m.nickname AS nickname
+    FROM pending_streamer p
+    LEFT JOIN members m ON p.member_id = m.id
+  </select>
+
 </mapper>

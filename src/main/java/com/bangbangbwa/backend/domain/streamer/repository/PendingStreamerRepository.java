@@ -1,7 +1,9 @@
 package com.bangbangbwa.backend.domain.streamer.repository;
 
+import com.bangbangbwa.backend.domain.admin.common.dto.GetPendingMembers.GetPendingMemberResponse;
 import com.bangbangbwa.backend.domain.streamer.common.entity.PendingStreamer;
 import com.bangbangbwa.backend.domain.streamer.common.enums.PendingType;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
@@ -29,5 +31,9 @@ public class PendingStreamerRepository {
     params.put("memberId", memberId);
     params.put("status", status);
     return Optional.ofNullable(mysql.selectOne("PendingStreamerMapper.findByMemberIdAndStatus", params));
+  }
+
+  public List<GetPendingMemberResponse> findByPendingMembers() {
+    return mysql.selectList("PendingStreamerMapper.findByPendingMembers");
   }
 }
