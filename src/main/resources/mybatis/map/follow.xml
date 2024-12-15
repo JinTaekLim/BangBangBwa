@@ -12,4 +12,14 @@
       #{updatedAt},   #{updatedId}
     )
   </insert>
+
+  <select id="findFollowersByMemberId" parameterType="Long" resultType="com.bangbangbwa.backend.domain.member.common.dto.FollowDto$FollowerResponse">
+    SELECT
+    f.follower_id AS memberId,
+    m.nickname AS nickname,
+    m.profile AS profile
+    FROM follow f
+    INNER JOIN members m ON f.follower_id = m.id
+    WHERE f.followee_id = #{memberId}
+  </select>
 </mapper>
