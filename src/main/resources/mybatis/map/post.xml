@@ -148,4 +148,18 @@
     WHERE p.member_id = #{memberId}
   </select>
 
+  <select id="findPostByIdAndMemberId" parameterType="map" resultType="post">
+    SELECT * FROM posts WHERE id = #{postId} AND member_id = #{memberId}
+  </select>
+
+  <update id="updatePostPin" parameterType="map">
+    UPDATE posts
+    SET pinned = #{pinned}
+    WHERE id = #{postId}
+  </update>
+
+  <select id="findPinnedPostsByMemberId" parameterType="Long" resultType="post">
+    SELECT * FROM posts WHERE member_id = #{memberId} AND pinned = true
+  </select>
+
 </mapper>

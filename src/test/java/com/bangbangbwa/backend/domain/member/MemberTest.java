@@ -6,8 +6,10 @@ import com.bangbangbwa.backend.domain.member.common.dto.FollowDto.FollowResponse
 import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto;
 import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto.FollowerResponse;
 import com.bangbangbwa.backend.domain.member.common.dto.PromoteStreamerDto;
+import com.bangbangbwa.backend.domain.member.common.dto.TogglePostPinDto;
 import com.bangbangbwa.backend.domain.member.common.entity.Follow;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
+import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.member.exception.UnAuthenticationMemberException;
 import com.bangbangbwa.backend.domain.member.repository.FollowRepository;
 import com.bangbangbwa.backend.domain.member.repository.MemberRepository;
@@ -16,6 +18,7 @@ import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
 import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
 import com.bangbangbwa.backend.domain.sns.exception.DuplicatePendingPromotionException;
+import com.bangbangbwa.backend.domain.sns.exception.MaxPinnedPostsExceededException;
 import com.bangbangbwa.backend.domain.sns.repository.PostRepository;
 import com.bangbangbwa.backend.domain.streamer.common.entity.PendingStreamer;
 import com.bangbangbwa.backend.domain.streamer.repository.PendingStreamerRepository;
@@ -106,20 +109,21 @@ class MemberTest extends IntegrationTest {
         .followeeId(followeeId)
         .build();
   }
-    private Post getPost(PostType postType, Member member) {
-        return Post.builder()
-            .postType(postType)
-            .memberId(member.getId())
-            .title(RandomValue.string(100).setNullable(false).get())
-            .content(RandomValue.string(2000).setNullable(false).get())
-            .build();
-    }
 
-    private Post createPost(PostType postType, Member writeMember) {
-        Post post = getPost(postType, writeMember);
-        postRepository.save(post);
-        return post;
-    }
+  private Post getPost(PostType postType, Member member) {
+    return Post.builder()
+        .postType(postType)
+        .memberId(member.getId())
+        .title(RandomValue.string(100).setNullable(false).get())
+        .content(RandomValue.string(2000).setNullable(false).get())
+        .build();
+  }
+
+  private Post createPost(PostType postType, Member writeMember) {
+    Post post = getPost(postType, writeMember);
+    postRepository.save(post);
+    return post;
+  }
 
 
   @Test
@@ -230,7 +234,7 @@ class MemberTest extends IntegrationTest {
     List<Member> followMember = new ArrayList<>();
     List<Follow> followerList = IntStream.range(0, followCount)
         .mapToObj(i -> {
-            followMember.add(createMember());
+          followMember.add(createMember());
           Follow follow = getFollow(followMember.get(i).getId(), member.getId());
           followRepository.save(follow);
           return follow;
@@ -253,13 +257,13 @@ class MemberTest extends IntegrationTest {
 
     // then
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-    for(int i=0; i<followCount; i++) {
-        FollowerResponse followerResponse = apiResponse.getData().followers().get(i);
-        Follow follow = followerList.get(i);
+    for (int i = 0; i < followCount; i++) {
+      FollowerResponse followerResponse = apiResponse.getData().followers().get(i);
+      Follow follow = followerList.get(i);
 
-        assertThat(followerResponse.memberId()).isEqualTo(follow.getFollowerId());
-        assertThat(followerResponse.profile()).isEqualTo(followMember.get(i).getProfile());
-        assertThat(followerResponse.nickname()).isEqualTo(followMember.get(i).getNickname());
+      assertThat(followerResponse.memberId()).isEqualTo(follow.getFollowerId());
+      assertThat(followerResponse.profile()).isEqualTo(followMember.get(i).getProfile());
+      assertThat(followerResponse.nickname()).isEqualTo(followMember.get(i).getNickname());
     }
 
   }
@@ -297,7 +301,7 @@ class MemberTest extends IntegrationTest {
     // then
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    for(int i=0; i<followeeCount; i++) {
+    for (int i = 0; i < followeeCount; i++) {
       FollowResponse followeeResponse = apiResponse.getData().follows().get(i);
       Follow followee = followeeList.get(i);
 
@@ -308,40 +312,156 @@ class MemberTest extends IntegrationTest {
 
   }
 
-    @Test()
-    void getPosts() {
-        // given
-        Member member = createMember();
-        PostType postType = RandomValue.getRandomEnum(PostType.class);
-        int postCount = 3;
-        List<Post> posts = IntStream.range(0, postCount)
-            .mapToObj(i -> createPost(postType, member))
-            .toList();
+  @Test()
+  void getPosts() {
+    // given
+    Member member = createMember();
+    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    int postCount = 3;
+    List<Post> posts = IntStream.range(0, postCount)
+        .mapToObj(i -> createPost(postType, member))
+        .toList();
 
-        String url = "http://localhost:" + port + "/api/v1/members/posts/" + member.getId();
+    String url = "http://localhost:" + port + "/api/v1/members/posts/" + member.getId();
 
-        // when
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity(
-            url,
-            String.class
-        );
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.getForEntity(
+        url,
+        String.class
+    );
 
-        ApiResponse<PostDto.Response> apiResponse = gson.fromJson(
-            responseEntity.getBody(),
-            new TypeToken<ApiResponse<PostDto.Response>>() {}.getType()
-        );
+    ApiResponse<PostDto.Response> apiResponse = gson.fromJson(
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<PostDto.Response>>() {
+        }.getType()
+    );
 
-        // then
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-
-        IntStream.range(0, posts.size()).forEach(i -> {
-            assertThat(apiResponse.getData().postInfos().get(i).postId()).isEqualTo(posts.get(i).getId());
+    IntStream.range(0, posts.size()).forEach(i -> {
+      assertThat(apiResponse.getData().postInfos().get(i).postId()).isEqualTo(posts.get(i).getId());
 //            assertThat(apiResponse.getData().postInfos().get(i).createdDate()).isEqualTo(posts.get(i).getCreatedAt());
-            assertThat(apiResponse.getData().postInfos().get(i).title()).isEqualTo(posts.get(i).getTitle());
-            assertThat(apiResponse.getData().postInfos().get(i).isPinned()).isEqualTo(posts.get(i).isPinned());
-        });
+      assertThat(apiResponse.getData().postInfos().get(i).title()).isEqualTo(
+          posts.get(i).getTitle());
+      assertThat(apiResponse.getData().postInfos().get(i).isPinned()).isEqualTo(
+          posts.get(i).isPinned());
+    });
+  }
+
+  @Test()
+  void togglePostPin() {
+    // given
+    Member member = getMember();
+    member.updateRole(Role.STREAMER);
+    memberRepository.save(member);
+    TokenDto tokenDto = tokenProvider.getToken(member);
+
+    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    Post post = createPost(postType, member);
+
+    boolean pinned = !post.isPinned();
+    TogglePostPinDto.Request request = new TogglePostPinDto.Request(post.getId(), pinned);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(tokenDto.getAccessToken());
+    HttpEntity<TogglePostPinDto.Request> requestEntity = new HttpEntity<>(request, headers);
+
+    String url = "http://localhost:" + port + "/api/v1/members/togglePostPin";
+
+    // then
+    ResponseEntity<String> responseEntity = restTemplate.postForEntity(
+        url,
+        requestEntity,
+        String.class
+    );
+
+    ApiResponse<?> apiResponse = gson.fromJson(
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<?>>() {}.getType()
+    );
+
+    Post getPost = postRepository.findById(post.getId()).orElseThrow(AssertionError::new);
+
+    // when
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(apiResponse.getData()).isNull();
+    assertThat(getPost.getId()).isEqualTo(post.getId());
+    assertThat(getPost.getMemberId()).isEqualTo(member.getId());
+    assertThat(getPost.isPinned()).isEqualTo(pinned);
+  }
+
+  @Test()
+  void togglePostPin_게시물_초과() {
+    // given
+    Member member = getMember();
+    member.updateRole(Role.STREAMER);
+    memberRepository.save(member);
+    TokenDto tokenDto = tokenProvider.getToken(member);
+    PostType postType = RandomValue.getRandomEnum(PostType.class);
+
+    List<Post> posts = IntStream.range(0,3)
+        .mapToObj(i -> {
+          Post post = createPost(postType, member);
+          postRepository.updatePostPin(post.getId(), true);
+          return post;
+        }).toList();
+
+    boolean pinned = true;
+    TogglePostPinDto.Request request = new TogglePostPinDto.Request(posts.get(0).getId(), pinned);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(tokenDto.getAccessToken());
+    HttpEntity<TogglePostPinDto.Request> requestEntity = new HttpEntity<>(request, headers);
+
+    MaxPinnedPostsExceededException exception = new MaxPinnedPostsExceededException();
+    String url = "http://localhost:" + port + "/api/v1/members/togglePostPin";
+
+    // then
+    ResponseEntity<String> responseEntity = restTemplate.postForEntity(
+        url,
+        requestEntity,
+        String.class
+    );
+
+    ApiResponse<?> apiResponse = gson.fromJson(
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<?>>() {}.getType()
+    );
 
 
-    }
+    // when
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(apiResponse.getData()).isNull();
+    assertThat(apiResponse.getCode()).isEqualTo(exception.getCode());
+    assertThat(apiResponse.getMessage()).isEqualTo(exception.getMessage());
+  }
+
+
+  @Test()
+  void togglePostPin_토큰_미입력() {
+    // given
+    TogglePostPinDto.Request request = new TogglePostPinDto.Request(null, true);
+
+    UnAuthenticationMemberException exception = new UnAuthenticationMemberException();
+    String url = "http://localhost:" + port + "/api/v1/members/togglePostPin";
+
+    // then
+    ResponseEntity<String> responseEntity = restTemplate.postForEntity(
+        url,
+        request,
+        String.class
+    );
+
+    ApiResponse<?> apiResponse = gson.fromJson(
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<?>>() {}.getType()
+    );
+
+
+    // when
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    assertThat(apiResponse.getCode()).isEqualTo(exception.getCode());
+    assertThat(apiResponse.getMessage()).isEqualTo(exception.getMessage());
+  }
 }
