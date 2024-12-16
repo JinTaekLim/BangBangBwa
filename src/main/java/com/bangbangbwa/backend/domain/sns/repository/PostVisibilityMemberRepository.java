@@ -1,6 +1,6 @@
 package com.bangbangbwa.backend.domain.sns.repository;
 
-import com.bangbangbwa.backend.domain.sns.common.entity.PostVisibilityMember;
+import com.bangbangbwa.backend.domain.post.common.entity.PostVisibilityMember;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSession;

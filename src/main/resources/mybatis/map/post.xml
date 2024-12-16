@@ -22,10 +22,11 @@
   </select>
 
 
-  <resultMap id="GetLatestPostsDtoMap" type="com.bangbangbwa.backend.domain.sns.common.dto.GetLatestPostsDto">
-    <result property="memberId" column="memberId" />
-    <result property="profileUrl" column="profileUrl" />
-    <result property="postIdList" column="postIdList" />
+  <resultMap id="GetLatestPostsDtoMap"
+    type="com.bangbangbwa.backend.domain.post.common.dto.GetLatestPostsDto">
+    <result property="memberId" column="memberId"/>
+    <result property="profileUrl" column="profileUrl"/>
+    <result property="postIdList" column="postIdList"/>
   </resultMap>
 
   <select id="findPostsWithinLast24Hours" parameterType="PostType" resultMap="GetLatestPostsDtoMap">
@@ -40,7 +41,8 @@
     WHERE
     p.created_at >= NOW() - INTERVAL '1' DAY
     AND p.post_type = #{postType}
-    <foreach item="postId" collection="readerPostList" open="AND p.id NOT IN (" close=")" separator=",">
+    <foreach item="postId" collection="readerPostList" open="AND p.id NOT IN (" close=")"
+      separator=",">
       #{postId}
     </foreach>
     GROUP BY
@@ -50,7 +52,8 @@
   </select>
 
 
-  <select id="getPostDetails" parameterType="map" resultType="com.bangbangbwa.backend.domain.sns.common.dto.GetPostDetailsDto$Response">
+  <select id="getPostDetails" parameterType="map"
+    resultType="com.bangbangbwa.backend.domain.post.common.dto.GetPostDetailsDto$Response">
     SELECT
     p.id AS postId,
     p.member_id AS writerId,
@@ -60,16 +63,15 @@
     m.nickname,
     c.content AS comment,
     CASE
-      WHEN f.follower_id IS NOT NULL THEN true
-      ELSE false
+    WHEN f.follower_id IS NOT NULL THEN true
+    ELSE false
     END AS isFollowed
     FROM posts p
-      LEFT JOIN members m ON p.member_id = m.id
+    LEFT JOIN members m ON p.member_id = m.id
     LEFT JOIN comments c ON c.post_id = p.id AND c.member_id = #{memberId}
     LEFT JOIN follow f ON f.follower_id = #{memberId} AND f.followee_id = p.member_id
     WHERE p.id = #{postId}
   </select>
-
 
 
   <select id="findByPostTypeAndRandomPostsExcludingReadIds" parameterType="map" resultType="post">
@@ -85,7 +87,6 @@
     ORDER BY RAND()
     LIMIT #{limit}
   </select>
-
 
 
   <select id="findPostsByFollowedStreamerExcludingReadIds" parameterType="map" resultType="post">
@@ -115,9 +116,6 @@
   </select>
 
 
-
-
-
   <select id="findPostsByFollowStreamerExcludingReadIds" parameterType="map" resultType="Post">
     SELECT p.*
     FROM posts p
@@ -137,8 +135,8 @@
   </select>
 
 
-
-  <select id="findPostsByMemberId" parameterType="Long" resultType="com.bangbangbwa.backend.domain.member.common.dto.PostDto">
+  <select id="findPostsByMemberId" parameterType="Long"
+    resultType="com.bangbangbwa.backend.domain.member.common.dto.PostDto">
     SELECT
     p.id AS postId,
     p.pinned AS isPinned,

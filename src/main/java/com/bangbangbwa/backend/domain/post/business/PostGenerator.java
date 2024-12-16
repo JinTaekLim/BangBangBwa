@@ -1,8 +1,10 @@
-package com.bangbangbwa.backend.domain.sns.business;
+package com.bangbangbwa.backend.domain.post.business;
 
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
-import com.bangbangbwa.backend.domain.sns.common.dto.CreatePostDto;
-import com.bangbangbwa.backend.domain.sns.common.entity.Post;
+import com.bangbangbwa.backend.domain.post.common.dto.CreatePostDto;
+import com.bangbangbwa.backend.domain.post.common.entity.Post;
+import com.bangbangbwa.backend.domain.sns.business.PostParser;
+import com.bangbangbwa.backend.domain.sns.business.PostUpdater;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

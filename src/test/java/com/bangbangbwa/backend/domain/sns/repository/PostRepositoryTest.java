@@ -1,5 +1,7 @@
 package com.bangbangbwa.backend.domain.sns.repository;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.member.common.entity.Follow;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
@@ -7,382 +9,376 @@ import com.bangbangbwa.backend.domain.member.repository.FollowRepository;
 import com.bangbangbwa.backend.domain.member.repository.MemberRepository;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
+import com.bangbangbwa.backend.domain.post.common.dto.GetLatestPostsDto;
+import com.bangbangbwa.backend.domain.post.common.entity.Post;
+import com.bangbangbwa.backend.domain.post.common.enums.PostType;
 import com.bangbangbwa.backend.domain.promotion.common.entity.Streamer;
 import com.bangbangbwa.backend.domain.promotion.repository.StreamerRepository;
-import com.bangbangbwa.backend.domain.sns.common.dto.GetLatestPostsDto;
-import com.bangbangbwa.backend.domain.sns.common.entity.Post;
-import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
 import com.bangbangbwa.backend.domain.streamer.repository.StreamerTagRepository;
 import com.bangbangbwa.backend.domain.tag.common.entity.Tag;
 import com.bangbangbwa.backend.domain.tag.repository.MemberTagRepository;
 import com.bangbangbwa.backend.domain.tag.repository.TagRepository;
 import com.bangbangbwa.backend.global.test.MyBatisTest;
 import com.bangbangbwa.backend.global.util.randomValue.RandomValue;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-
 @Import({
-        PostRepository.class,
-        MemberRepository.class,
-        StreamerRepository.class,
-        StreamerTagRepository.class,
-        MemberTagRepository.class,
-        TagRepository.class,
-        FollowRepository.class,
+    PostRepository.class,
+    MemberRepository.class,
+    StreamerRepository.class,
+    StreamerTagRepository.class,
+    MemberTagRepository.class,
+    TagRepository.class,
+    FollowRepository.class,
 })
 class PostRepositoryTest extends MyBatisTest {
 
-    @Autowired
-    private PostRepository postRepository;
+  @Autowired
+  private PostRepository postRepository;
 
-    @Autowired
-    private MemberRepository memberRepository;
+  @Autowired
+  private MemberRepository memberRepository;
 
-    @Autowired
-    private StreamerRepository streamerRepository;
+  @Autowired
+  private StreamerRepository streamerRepository;
 
-    @Autowired
-    private StreamerTagRepository streamerTagRepository;
+  @Autowired
+  private StreamerTagRepository streamerTagRepository;
 
-    @Autowired
-    private MemberTagRepository memberTagRepository;
+  @Autowired
+  private MemberTagRepository memberTagRepository;
 
-    @Autowired
-    private TagRepository tagRepository;
+  @Autowired
+  private TagRepository tagRepository;
 
-    @Autowired
-    private FollowRepository followRepository;
+  @Autowired
+  private FollowRepository followRepository;
 
 
-    private Member getMember() {
-        Member member = Member.builder()
-                .nickname(RandomValue.string(255).setNullable(false).get())
-                .build();
-        OAuthInfoDto oAuthInfo = OAuthInfoDto.builder()
-                .snsId(RandomValue.string(255).setNullable(false).get())
-                .email(RandomValue.string(255).setNullable(false).getEmail())
-                .snsType(RandomValue.getRandomEnum(SnsType.class))
-                .build();
-        member.addOAuthInfo(oAuthInfo);
-        member.updateProfile(RandomValue.string(255).get());
+  private Member getMember() {
+    Member member = Member.builder()
+        .nickname(RandomValue.string(255).setNullable(false).get())
+        .build();
+    OAuthInfoDto oAuthInfo = OAuthInfoDto.builder()
+        .snsId(RandomValue.string(255).setNullable(false).get())
+        .email(RandomValue.string(255).setNullable(false).getEmail())
+        .snsType(RandomValue.getRandomEnum(SnsType.class))
+        .build();
+    member.addOAuthInfo(oAuthInfo);
+    member.updateProfile(RandomValue.string(255).get());
 
-        return member;
+    return member;
+  }
+
+  private Member createMember() {
+    Member member = getMember();
+    memberRepository.save(member);
+    return member;
+  }
+
+  private Post getPost(PostType postType, Member member) {
+    return Post.builder()
+        .postType(postType)
+        .memberId(member.getId())
+        .title(RandomValue.string(100).setNullable(false).get())
+        .content(RandomValue.string(2000).setNullable(false).get())
+        .build();
+  }
+
+  private Post createPost(PostType postType, Member writeMember) {
+    Post post = getPost(postType, writeMember);
+    postRepository.save(post);
+    return post;
+  }
+
+  private Streamer getStreamer(Member member) {
+    return Streamer.builder().memberId(member.getId()).build();
+  }
+
+  private Streamer createStreamer(Member member) {
+    Streamer streamer = getStreamer(member);
+    streamerRepository.save(streamer);
+    return streamer;
+  }
+
+  private Tag getTag() {
+    return Tag.builder()
+        .name(RandomValue.string(1, 10).setNullable(false).get())
+        .createdId("id")
+        .build();
+  }
+
+  private Tag createTag() {
+    Tag tag = getTag();
+    tagRepository.save(tag);
+    return tag;
+  }
+
+  @Test()
+  void findPostsWithinLast24Hours() {
+    // given
+    Member writeMember = createMember();
+    PostType postType = RandomValue.getRandomEnum(PostType.class);
+
+    int readPostCount = RandomValue.getInt(0, 5);
+    int newPostCount = RandomValue.getInt(0, 5);
+
+    Set<String> readerPostList = IntStream.range(0, readPostCount)
+        .mapToObj(i -> createPost(postType, writeMember).getId().toString())
+        .collect(Collectors.toSet());
+
+    List<Long> newPostList = IntStream.range(0, newPostCount)
+        .mapToObj(i -> createPost(postType, writeMember))
+        .map(Post::getId)
+        .sorted(Comparator.naturalOrder())
+        .toList();
+
+    // when
+    List<GetLatestPostsDto> postList = postRepository.findPostsWithinLast24Hours(postType,
+        readerPostList);
+
+    // then
+    for (GetLatestPostsDto post : postList) {
+      List<Long> sortedPostIds = Arrays.stream(post.getPostIdList().split(","))
+          .map(Long::valueOf)
+          .sorted()
+          .toList();
+
+      assertThat(sortedPostIds).isEqualTo(newPostList);
     }
+  }
 
-    private Member createMember() {
-        Member member = getMember();
-        memberRepository.save(member);
-        return member;
-    }
+  @Test()
+  void findByPostTypeAndRandomPostsExcludingReadIds() {
+    // given
+    Member writeMember = createMember();
+    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    int readPostCount = RandomValue.getInt(2);
+    int newPostCount = RandomValue.getInt(3);
 
-    private Post getPost(PostType postType, Member member) {
-        return Post.builder()
-                .postType(postType)
-                .memberId(member.getId())
-                .title(RandomValue.string(100).setNullable(false).get())
-                .content(RandomValue.string(2000).setNullable(false).get())
-                .build();
-    }
+    Set<String> readerPostList = IntStream.range(0, readPostCount)
+        .mapToObj(i -> createPost(postType, writeMember).getId().toString())
+        .collect(Collectors.toSet());
 
-    private Post createPost(PostType postType, Member writeMember) {
-        Post post = getPost(postType, writeMember);
-        postRepository.save(post);
-        return post;
-    }
+    List<Long> newPostList = IntStream.range(0, newPostCount)
+        .mapToObj(i -> createPost(postType, writeMember))
+        .map(Post::getId)
+        .sorted(Comparator.naturalOrder())
+        .toList();
 
-    private Streamer getStreamer(Member member) {
-        return Streamer.builder().memberId(member.getId()).build();
-    }
+    // when
+    List<Post> posts = postRepository.findByPostTypeAndRandomPostsExcludingReadIds(
+        postType,
+        3,
+        readerPostList
+    );
 
-    private Streamer createStreamer(Member member) {
-        Streamer streamer = getStreamer(member);
-        streamerRepository.save(streamer);
-        return streamer;
-    }
+    // then
+    assertThat(posts.size()).isEqualTo(newPostCount);
 
-    private Tag getTag() {
-        return Tag.builder()
-                .name(RandomValue.string(1,10).setNullable(false).get())
-                .createdId("id")
-                .build();
-    }
+    List<Post> sortedPosts = posts.stream().sorted(Comparator.comparing(Post::getId)).toList();
+    List<Long> sortedNewPostList = newPostList.stream().sorted().toList();
 
-    private Tag createTag() {
-        Tag tag = getTag();
-        tagRepository.save(tag);
-        return tag;
-    }
+    IntStream.range(0, sortedPosts.size())
+        .forEach(i -> assertThat(sortedPosts.get(i).getId())
+            .isEqualTo(sortedNewPostList.get(i)));
+  }
 
-    @Test()
-    void findPostsWithinLast24Hours() {
-        // given
-        Member writeMember = createMember();
-        PostType postType = RandomValue.getRandomEnum(PostType.class);
+  @Test
+  void findPostsByFollowedStreamerExcludingReadIds() {
+    // given
+    int postLimit = 3;
+    int tagCount = RandomValue.getInt(1, 5);
+    int readPostCount = RandomValue.getInt(2);
+    int postCount = RandomValue.getInt(0, 5);
 
-        int readPostCount = RandomValue.getInt(0, 5);
-        int newPostCount = RandomValue.getInt(0, 5);
+    Member member = createMember();
+    Tag tag = createTag();
+    memberTagRepository.save(member.getId(), tag.getId());
 
-        Set<String> readerPostList = IntStream.range(0, readPostCount)
-                .mapToObj(i -> createPost(postType, writeMember).getId().toString())
-                .collect(Collectors.toSet());
+    Member writeMember = createMember();
+    Streamer streamer = createStreamer(writeMember);
+    List<Long> tagIds = Collections.singletonList(tag.getId());
+    IntStream.range(0, tagCount)
+        .forEach(i -> streamerTagRepository.save(streamer.getId(), tag));
 
-        List<Long> newPostList = IntStream.range(0, newPostCount)
-                .mapToObj(i -> createPost(postType, writeMember))
-                .map(Post::getId)
-                .sorted(Comparator.naturalOrder())
-                .toList();
+    IntStream.range(0, postCount)
+        .forEach(i -> createPost(PostType.STREAMER, writeMember));
 
-        // when
-        List<GetLatestPostsDto> postList = postRepository.findPostsWithinLast24Hours(postType, readerPostList);
+    Set<String> readerPostList = IntStream.range(0, readPostCount)
+        .mapToObj(i -> createPost(PostType.STREAMER, writeMember).getId().toString())
+        .collect(Collectors.toSet());
 
-        // then
-        for(GetLatestPostsDto post : postList) {
-            List<Long> sortedPostIds = Arrays.stream(post.getPostIdList().split(","))
-                    .map(Long::valueOf)
-                    .sorted()
-                    .toList();
+    // when
+    List<Post> posts = postRepository.findPostsByFollowedStreamerExcludingReadIds(
+        postLimit,
+        member.getId(),
+        readerPostList
+    );
 
-            assertThat(sortedPostIds).isEqualTo(newPostList);
-        }
-    }
+    // then
+    assertThat(posts.size()).isEqualTo(Math.min(postCount, postLimit));
+  }
 
-    @Test()
-    void findByPostTypeAndRandomPostsExcludingReadIds() {
-        // given
-        Member writeMember = createMember();
-        PostType postType = RandomValue.getRandomEnum(PostType.class);
-        int readPostCount = RandomValue.getInt(2);
-        int newPostCount = RandomValue.getInt(3);
+  @Test()
+  void findPostsByFollowStreamerExcludingReadIds() {
+    // given
+    int postLimit = 3;
+    int returnPostCount = RandomValue.getInt(0, 5);
+    int postCount = RandomValue.getInt(0, 5);
+    int nonReturnedPostCount = RandomValue.getInt(0, 5);
+    PostType postType = PostType.STREAMER;
 
-        Set<String> readerPostList = IntStream.range(0, readPostCount)
-                .mapToObj(i -> createPost(postType, writeMember).getId().toString())
-                .collect(Collectors.toSet());
+    IntStream.range(0, nonReturnedPostCount)
+        .forEach(i -> createPost(postType, createMember()));
 
-        List<Long> newPostList = IntStream.range(0, newPostCount)
-                .mapToObj(i -> createPost(postType, writeMember))
-                .map(Post::getId)
-                .sorted(Comparator.naturalOrder())
-                .toList();
+    IntStream.range(0, postCount)
+        .forEach(i -> createPost(postType, createMember()));
 
-        // when
-        List<Post> posts = postRepository.findByPostTypeAndRandomPostsExcludingReadIds(
-                postType,
-                3,
-                readerPostList
-        );
+    List<Long> membersId = IntStream.range(0, returnPostCount)
+        .mapToObj(i -> {
+          Member writeMember = createMember();
+          Post post = createPost(PostType.STREAMER, writeMember);
+          return post.getMemberId();
+        })
+        .toList();
 
-        // then
-        assertThat(posts.size()).isEqualTo(newPostCount);
+    Member member = createMember();
 
-        List<Post> sortedPosts = posts.stream().sorted(Comparator.comparing(Post::getId)).toList();
-        List<Long> sortedNewPostList = newPostList.stream().sorted().toList();
+    membersId.forEach(id -> {
+      Follow follow = Follow.builder()
+          .followerId(member.getId())
+          .followeeId(id)
+          .build();
+      followRepository.save(follow);
+    });
 
-        IntStream.range(0, sortedPosts.size())
-                .forEach(i -> assertThat(sortedPosts.get(i).getId())
-                        .isEqualTo(sortedNewPostList.get(i)));
-    }
+    Set<String> readerPostList = IntStream.range(0, returnPostCount)
+        .mapToObj(i -> createPost(PostType.STREAMER, member).getId().toString())
+        .collect(Collectors.toSet());
 
-    @Test
-    void findPostsByFollowedStreamerExcludingReadIds() {
-        // given
-        int postLimit = 3;
-        int tagCount = RandomValue.getInt(1, 5);
-        int readPostCount = RandomValue.getInt(2);
-        int postCount = RandomValue.getInt(0,5);
+    //when
+    List<Post> postList = postRepository.findPostsByFollowStreamerExcludingReadIds(
+        postLimit,
+        member.getId(),
+        readerPostList
+    );
 
-        Member member = createMember();
-        Tag tag = createTag();
-        memberTagRepository.save(member.getId(), tag.getId());
-
-
-        Member writeMember = createMember();
-        Streamer streamer = createStreamer(writeMember);
-        List<Long> tagIds = Collections.singletonList(tag.getId());
-        IntStream.range(0, tagCount)
-                .forEach(i->streamerTagRepository.save(streamer.getId(), tag));
-
-        IntStream.range(0, postCount)
-                .forEach(i->createPost(PostType.STREAMER, writeMember));
-
-        Set<String> readerPostList = IntStream.range(0, readPostCount)
-                .mapToObj(i -> createPost(PostType.STREAMER, writeMember).getId().toString())
-                .collect(Collectors.toSet());
+    //then
+    int expectedPostCount = Math.min(returnPostCount, postLimit);
+    assertThat(postList.size()).isEqualTo(expectedPostCount);
+    IntStream.range(0, expectedPostCount)
+        .forEach(i -> assertThat(postList.get(i).getMemberId()).isEqualTo(membersId.get(i)));
+  }
 
 
-        // when
-        List<Post> posts = postRepository.findPostsByFollowedStreamerExcludingReadIds(
-                postLimit,
-                member.getId(),
-                readerPostList
-        );
+  @Test()
+  void findPostsByMemberId() {
+    // given
+    Member member = createMember();
+    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    int postCount = 3;
+    List<Post> posts = IntStream.range(0, postCount)
+        .mapToObj(i -> createPost(postType, member))
+        .toList();
 
-        // then
-        assertThat(posts.size()).isEqualTo(Math.min(postCount, postLimit));
-    }
+    // when
+    List<PostDto> postDtos = postRepository.findPostsByMemberId(member.getId());
 
-    @Test()
-    void findPostsByFollowStreamerExcludingReadIds() {
-        // given
-        int postLimit = 3;
-        int returnPostCount = RandomValue.getInt(0,5);
-        int postCount = RandomValue.getInt(0,5);
-        int nonReturnedPostCount = RandomValue.getInt(0,5);
-        PostType postType = PostType.STREAMER;
+    // then
 
-        IntStream.range(0, nonReturnedPostCount)
-                .forEach(i->createPost(postType, createMember()));
+    assertThat(postDtos.size()).isEqualTo(postCount);
 
-        IntStream.range(0, postCount)
-                .forEach(i->createPost(postType, createMember()));
-
-        List<Long> membersId = IntStream.range(0, returnPostCount)
-                .mapToObj(i -> {
-                    Member writeMember = createMember();
-                    Post post = createPost(PostType.STREAMER, writeMember);
-                    return post.getMemberId();
-                })
-                .toList();
-
-        Member member = createMember();
-
-        membersId.forEach(id -> {
-            Follow follow = Follow.builder()
-                    .followerId(member.getId())
-                    .followeeId(id)
-                    .build();
-            followRepository.save(follow);
-        });
-
-
-        Set<String> readerPostList = IntStream.range(0, returnPostCount)
-                .mapToObj(i -> createPost(PostType.STREAMER, member).getId().toString())
-                .collect(Collectors.toSet());
-
-
-        //when
-        List<Post> postList = postRepository.findPostsByFollowStreamerExcludingReadIds(
-                postLimit,
-                member.getId(),
-                readerPostList
-        );
-
-        //then
-        int expectedPostCount = Math.min(returnPostCount, postLimit);
-        assertThat(postList.size()).isEqualTo(expectedPostCount);
-        IntStream.range(0, expectedPostCount)
-                .forEach(i -> assertThat(postList.get(i).getMemberId()).isEqualTo(membersId.get(i)));
-    }
-
-
-    @Test()
-    void findPostsByMemberId() {
-        // given
-        Member member = createMember();
-        PostType postType = RandomValue.getRandomEnum(PostType.class);
-        int postCount = 3;
-        List<Post> posts = IntStream.range(0, postCount)
-            .mapToObj(i -> createPost(postType, member))
-            .toList();
-
-
-        // when
-        List<PostDto> postDtos = postRepository.findPostsByMemberId(member.getId());
-
-        // then
-
-        assertThat(postDtos.size()).isEqualTo(postCount);
-
-        IntStream.range(0, posts.size()).forEach(i -> {
-            assertThat(postDtos.get(i).getPostId()).isEqualTo(posts.get(i).getId());
+    IntStream.range(0, posts.size()).forEach(i -> {
+      assertThat(postDtos.get(i).getPostId()).isEqualTo(posts.get(i).getId());
 //            assertThat(postDtos.get(i).getCreatedDate()).isEqualTo(posts.get(i).getCreatedAt());
-            assertThat(postDtos.get(i).getTitle()).isEqualTo(posts.get(i).getTitle());
-            assertThat(postDtos.get(i).isPinned()).isEqualTo(posts.get(i).isPinned());
-        });
+      assertThat(postDtos.get(i).getTitle()).isEqualTo(posts.get(i).getTitle());
+      assertThat(postDtos.get(i).isPinned()).isEqualTo(posts.get(i).isPinned());
+    });
 
-    }
+  }
 
-    @Test()
-    void findPostByIdAndMemberId_내_게시물() {
-        // given
-        Member member = createMember();
-        PostType postType = RandomValue.getRandomEnum(PostType.class);
-        Post post = createPost(postType, member);
+  @Test()
+  void findPostByIdAndMemberId_내_게시물() {
+    // given
+    Member member = createMember();
+    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    Post post = createPost(postType, member);
 
-        // then
-        Post getPost = postRepository.findPostByIdAndMemberId(post.getId(), member.getId())
-            .orElseThrow(AssertionError::new);
+    // then
+    Post getPost = postRepository.findPostByIdAndMemberId(post.getId(), member.getId())
+        .orElseThrow(AssertionError::new);
 
-        // when
-        assertThat(post)
-            .usingRecursiveComparison()
+    // when
+    assertThat(post)
+        .usingRecursiveComparison()
+        .ignoringFields("createdAt")
+        .isEqualTo(getPost);
+  }
+
+  @Test()
+  void findPostByIdAndMemberId_타인_게시물() {
+    // given
+    Member member = createMember();
+    Member writeMember = createMember();
+    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    Post post = createPost(postType, writeMember);
+
+    // then&then
+    Post getPost = postRepository.findPostByIdAndMemberId(post.getId(), member.getId())
+        .orElse(null);
+
+    // when
+    assertThat(getPost).isNull();
+  }
+
+  @Test()
+  void updatePostPin() {
+    // given
+    Member writeMember = createMember();
+    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    Post post = createPost(postType, writeMember);
+    boolean pinned = !post.isPinned();
+
+    // then
+    postRepository.updatePostPin(post.getId(), pinned);
+    Post getPost = postRepository.findById(post.getId()).orElse(null);
+    // when
+    assertThat(getPost.isPinned()).isEqualTo(pinned);
+  }
+
+  @Test()
+  void findPinnedPostsByMemberId() {
+    // given
+    Member writeMember = createMember();
+    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    int postCount = RandomValue.getInt(1, 3);
+    List<Post> posts = IntStream.range(0, postCount)
+        .mapToObj(i -> createPost(postType, writeMember))
+        .peek(post -> postRepository.updatePostPin(post.getId(), true))
+        .toList();
+
+    // when
+    List<Post> postList = postRepository.findPinnedPostsByMemberId(writeMember.getId());
+
+    // then
+    assertThat(postList.size()).isEqualTo(postCount);
+
+    IntStream.range(0, postCount)
+        .forEach(i -> assertThat(posts.get(i)).usingRecursiveComparison()
             .ignoringFields("createdAt")
-            .isEqualTo(getPost);
-    }
+            .isEqualTo(posts.get(i)));
 
-    @Test()
-    void findPostByIdAndMemberId_타인_게시물() {
-        // given
-        Member member = createMember();
-        Member writeMember = createMember();
-        PostType postType = RandomValue.getRandomEnum(PostType.class);
-        Post post = createPost(postType, writeMember);
-
-        // then&then
-        Post getPost = postRepository.findPostByIdAndMemberId(post.getId(), member.getId())
-            .orElse(null);
-
-        // when
-        assertThat(getPost).isNull();
-    }
-
-    @Test()
-    void updatePostPin() {
-        // given
-        Member writeMember = createMember();
-        PostType postType = RandomValue.getRandomEnum(PostType.class);
-        Post post = createPost(postType, writeMember);
-        boolean pinned = !post.isPinned();
-
-        // then
-        postRepository.updatePostPin(post.getId(), pinned);
-        Post getPost = postRepository.findById(post.getId()).orElse(null);
-        // when
-        assertThat(getPost.isPinned()).isEqualTo(pinned);
-    }
-
-    @Test()
-    void findPinnedPostsByMemberId() {
-        // given
-        Member writeMember = createMember();
-        PostType postType = RandomValue.getRandomEnum(PostType.class);
-        int postCount = RandomValue.getInt(1,3);
-        List<Post> posts = IntStream.range(0, postCount)
-            .mapToObj(i -> createPost(postType, writeMember))
-            .peek(post -> postRepository.updatePostPin(post.getId(), true))
-            .toList();
-
-        // when
-        List<Post> postList = postRepository.findPinnedPostsByMemberId(writeMember.getId());
-
-        // then
-        assertThat(postList.size()).isEqualTo(postCount);
-
-        IntStream.range(0, postCount)
-            .forEach(i -> assertThat(posts.get(i)).usingRecursiveComparison()
-                .ignoringFields("createdAt")
-                .isEqualTo(posts.get(i)));
-
-    }
-
-
+  }
 
 //    @Test()
 //    void getUnreadAndFilteredPosts() throws Exception {

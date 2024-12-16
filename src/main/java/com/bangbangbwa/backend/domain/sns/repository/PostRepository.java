@@ -1,13 +1,15 @@
 package com.bangbangbwa.backend.domain.sns.repository;
 
 import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
-import com.bangbangbwa.backend.domain.sns.common.dto.GetLatestPostsDto;
-import com.bangbangbwa.backend.domain.sns.common.dto.GetPostDetailsDto;
-import com.bangbangbwa.backend.domain.sns.common.entity.Post;
-import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
-
-import java.util.*;
-
+import com.bangbangbwa.backend.domain.post.common.dto.GetLatestPostsDto;
+import com.bangbangbwa.backend.domain.post.common.dto.GetPostDetailsDto;
+import com.bangbangbwa.backend.domain.post.common.entity.Post;
+import com.bangbangbwa.backend.domain.post.common.enums.PostType;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
@@ -18,7 +20,9 @@ public class PostRepository {
 
   private final SqlSession mysql;
 
-  public void save(Post post) { mysql.insert("PostMapper.save", post); }
+  public void save(Post post) {
+    mysql.insert("PostMapper.save", post);
+  }
 
   public Optional<Post> findById(Long postId) {
     return Optional.ofNullable(mysql.selectOne("PostMapper.findById", postId));
@@ -35,7 +39,8 @@ public class PostRepository {
     return mysql.selectList("PostMapper.findAllByPostType", params);
   }
 
-  public List<GetLatestPostsDto> findPostsWithinLast24Hours(PostType postType, Set<String> readerPostList) {
+  public List<GetLatestPostsDto> findPostsWithinLast24Hours(PostType postType,
+      Set<String> readerPostList) {
     Map<String, Object> params = new HashMap<>();
     params.put("postType", postType);
     params.put("readerPostList", readerPostList);
@@ -49,7 +54,8 @@ public class PostRepository {
     return Optional.ofNullable(mysql.selectOne("PostMapper.getPostDetails", params));
   }
 
-  public List<Post> findByPostTypeAndRandomPostsExcludingReadIds(PostType postType, int limit, Set<String> readPostIds) {
+  public List<Post> findByPostTypeAndRandomPostsExcludingReadIds(PostType postType, int limit,
+      Set<String> readPostIds) {
     Map<String, Object> params = new HashMap<>();
     params.put("postType", postType);
     params.put("limit", limit);
@@ -57,7 +63,8 @@ public class PostRepository {
     return mysql.selectList("PostMapper.findByPostTypeAndRandomPostsExcludingReadIds", params);
   }
 
-  public List<Post> findPostsByFollowedStreamerExcludingReadIds(int limit, Long memberId, Set<String> readPostIds) {
+  public List<Post> findPostsByFollowedStreamerExcludingReadIds(int limit, Long memberId,
+      Set<String> readPostIds) {
     Map<String, Object> params = new HashMap<>();
     params.put("limit", limit);
     params.put("memberId", memberId);
@@ -66,9 +73,9 @@ public class PostRepository {
   }
 
   public List<Post> findPostsByFollowStreamerExcludingReadIds(
-          int limit,
-          Long memberId,
-          Set<String> readPostIds
+      int limit,
+      Long memberId,
+      Set<String> readPostIds
   ) {
     Map<String, Object> params = new HashMap<>();
     params.put("limit", limit);

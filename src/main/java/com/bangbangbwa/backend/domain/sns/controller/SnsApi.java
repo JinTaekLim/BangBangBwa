@@ -1,8 +1,8 @@
 package com.bangbangbwa.backend.domain.sns.controller;
 
-import com.bangbangbwa.backend.domain.sns.common.dto.CreatePostDto;
-import com.bangbangbwa.backend.domain.sns.common.dto.GetPostDetailsDto;
-import com.bangbangbwa.backend.domain.sns.common.dto.GetPostListDto;
+import com.bangbangbwa.backend.domain.post.common.dto.CreatePostDto;
+import com.bangbangbwa.backend.domain.post.common.dto.GetPostDetailsDto;
+import com.bangbangbwa.backend.domain.post.common.dto.GetPostListDto;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
