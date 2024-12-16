@@ -15,6 +15,7 @@ import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
 import com.bangbangbwa.backend.domain.member.common.dto.PromoteStreamerDto;
 import com.bangbangbwa.backend.domain.member.common.dto.SummaryDto;
+import com.bangbangbwa.backend.domain.member.common.dto.ToggleFollowDto;
 import com.bangbangbwa.backend.domain.member.common.mapper.MemberMapper;
 import com.bangbangbwa.backend.domain.member.common.mapper.ProfileMapper;
 import com.bangbangbwa.backend.domain.member.common.mapper.SummaryMapper;
@@ -193,5 +194,12 @@ public class MemberController implements MemberApi {
     List<FollowResponse> followerResponses = memberService.getFollows(memberId);
     FollowDto.Response response = new FollowDto.Response(followerResponses);
     return ApiResponse.ok(response);
+  }
+
+  @PostMapping("/toggleFollow")
+  @PreAuthorize("hasAuthority('MEMBER')")
+  public ApiResponse<?> toggleFollow(@RequestBody ToggleFollowDto.Request req) {
+    memberService.toggleFollow(req);
+    return ApiResponse.ok();
   }
 }

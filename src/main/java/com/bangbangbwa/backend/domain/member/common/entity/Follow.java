@@ -38,4 +38,8 @@ public class Follow {
     this.createdAt = now;
     this.createdId = SELF;
   }
+
+  public void updateFollowerId(Long followeeId) {
+    this.followerId = followeeId;
+  }
 }
