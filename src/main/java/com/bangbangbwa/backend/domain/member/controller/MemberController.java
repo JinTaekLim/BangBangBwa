@@ -4,6 +4,8 @@ import com.bangbangbwa.backend.domain.member.common.dto.CommentDto;
 import com.bangbangbwa.backend.domain.member.common.dto.CommentDto.CommentResponse;
 import com.bangbangbwa.backend.domain.member.common.dto.CommentDto.CommentResponseCommentInfo;
 import com.bangbangbwa.backend.domain.member.common.dto.CommentDto.CommentResponsePostInfo;
+import com.bangbangbwa.backend.domain.member.common.dto.FollowDto;
+import com.bangbangbwa.backend.domain.member.common.dto.FollowDto.FollowResponse;
 import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto;
 import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto.FollowerResponse;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberLoginDto;
@@ -180,17 +182,16 @@ public class MemberController implements MemberApi {
   @GetMapping("/followers/{memberId}")
   @PreAuthorize("permitAll()")
   public ApiResponse<FollowerDto.Response> getFollowers(@PathVariable("memberId") Long memberId) {
-    List<FollowerResponse> followerResponses = new ArrayList<>();
-
-    followerResponses.add(new FollowerResponse(1L, "전정국",
-        "https://images.khan.co.kr/article/2024/03/05/news-p.v1.20240305.9dc707937ff0483e9f91ee16c87312dd_P1.jpg"));
-    followerResponses.add(new FollowerResponse(2L, "정국",
-        "https://theviewers.co.kr/Files/30/News/202308/2890_20230816082125807.JPEG"));
-    followerResponses.add(new FollowerResponse(3L, "JK",
-        "https://img.etoday.co.kr/pto_db/2023/04/600/20230425161027_1877523_1200_1655.jpg"));
-
+    List<FollowerResponse> followerResponses = memberService.getFollowers(memberId);
     FollowerDto.Response response = new FollowerDto.Response(followerResponses);
+    return ApiResponse.ok(response);
+  }
 
+  @GetMapping("/follows/{memberId}")
+  @PreAuthorize("permitAll()")
+  public ApiResponse<FollowDto.Response> getFollows(@PathVariable("memberId") Long memberId) {
+    List<FollowResponse> followerResponses = memberService.getFollows(memberId);
+    FollowDto.Response response = new FollowDto.Response(followerResponses);
     return ApiResponse.ok(response);
   }
 }
