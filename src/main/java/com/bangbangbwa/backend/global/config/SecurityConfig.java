@@ -49,4 +49,22 @@ public class SecurityConfig {
 
     return http.build();
   }
+
+  @Bean
+  public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
+    configuration.setAllowedOrigins(Arrays.asList(
+        "http://localhost:3000",
+        "https://dev-bangbangbwa.netlify.app"
+    ));
+    configuration.setAllowedMethods(Arrays.asList(
+        "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"
+    ));
+    configuration.setAllowedHeaders(List.of("*"));
+    configuration.setAllowCredentials(true);
+
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+    return source;
+  }
 }
