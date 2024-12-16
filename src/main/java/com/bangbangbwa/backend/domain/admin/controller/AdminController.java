@@ -2,13 +2,17 @@ package com.bangbangbwa.backend.domain.admin.controller;
 
 
 import com.bangbangbwa.backend.domain.admin.common.dto.ApproveStreamerDto;
+import com.bangbangbwa.backend.domain.admin.common.dto.GetPendingMembers;
+import com.bangbangbwa.backend.domain.admin.common.dto.GetPendingMembers.GetPendingMemberResponse;
 import com.bangbangbwa.backend.domain.admin.service.AdminService;
 import com.bangbangbwa.backend.domain.streamer.common.entity.PendingStreamer;
 import com.bangbangbwa.backend.domain.streamer.common.mapper.PendingStreamerMapper;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +35,14 @@ public class AdminController {
         .INSTANCE
         .dtoToApproveStreamerResponse(pendingStreamer);
 
+    return ApiResponse.ok(response);
+  }
+
+  @GetMapping("/getPendingMembers")
+  @PreAuthorize("hasAuthority('ADMIN')")
+  public ApiResponse<?> getPendingMembers() {
+    List<GetPendingMemberResponse> getPendingMemberResponse = adminService.getPendingMembers();
+    GetPendingMembers.Response response = new GetPendingMembers.Response(getPendingMemberResponse);
     return ApiResponse.ok(response);
   }
 }
