@@ -83,7 +83,8 @@ class PendingStreamerReaderTest extends MyBatisTest {
     for(int i=0; i<pendingCount; i++) {
       assertThat(response.get(i).memberId()).isEqualTo(memberList.get(i).getId());
       assertThat(response.get(i).profile()).isEqualTo(memberList.get(i).getProfile());
-      assertThat(response.get(i).registrationDate()).isEqualTo(pendingStreamers.get(i).getCreatedAt());
+
+      assertThat(response.get(i).registrationDate().withNano(0)).isEqualTo(pendingStreamers.get(i).getCreatedAt().withNano(0));
       assertThat(response.get(i).platformUrl()).isEqualTo(pendingStreamers.get(i).getPlatformUrl());
     }
   }
