@@ -32,7 +32,7 @@
     m.profile AS profile,
     m.nickname AS nickname
     FROM pending_streamer p
-    LEFT JOIN members m ON p.member_id = m.id
+    INNER JOIN members m ON p.member_id = m.id
   </select>
 
 </mapper>
