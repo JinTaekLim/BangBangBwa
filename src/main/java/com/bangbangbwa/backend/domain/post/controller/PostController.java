@@ -11,6 +11,7 @@ import com.bangbangbwa.backend.domain.post.common.enums.PostType;
 import com.bangbangbwa.backend.domain.post.common.mapper.PostMapper;
 import com.bangbangbwa.backend.domain.post.service.PostService;
 import com.bangbangbwa.backend.global.response.ApiResponse;
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/v1/posts")
 @RequiredArgsConstructor
-public class PostController {
+public class PostController implements PostApi {
 
   private final PostService postService;
 
@@ -79,6 +80,7 @@ public class PostController {
     return ApiResponse.ok(response);
   }
 
+  @Hidden
   @PutMapping
   @PreAuthorize("hasAuthority('STREAMER')")
   public ApiResponse<GetPostDetailsDto.Response> updatePost(
