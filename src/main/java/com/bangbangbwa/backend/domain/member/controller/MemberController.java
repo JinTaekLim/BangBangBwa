@@ -15,6 +15,7 @@ import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
 import com.bangbangbwa.backend.domain.member.common.dto.PromoteStreamerDto;
 import com.bangbangbwa.backend.domain.member.common.dto.SummaryDto;
+import com.bangbangbwa.backend.domain.member.common.dto.ToggleFollowDto;
 import com.bangbangbwa.backend.domain.member.common.dto.TogglePostPinDto;
 import com.bangbangbwa.backend.domain.member.common.mapper.MemberMapper;
 import com.bangbangbwa.backend.domain.member.common.mapper.ProfileMapper;

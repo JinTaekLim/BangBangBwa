@@ -34,10 +34,6 @@ import com.google.gson.reflect.TypeToken;
 import java.util.List;
 import java.util.stream.IntStream;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.stream.IntStream;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -381,7 +377,8 @@ class MemberTest extends IntegrationTest {
 
     ApiResponse<?> apiResponse = gson.fromJson(
         responseEntity.getBody(),
-        new TypeToken<ApiResponse<?>>() {}.getType()
+        new TypeToken<ApiResponse<?>>() {
+        }.getType()
     );
 
     Post getPost = postRepository.findById(post.getId()).orElseThrow(AssertionError::new);
