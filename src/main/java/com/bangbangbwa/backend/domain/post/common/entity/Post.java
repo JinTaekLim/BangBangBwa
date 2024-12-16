@@ -53,4 +53,8 @@ public class Post {
     this.memberId = memberId;
   }
 
+  public void deletePost() {
+    this.status = PostStatus.DELETED;
+    this.deletedAt = LocalDateTime.now();
+  }
 }

@@ -117,4 +117,9 @@ public class PostService {
         .mapToObj(i -> getLatestPostsDto.get(i).toResponse(dailyMessageList.get(i)))
         .collect(Collectors.toList());
   }
+
+  public void deletePost(Long postId) {
+    Post post = postReader.findById(postId);
+    post.deletePost();
+  }
 }

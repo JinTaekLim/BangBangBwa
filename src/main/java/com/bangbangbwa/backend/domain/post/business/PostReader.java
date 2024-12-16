@@ -22,7 +22,6 @@ public class PostReader {
     return postRepository.findById(postId).orElseThrow(NotFoundPostException::new);
   }
 
-
   public GetPostDetailsDto.Response getPostDetails(Long postId, Long memberId) {
     return postRepository.getPostDetails(postId, memberId).orElseThrow(NotFoundPostException::new);
   }
