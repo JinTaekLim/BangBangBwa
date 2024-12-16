@@ -28,16 +28,17 @@
     <result property="profileUrl" column="streamer_profile_url"/>
   </resultMap>
 
-  <select id="selectAll" resultMap="streamerMap">
+  <select id="findStreamers10000" resultMap="streamerMap">
     SELECT *
     FROM (
-    <include refid="findStreamerSQL" />
+    <include refid="findStreamerSQL"/>
     ) a
-    ORDER BY a.streamer_id
+    ORDER BY RAND()
+    LIMIT 10000
   </select>
 
   <select id="findStreamer" resultMap="streamerMap">
-    <include refid="findStreamerSQL" />
+    <include refid="findStreamerSQL"/>
   </select>
 
   <sql id="findStreamerSQL">
@@ -71,9 +72,9 @@
 
   <insert id="save" parameterType="streamer" keyProperty="id">
     INSERT INTO streamers (
-      member_id
+    member_id
     ) VALUES (
-      #{memberId}
+    #{memberId}
     );
   </insert>
 

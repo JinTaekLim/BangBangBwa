@@ -8,12 +8,13 @@ import java.util.List;
 public class StreamerInterestedListMapper {
 
   public List<PromotionStreamerInterested> asDtoList(
-      List<Tag> tags) {
+      List<Tag> tags
+  ) {
     List<PromotionStreamerInterested> returnList = new ArrayList<>();
     for (Tag tag : tags) {
       PromotionStreamerInterested dto
           = new PromotionStreamerInterested(
-          checkInterestedIn(), // TODO : 회원 관심 분야 기능 추가 후 수정 예정
+          checkInterestedIn(),
           tag.getName()
       );
       returnList.add(dto);

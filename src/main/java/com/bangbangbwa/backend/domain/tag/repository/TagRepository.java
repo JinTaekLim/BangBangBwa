@@ -1,5 +1,6 @@
 package com.bangbangbwa.backend.domain.tag.repository;
 
+import com.bangbangbwa.backend.domain.tag.common.dto.TagDto;
 import com.bangbangbwa.backend.domain.tag.common.entity.Tag;
 import java.util.List;
 import java.util.Optional;
@@ -25,5 +26,9 @@ public class TagRepository {
 
   public List<String> findAllByName(String tagWord) {
     return mysql.selectList("TagMapper.findAllByName", tagWord);
+  }
+
+  public List<TagDto> findByMemberId(Long memberId) {
+    return mysql.selectList("TagMapper.findByMemberId", memberId);
   }
 }
