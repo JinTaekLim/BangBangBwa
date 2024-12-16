@@ -136,4 +136,16 @@
     LIMIT #{limit}
   </select>
 
+
+
+  <select id="findPostsByMemberId" parameterType="Long" resultType="com.bangbangbwa.backend.domain.member.common.dto.PostDto">
+    SELECT
+    p.id AS postId,
+    p.pinned AS isPinned,
+    p.title,
+    p.created_at AS createdDate
+    FROM posts p
+    WHERE p.member_id = #{memberId}
+  </select>
+
 </mapper>
