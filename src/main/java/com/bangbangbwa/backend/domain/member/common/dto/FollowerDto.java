@@ -17,9 +17,9 @@ public class FollowerDto {
       @Schema(description = "팔로워 사용자 ID")
       Long memberId,
       @Schema(description = "팔로워 닉네임")
-      String name,
+      String nickname,
       @Schema(description = "팔로워 이미지 URL")
-      String imageUrl
+      String profile
   ) {
   }
 }

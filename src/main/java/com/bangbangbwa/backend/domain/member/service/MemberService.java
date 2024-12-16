@@ -1,5 +1,6 @@
 package com.bangbangbwa.backend.domain.member.service;
 
+import com.bangbangbwa.backend.domain.member.business.FollowReader;
 import com.bangbangbwa.backend.domain.member.business.MemberCreator;
 import com.bangbangbwa.backend.domain.member.business.MemberGenerator;
 import com.bangbangbwa.backend.domain.member.business.MemberProvider;
@@ -8,7 +9,8 @@ import com.bangbangbwa.backend.domain.member.business.MemberTagRelation;
 import com.bangbangbwa.backend.domain.member.business.MemberValidator;
 import com.bangbangbwa.backend.domain.member.business.NicknameProvider;
 import com.bangbangbwa.backend.domain.member.common.dto.CommentDto;
-import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto;
+import com.bangbangbwa.backend.domain.member.common.dto.FollowDto.FollowResponse;
+import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto.FollowerResponse;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
 import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
@@ -43,6 +45,7 @@ public class MemberService {
   private final MemberProvider memberProvider;
   private final TagManager tagManager;
   private final StreamerReader streamerReader;
+  private final FollowReader followReader;
 
   @Transactional
   public TokenDto signup(OAuthInfoDto oAuthInfo, MemberSignupDto.Request request,
@@ -110,8 +113,11 @@ public class MemberService {
     return null;
   }
 
-  public List<FollowerDto> getFollowers(Long memberId) {
-    memberReader.findById(memberId);
-    return null;
+  public List<FollowerResponse> getFollowers(Long memberId) {
+    return followReader.findFollowersByMemberId(memberId);
+  }
+
+  public List<FollowResponse> getFollows(Long memberId) {
+    return followReader.findFollowsByMemberId(memberId);
   }
 }
