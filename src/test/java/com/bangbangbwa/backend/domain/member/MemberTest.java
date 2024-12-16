@@ -8,9 +8,11 @@ import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto.FollowerResp
 import com.bangbangbwa.backend.domain.member.common.dto.PromoteStreamerDto;
 import com.bangbangbwa.backend.domain.member.common.dto.ToggleFollowDto;
 import com.bangbangbwa.backend.domain.member.common.dto.ToggleFollowDto.Request;
+import com.bangbangbwa.backend.domain.member.common.dto.TogglePostPinDto;
 import com.bangbangbwa.backend.domain.member.common.entity.Follow;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.member.exception.NotFoundFollowException;
+import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.member.exception.UnAuthenticationMemberException;
 import com.bangbangbwa.backend.domain.member.repository.FollowRepository;
 import com.bangbangbwa.backend.domain.member.repository.MemberRepository;
@@ -19,6 +21,7 @@ import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import com.bangbangbwa.backend.domain.sns.common.entity.Post;
 import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
 import com.bangbangbwa.backend.domain.sns.exception.DuplicatePendingPromotionException;
+import com.bangbangbwa.backend.domain.sns.exception.MaxPinnedPostsExceededException;
 import com.bangbangbwa.backend.domain.sns.repository.PostRepository;
 import com.bangbangbwa.backend.domain.streamer.common.entity.PendingStreamer;
 import com.bangbangbwa.backend.domain.streamer.repository.PendingStreamerRepository;
@@ -349,6 +352,121 @@ class MemberTest extends IntegrationTest {
     });
   }
 
+  @Test()
+  void togglePostPin() {
+    // given
+    Member member = getMember();
+    member.updateRole(Role.STREAMER);
+    memberRepository.save(member);
+    TokenDto tokenDto = tokenProvider.getToken(member);
+
+    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    Post post = createPost(postType, member);
+
+    boolean pinned = !post.isPinned();
+    TogglePostPinDto.Request request = new TogglePostPinDto.Request(post.getId(), pinned);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(tokenDto.getAccessToken());
+    HttpEntity<TogglePostPinDto.Request> requestEntity = new HttpEntity<>(request, headers);
+
+    String url = "http://localhost:" + port + "/api/v1/members/togglePostPin";
+
+    // then
+    ResponseEntity<String> responseEntity = restTemplate.postForEntity(
+        url,
+        requestEntity,
+        String.class
+    );
+
+    ApiResponse<?> apiResponse = gson.fromJson(
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<?>>() {}.getType()
+    );
+
+    Post getPost = postRepository.findById(post.getId()).orElseThrow(AssertionError::new);
+
+    // when
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(apiResponse.getData()).isNull();
+    assertThat(getPost.getId()).isEqualTo(post.getId());
+    assertThat(getPost.getMemberId()).isEqualTo(member.getId());
+    assertThat(getPost.isPinned()).isEqualTo(pinned);
+  }
+
+  @Test()
+  void togglePostPin_게시물_초과() {
+    // given
+    Member member = getMember();
+    member.updateRole(Role.STREAMER);
+    memberRepository.save(member);
+    TokenDto tokenDto = tokenProvider.getToken(member);
+    PostType postType = RandomValue.getRandomEnum(PostType.class);
+
+    List<Post> posts = IntStream.range(0,3)
+        .mapToObj(i -> {
+          Post post = createPost(postType, member);
+          postRepository.updatePostPin(post.getId(), true);
+          return post;
+        }).toList();
+
+    boolean pinned = true;
+    TogglePostPinDto.Request request = new TogglePostPinDto.Request(posts.get(0).getId(), pinned);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(tokenDto.getAccessToken());
+    HttpEntity<TogglePostPinDto.Request> requestEntity = new HttpEntity<>(request, headers);
+
+    MaxPinnedPostsExceededException exception = new MaxPinnedPostsExceededException();
+    String url = "http://localhost:" + port + "/api/v1/members/togglePostPin";
+
+    // then
+    ResponseEntity<String> responseEntity = restTemplate.postForEntity(
+        url,
+        requestEntity,
+        String.class
+    );
+
+    ApiResponse<?> apiResponse = gson.fromJson(
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<?>>() {}.getType()
+    );
+
+
+    // when
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(apiResponse.getData()).isNull();
+    assertThat(apiResponse.getCode()).isEqualTo(exception.getCode());
+    assertThat(apiResponse.getMessage()).isEqualTo(exception.getMessage());
+  }
+
+
+  @Test()
+  void togglePostPin_토큰_미입력() {
+    // given
+    TogglePostPinDto.Request request = new TogglePostPinDto.Request(null, true);
+
+    UnAuthenticationMemberException exception = new UnAuthenticationMemberException();
+    String url = "http://localhost:" + port + "/api/v1/members/togglePostPin";
+
+    // then
+    ResponseEntity<String> responseEntity = restTemplate.postForEntity(
+        url,
+        request,
+        String.class
+    );
+
+    ApiResponse<?> apiResponse = gson.fromJson(
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<?>>() {}.getType()
+    );
+
+
+    // when
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    assertThat(apiResponse.getCode()).isEqualTo(exception.getCode());
+    assertThat(apiResponse.getMessage()).isEqualTo(exception.getMessage());
+  }
 
   @Test()
   void toggleFollow() {
@@ -491,3 +609,4 @@ class MemberTest extends IntegrationTest {
     assertThat(apiResponse.getMessage()).isEqualTo(exception.getMessage());
   }
 }
+
