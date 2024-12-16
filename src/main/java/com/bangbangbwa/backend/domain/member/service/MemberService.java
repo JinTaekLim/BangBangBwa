@@ -15,11 +15,14 @@ import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
 import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
 import com.bangbangbwa.backend.domain.member.common.dto.SummaryDto;
+import com.bangbangbwa.backend.domain.member.common.dto.TogglePostPinDto;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.promotion.business.StreamerReader;
 import com.bangbangbwa.backend.domain.sns.business.PostReader;
+import com.bangbangbwa.backend.domain.sns.business.PostUpdater;
+import com.bangbangbwa.backend.domain.sns.business.PostValidator;
 import com.bangbangbwa.backend.domain.tag.business.TagManager;
 import com.bangbangbwa.backend.domain.tag.common.entity.Tag;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
@@ -48,6 +51,8 @@ public class MemberService {
   private final StreamerReader streamerReader;
   private final FollowReader followReader;
   private final PostReader postReader;
+  private final PostValidator postValidator;
+  private final PostUpdater postUpdater;
 
   @Transactional
   public TokenDto signup(OAuthInfoDto oAuthInfo, MemberSignupDto.Request request,
@@ -120,5 +125,12 @@ public class MemberService {
 
   public List<FollowResponse> getFollows(Long memberId) {
     return followReader.findFollowsByMemberId(memberId);
+  }
+
+  public void togglePostPin(TogglePostPinDto.Request req) {
+    Long memberId = memberProvider.getCurrentMemberId();
+    postValidator.validatePostWriter(req.postId(), memberId);
+    if (req.pinned()) postValidator.validatePostPinLimit(memberId);
+    postUpdater.updatePostPin(req.postId(), req.pinned());
   }
 }

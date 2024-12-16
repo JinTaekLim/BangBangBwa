@@ -309,9 +309,78 @@ class PostRepositoryTest extends MyBatisTest {
 
     }
 
+    @Test()
+    void findPostByIdAndMemberId_내_게시물() {
+        // given
+        Member member = createMember();
+        PostType postType = RandomValue.getRandomEnum(PostType.class);
+        Post post = createPost(postType, member);
 
+        // then
+        Post getPost = postRepository.findPostByIdAndMemberId(post.getId(), member.getId())
+            .orElseThrow(AssertionError::new);
 
+        // when
+        assertThat(post)
+            .usingRecursiveComparison()
+            .ignoringFields("createdAt")
+            .isEqualTo(getPost);
+    }
 
+    @Test()
+    void findPostByIdAndMemberId_타인_게시물() {
+        // given
+        Member member = createMember();
+        Member writeMember = createMember();
+        PostType postType = RandomValue.getRandomEnum(PostType.class);
+        Post post = createPost(postType, writeMember);
+
+        // then&then
+        Post getPost = postRepository.findPostByIdAndMemberId(post.getId(), member.getId())
+            .orElse(null);
+
+        // when
+        assertThat(getPost).isNull();
+    }
+
+    @Test()
+    void updatePostPin() {
+        // given
+        Member writeMember = createMember();
+        PostType postType = RandomValue.getRandomEnum(PostType.class);
+        Post post = createPost(postType, writeMember);
+        boolean pinned = !post.isPinned();
+
+        // then
+        postRepository.updatePostPin(post.getId(), pinned);
+        Post getPost = postRepository.findById(post.getId()).orElse(null);
+        // when
+        assertThat(getPost.isPinned()).isEqualTo(pinned);
+    }
+
+    @Test()
+    void findPinnedPostsByMemberId() {
+        // given
+        Member writeMember = createMember();
+        PostType postType = RandomValue.getRandomEnum(PostType.class);
+        int postCount = RandomValue.getInt(1,3);
+        List<Post> posts = IntStream.range(0, postCount)
+            .mapToObj(i -> createPost(postType, writeMember))
+            .peek(post -> postRepository.updatePostPin(post.getId(), true))
+            .toList();
+
+        // when
+        List<Post> postList = postRepository.findPinnedPostsByMemberId(writeMember.getId());
+
+        // then
+        assertThat(postList.size()).isEqualTo(postCount);
+
+        IntStream.range(0, postCount)
+            .forEach(i -> assertThat(posts.get(i)).usingRecursiveComparison()
+                .ignoringFields("createdAt")
+                .isEqualTo(posts.get(i)));
+
+    }
 
 
 

@@ -81,5 +81,22 @@ public class PostRepository {
     return mysql.selectList("PostMapper.findPostsByMemberId", memberId);
   }
 
+  public Optional<Post> findPostByIdAndMemberId(Long postId, Long memberId) {
+    Map<String, Object> params = new HashMap<>();
+    params.put("postId", postId);
+    params.put("memberId", memberId);
+    return Optional.ofNullable(mysql.selectOne("PostMapper.findPostByIdAndMemberId", params));
+  }
+
+  public void updatePostPin(Long postId, boolean pinned) {
+    Map<String, Object> params = new HashMap<>();
+    params.put("postId", postId);
+    params.put("pinned", pinned);
+    mysql.update("PostMapper.updatePostPin", params);
+  }
+
+  public List<Post> findPinnedPostsByMemberId(Long memberId) {
+    return mysql.selectList("PostMapper.findPinnedPostsByMemberId", memberId);
+  }
 }
 
