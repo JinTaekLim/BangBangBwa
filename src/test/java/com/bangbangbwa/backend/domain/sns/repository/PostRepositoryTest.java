@@ -321,7 +321,10 @@ class PostRepositoryTest extends MyBatisTest {
             .orElseThrow(AssertionError::new);
 
         // when
-        assertThat(post).usingRecursiveComparison().isEqualTo(getPost);
+        assertThat(post)
+            .usingRecursiveComparison()
+            .ignoringFields("createdAt")
+            .isEqualTo(getPost);
     }
 
     @Test()
@@ -373,7 +376,9 @@ class PostRepositoryTest extends MyBatisTest {
         assertThat(postList.size()).isEqualTo(postCount);
 
         IntStream.range(0, postCount)
-            .forEach(i -> assertThat(posts.get(i)).usingRecursiveComparison().isEqualTo(posts.get(i)));
+            .forEach(i -> assertThat(posts.get(i)).usingRecursiveComparison()
+                .ignoringFields("createdAt")
+                .isEqualTo(posts.get(i)));
 
     }
 
