@@ -201,6 +201,7 @@ CREATE TABLE report_posts (
     id              BIGINT AUTO_INCREMENT PRIMARY KEY   COMMENT '게시물 신고 ID',
     status          VARCHAR(100)        NOT NULL        COMMENT 'CANCEL, PENDING, DELETED',
     post_id         BIGINT              NOT NULL        COMMENT '게시물 ID',
+    reason          VARCHAR(100)        NOT NULL        COMMENT '신고 사유',
     created_at      DATETIME            NOT NULL        COMMENT '생성일시',
     created_id      VARCHAR(255)        NOT NULL        COMMENT '생성자',
     updated_at      DATETIME                            COMMENT '수정일시',

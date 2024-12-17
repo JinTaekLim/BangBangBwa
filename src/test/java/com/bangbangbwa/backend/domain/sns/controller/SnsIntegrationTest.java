@@ -146,9 +146,9 @@ class SnsIntegrationTest extends IntegrationTest {
 
   private Follow getFollow(Long followerId, Long followeeId) {
     return Follow.builder()
-            .followerId(followerId)
-            .followeeId(followeeId)
-            .build();
+        .followerId(followerId)
+        .followeeId(followeeId)
+        .build();
   }
 
   private Follow createFollow(Member followerId, Member followeeId) {
@@ -159,23 +159,24 @@ class SnsIntegrationTest extends IntegrationTest {
 
   private ReportPost getReportPost(Long postId, String memberId) {
     return ReportPost.builder()
-            .createdId(memberId)
-            .postId(postId)
-            .build();
+        .createdId(memberId)
+        .postId(postId)
+        .reason(RandomValue.string(3, 5).setNullable(false).get())
+        .build();
   }
 
   private ReportPost createReportPost(Post post, Member member) {
-    ReportPost reportPost = getReportPost(post.getId() , member.getId().toString());
+    ReportPost reportPost = getReportPost(post.getId(), member.getId().toString());
     reportPostRepository.save(reportPost);
     return reportPost;
   }
 
   private Comment getComment(Post post, Member member) {
     return Comment.builder()
-            .content(RandomValue.string(30).setNullable(false).get())
-            .memberId(member.getId())
-            .postId(post.getId())
-            .build();
+        .content(RandomValue.string(30).setNullable(false).get())
+        .memberId(member.getId())
+        .postId(post.getId())
+        .build();
   }
 
   private Comment createComment(Post post, Member member) {
@@ -186,9 +187,9 @@ class SnsIntegrationTest extends IntegrationTest {
 
   private ReportComment getReportComment(Comment comment, Member member) {
     return ReportComment.builder()
-            .commentId(comment.getId())
-            .createdId(member.getId().toString())
-            .build();
+        .commentId(comment.getId())
+        .createdId(member.getId().toString())
+        .build();
   }
 
   private ReportComment createReportComment(Comment comment, Member member) {
@@ -198,7 +199,7 @@ class SnsIntegrationTest extends IntegrationTest {
   }
 
   private Tag getTag() {
-    String name = RandomValue.string(10,15).setNullable(false).get();
+    String name = RandomValue.string(10, 15).setNullable(false).get();
     return Tag.builder().createdId("test").name(name).build();
   }
 
@@ -219,7 +220,6 @@ class SnsIntegrationTest extends IntegrationTest {
   }
 
 
-
   @Test()
   void getPostList_토큰_보유_멤버() {
     // given
@@ -236,14 +236,14 @@ class SnsIntegrationTest extends IntegrationTest {
     TokenDto tokenDto = tokenProvider.getToken(member);
 
     Member writeMember = createMember();
-    int postCount = RandomValue.getInt(0,5);
+    int postCount = RandomValue.getInt(0, 5);
     List<Post> postList = IntStream.range(0, postCount)
         .mapToObj(i -> createPost(postType, writeMember))
         .toList();
 
     Member writeFollowMember = createMember();
     createFollow(member, writeFollowMember);
-    int followPostCount = RandomValue.getInt(0,5);
+    int followPostCount = RandomValue.getInt(0, 5);
     List<Post> followPostList = IntStream.range(0, followPostCount)
         .mapToObj(i -> createPost(postType, writeFollowMember))
         .toList();
@@ -252,20 +252,18 @@ class SnsIntegrationTest extends IntegrationTest {
     Streamer streamer = createStreamer(writeTagMember);
     streamerRepository.save(streamer);
     streamerTagRepository.save(streamer.getId(), tag);
-    int tagPostCount = RandomValue.getInt(0,5);
+    int tagPostCount = RandomValue.getInt(0, 5);
     List<Post> tagPostList = IntStream.range(0, tagPostCount)
         .mapToObj(i -> createPost(postType, writeTagMember))
         .toList();
 
     int totalPostCount = Math.min(POST_SIZE, tagPostCount + followPostCount + postCount);
 
-
     HttpHeaders headers = new HttpHeaders();
     headers.setBearerAuth(tokenDto.getAccessToken());
     HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
 
     String url = "http://localhost:" + port + "/api/v1/sns/getPostList";
-
 
     // when
     ResponseEntity<String> responseEntity = restTemplate.exchange(
@@ -277,7 +275,8 @@ class SnsIntegrationTest extends IntegrationTest {
 
     ApiResponse<List<GetPostListDto.Response>> apiResponse = gson.fromJson(
         responseEntity.getBody(),
-        new TypeToken<ApiResponse<List<GetPostListDto.Response>>>() {}.getType()
+        new TypeToken<ApiResponse<List<GetPostListDto.Response>>>() {
+        }.getType()
     );
 
     // then
@@ -301,12 +300,11 @@ class SnsIntegrationTest extends IntegrationTest {
     TokenDto tokenDto = tokenProvider.getToken(member);
 
     Member writeMember = createMember();
-    int postCount = RandomValue.getInt(0,5);
+    int postCount = RandomValue.getInt(0, 5);
 
     List<Post> postList = IntStream.range(0, postCount)
-            .mapToObj(i -> createPost(postType, writeMember))
-            .toList();
-
+        .mapToObj(i -> createPost(postType, writeMember))
+        .toList();
 
     HttpHeaders headers = new HttpHeaders();
     headers.setBearerAuth(tokenDto.getAccessToken());
@@ -314,18 +312,18 @@ class SnsIntegrationTest extends IntegrationTest {
 
     String url = "http://localhost:" + port + "/api/v1/sns/getPostList";
 
-
     // when
     ResponseEntity<String> responseEntity = restTemplate.exchange(
-            url,
-            HttpMethod.GET,
-            requestEntity,
-            String.class
+        url,
+        HttpMethod.GET,
+        requestEntity,
+        String.class
     );
 
     ApiResponse<List<GetPostListDto.Response>> apiResponse = gson.fromJson(
         responseEntity.getBody(),
-        new TypeToken<ApiResponse<List<GetPostListDto.Response>>>() {}.getType()
+        new TypeToken<ApiResponse<List<GetPostListDto.Response>>>() {
+        }.getType()
     );
 
     // then
@@ -333,18 +331,19 @@ class SnsIntegrationTest extends IntegrationTest {
     assertNotNull(apiResponse.getData());
     assertThat(apiResponse.getData().size()).isEqualTo(postCount);
 
-
-    Comparator<GetPostListDto.Response> getPostId = Comparator.comparing(GetPostListDto.Response::postId);
-    List<GetPostListDto.Response> actualList = apiResponse.getData().stream().sorted(getPostId).toList();
+    Comparator<GetPostListDto.Response> getPostId = Comparator.comparing(
+        GetPostListDto.Response::postId);
+    List<GetPostListDto.Response> actualList = apiResponse.getData().stream().sorted(getPostId)
+        .toList();
 
     List<GetPostListDto.Response> expectedList = postList.stream()
-            .map(post -> new GetPostListDto.Response(
-                    post.getId(),
-                    post.getTitle(),
-                    false,
-                    false
-                    )
-            ).sorted(getPostId).toList();
+        .map(post -> new GetPostListDto.Response(
+                post.getId(),
+                post.getTitle(),
+                false,
+                false
+            )
+        ).sorted(getPostId).toList();
 
     assertThat(actualList).usingRecursiveComparison().isEqualTo(expectedList);
   }
@@ -356,24 +355,23 @@ class SnsIntegrationTest extends IntegrationTest {
     PostType postType = PostType.STREAMER;
 
     Member writeMember = createMember();
-    int postCount = RandomValue.getInt(0,5);
+    int postCount = RandomValue.getInt(0, 5);
 
     IntStream.range(0, postCount)
-            .forEach(i -> createPost(postType, writeMember));
-
+        .forEach(i -> createPost(postType, writeMember));
 
     String url = "http://localhost:" + port + "/api/v1/sns/getPostList";
 
-
     // when
     ResponseEntity<String> responseEntity = restTemplate.getForEntity(
-            url,
-            String.class
+        url,
+        String.class
     );
 
     ApiResponse<List<GetPostListDto.Response>> apiResponse = gson.fromJson(
-            responseEntity.getBody(),
-            new TypeToken<ApiResponse<List<GetPostListDto.Response>>>() {}.getType()
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<List<GetPostListDto.Response>>>() {
+        }.getType()
     );
 
     // then
@@ -382,7 +380,6 @@ class SnsIntegrationTest extends IntegrationTest {
     assertThat(apiResponse.getData().size()).isEqualTo(postCount);
 
   }
-
 
 
   @Test
@@ -396,7 +393,9 @@ class SnsIntegrationTest extends IntegrationTest {
     Post post = createPost(postType, writeMember);
 
     boolean isFollow = RandomValue.getRandomBoolean();
-    if (isFollow) { createFollow(member, writeMember); }
+    if (isFollow) {
+      createFollow(member, writeMember);
+    }
 
     String url = "http://localhost:" + port + "/api/v1/sns/getPostDetails/" + post.getId();
 
@@ -406,15 +405,16 @@ class SnsIntegrationTest extends IntegrationTest {
 
     // when
     ResponseEntity<String> responseEntity = restTemplate.exchange(
-            url,
-            HttpMethod.GET,
-            requestEntity,
-            String.class
+        url,
+        HttpMethod.GET,
+        requestEntity,
+        String.class
     );
 
     ApiResponse<GetPostDetailsDto.Response> apiResponse = gson.fromJson(
         responseEntity.getBody(),
-        new TypeToken<ApiResponse<GetPostDetailsDto.Response>>() {}.getType()
+        new TypeToken<ApiResponse<GetPostDetailsDto.Response>>() {
+        }.getType()
     );
 
     // then
@@ -441,13 +441,14 @@ class SnsIntegrationTest extends IntegrationTest {
 
     // when
     ResponseEntity<String> responseEntity = restTemplate.getForEntity(
-            url,
-            String.class
+        url,
+        String.class
     );
 
     ApiResponse<GetPostDetailsDto.Response> apiResponse = gson.fromJson(
-            responseEntity.getBody(),
-            new TypeToken<ApiResponse<GetPostDetailsDto.Response>>() {}.getType()
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<GetPostDetailsDto.Response>>() {
+        }.getType()
     );
 
     // then
@@ -467,7 +468,7 @@ class SnsIntegrationTest extends IntegrationTest {
   @Test
   void getPostDetails_존재하지_않는_게시물() {
     // given
-    Long postId = RandomValue.getRandomLong(-999,-1);
+    Long postId = RandomValue.getRandomLong(-999, -1);
 
     String url = "http://localhost:" + port + "/api/v1/sns/getPostDetails/" + postId;
 
@@ -477,8 +478,9 @@ class SnsIntegrationTest extends IntegrationTest {
     ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
 
     ApiResponse<GetPostDetailsDto.Response> apiResponse = gson.fromJson(
-            responseEntity.getBody(),
-            new TypeToken<ApiResponse<GetPostDetailsDto.Response>>() {}.getType()
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<GetPostDetailsDto.Response>>() {
+        }.getType()
     );
 
     // then
@@ -488,7 +490,6 @@ class SnsIntegrationTest extends IntegrationTest {
     assertThat(apiResponse.getMessage()).isEqualTo(exception.getMessage());
 
   }
-
 
 
   // note. PostType 랜덤 지정하도록 변경 필요
@@ -522,7 +523,8 @@ class SnsIntegrationTest extends IntegrationTest {
 
     ApiResponse<CreatePostDto.Response> apiResponse = gson.fromJson(
         responseEntity.getBody(),
-        new TypeToken<ApiResponse<CreatePostDto.Response>>() {}.getType()
+        new TypeToken<ApiResponse<CreatePostDto.Response>>() {
+        }.getType()
     );
 
     // then
@@ -567,7 +569,8 @@ class SnsIntegrationTest extends IntegrationTest {
 
     ApiResponse<CreatePostDto.Response> apiResponse = gson.fromJson(
         responseEntity.getBody(),
-        new TypeToken<ApiResponse<CreatePostDto.Response>>() {}.getType()
+        new TypeToken<ApiResponse<CreatePostDto.Response>>() {
+        }.getType()
     );
 
     // then
@@ -593,7 +596,6 @@ class SnsIntegrationTest extends IntegrationTest {
 
     UnAuthenticationMemberException exception = new UnAuthenticationMemberException();
 
-
     // when
     ResponseEntity<String> responseEntity = restTemplate.postForEntity(
         url,
@@ -603,7 +605,8 @@ class SnsIntegrationTest extends IntegrationTest {
 
     ApiResponse<CreatePostDto.Response> apiResponse = gson.fromJson(
         responseEntity.getBody(),
-        new TypeToken<ApiResponse<CreatePostDto.Response>>() {}.getType()
+        new TypeToken<ApiResponse<CreatePostDto.Response>>() {
+        }.getType()
     );
 
     // then
@@ -618,13 +621,15 @@ class SnsIntegrationTest extends IntegrationTest {
   void uploadPostMedia() {
     // given
     String url = "http://localhost:" + port + "/api/v1/sns/uploadPostMedia";
-    String returnUrl = "http://" + RandomValue.string(10,50).setNullable(false).setLanguages(Language.ENGLISH).get();
+    String returnUrl =
+        "http://" + RandomValue.string(10, 50).setNullable(false).setLanguages(Language.ENGLISH)
+            .get();
 
     MockMultipartFile mockFile = new MockMultipartFile(
-            "file",
-            "test-image.jpg",
-            "image/jpeg",
-            "test-image-content".getBytes()
+        "file",
+        "test-image.jpg",
+        "image/jpeg",
+        "test-image-content".getBytes()
     );
 
     // when
@@ -638,14 +643,15 @@ class SnsIntegrationTest extends IntegrationTest {
     HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
     ResponseEntity<String> responseEntity = restTemplate.postForEntity(
-            url,
-            requestEntity,
-            String.class
+        url,
+        requestEntity,
+        String.class
     );
 
     ApiResponse<UploadPostMediaDto.Response> apiResponse = gson.fromJson(
-            responseEntity.getBody(),
-            new TypeToken<ApiResponse<UploadPostMediaDto.Response>>() {}.getType()
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<UploadPostMediaDto.Response>>() {
+        }.getType()
     );
 
     // then
@@ -663,7 +669,6 @@ class SnsIntegrationTest extends IntegrationTest {
     Member writeMember = createMember();
     PostType postType = RandomValue.getRandomEnum(PostType.class);
     Post post = createPost(postType, writeMember);
-
 
     CreateCommentDto.Request request = new CreateCommentDto.Request(
         post.getId(),
@@ -685,7 +690,8 @@ class SnsIntegrationTest extends IntegrationTest {
 
     ApiResponse<CreateCommentDto.Response> apiResponse = gson.fromJson(
         responseEntity.getBody(),
-        new TypeToken<ApiResponse<CreateCommentDto.Response>>() {}.getType()
+        new TypeToken<ApiResponse<CreateCommentDto.Response>>() {
+        }.getType()
     );
     // then
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -719,7 +725,8 @@ class SnsIntegrationTest extends IntegrationTest {
 
     ApiResponse<CreateCommentDto.Response> apiResponse = gson.fromJson(
         responseEntity.getBody(),
-        new TypeToken<ApiResponse<CreateCommentDto.Response>>() {}.getType()
+        new TypeToken<ApiResponse<CreateCommentDto.Response>>() {
+        }.getType()
     );
     // then
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -732,7 +739,7 @@ class SnsIntegrationTest extends IntegrationTest {
   void searchMember() {
     // given
     String nickname = RandomValue
-        .string(1,50)
+        .string(1, 50)
         .setNullable(false)
         .setLanguages(Language.ENGLISH)
         .get();
@@ -754,7 +761,6 @@ class SnsIntegrationTest extends IntegrationTest {
     String url = "http://localhost:" + port + "/api/v1/sns/searchMember/"
         + nickname;
 
-
     HttpHeaders headers = new HttpHeaders();
     headers.setBearerAuth(tokenDto.getAccessToken());
     HttpEntity<String> requestEntity = new HttpEntity<>(headers);
@@ -768,7 +774,8 @@ class SnsIntegrationTest extends IntegrationTest {
 
     ApiResponse<List<SearchMemberDto.Response>> apiResponse = gson.fromJson(
         responseEntity.getBody(),
-        new TypeToken<ApiResponse<List<SearchMemberDto.Response>>>() {}.getType()
+        new TypeToken<ApiResponse<List<SearchMemberDto.Response>>>() {
+        }.getType()
     );
     // then
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -776,7 +783,6 @@ class SnsIntegrationTest extends IntegrationTest {
     assertThat(apiResponse.getData().get(0).memberId()).isEqualTo(searchMember.getId());
     assertThat(apiResponse.getData().get(0).nickname()).isEqualTo(searchMember.getNickname());
   }
-
 
 //  @Test
 //  void searchMember_토큰_없음() {
@@ -814,24 +820,25 @@ class SnsIntegrationTest extends IntegrationTest {
       Member writeMember = createMember();
       writeMember.updateRole(Role.STREAMER);
 
-      String dailyMessage = (RandomValue.getInt(0,2) == 1) ? null : RandomValue.string(1, 50).setNullable(false).get();
-      if (dailyMessage != null)  {
+      String dailyMessage = (RandomValue.getInt(0, 2) == 1) ? null
+          : RandomValue.string(1, 50).setNullable(false).get();
+      if (dailyMessage != null) {
         dailyMessageRepository.save(writeMember.getId(), dailyMessage, 24);
       }
 
       int postCount = RandomValue.getInt(0, 5);
       List<Long> postList = IntStream.range(0, postCount)
-              .mapToObj(a -> createPost(PostType.STREAMER, writeMember))
-              .map(Post::getId)
-              .sorted()
-              .toList();
+          .mapToObj(a -> createPost(PostType.STREAMER, writeMember))
+          .map(Post::getId)
+          .sorted()
+          .toList();
 
       if (!postList.isEmpty()) {
         expectedList.add(new GetLatestPostsDto.Response(
-                writeMember.getId(),
-                writeMember.getProfile(),
-                dailyMessage,
-                postList
+            writeMember.getId(),
+            writeMember.getProfile(),
+            dailyMessage,
+            postList
         ));
       }
     }
@@ -840,24 +847,26 @@ class SnsIntegrationTest extends IntegrationTest {
     ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
 
     ApiResponse<List<GetLatestPostsDto.Response>> apiResponse = gson.fromJson(
-            responseEntity.getBody(),
-            new TypeToken<ApiResponse<List<GetLatestPostsDto.Response>>>() {}.getType()
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<List<GetLatestPostsDto.Response>>>() {
+        }.getType()
     );
 
     // then
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(apiResponse.getData()).isNotNull();
 
-    Comparator<GetLatestPostsDto.Response> getMemberId = Comparator.comparing(GetLatestPostsDto.Response::memberId);
+    Comparator<GetLatestPostsDto.Response> getMemberId = Comparator.comparing(
+        GetLatestPostsDto.Response::memberId);
     List<GetLatestPostsDto.Response> actualList = apiResponse.getData().stream()
-            .map(dto -> new GetLatestPostsDto.Response(
-                    dto.memberId(),
-                    dto.profileUrl(),
-                    dto.dailyMessage(),
-                    dto.postIdList().stream().sorted().toList()
-            ))
-            .sorted(getMemberId)
-            .toList();
+        .map(dto -> new GetLatestPostsDto.Response(
+            dto.memberId(),
+            dto.profileUrl(),
+            dto.dailyMessage(),
+            dto.postIdList().stream().sorted().toList()
+        ))
+        .sorted(getMemberId)
+        .toList();
 
     assertThat(actualList).usingRecursiveComparison().isEqualTo(expectedList);
   }
@@ -877,32 +886,29 @@ class SnsIntegrationTest extends IntegrationTest {
     int newPostCount = RandomValue.getInt(0, 5);
 
     IntStream.range(0, readPostCount)
-            .forEach(a -> {
-              Post post = createPost(PostType.STREAMER, writeMember);
-              readerPostRepository.addReadPost(member.getId().toString(), post.getId().toString());
-            });
+        .forEach(a -> {
+          Post post = createPost(PostType.STREAMER, writeMember);
+          readerPostRepository.addReadPost(member.getId().toString(), post.getId().toString());
+        });
 
     List<Long> postList = IntStream.range(0, newPostCount)
-            .mapToObj(a -> createPost(PostType.STREAMER, writeMember))
-            .map(Post::getId)
-            .sorted()
-            .toList();
-
+        .mapToObj(a -> createPost(PostType.STREAMER, writeMember))
+        .map(Post::getId)
+        .sorted()
+        .toList();
 
     String dailyMessage = dailyMessageRepository.getDailyMessage(writeMember.getId());
 
     if (!postList.isEmpty()) {
       expectedList.add(new GetLatestPostsDto.Response(
-              writeMember.getId(),
-              writeMember.getProfile(),
-              dailyMessage,
-              postList
+          writeMember.getId(),
+          writeMember.getProfile(),
+          dailyMessage,
+          postList
       ));
     }
 
-
     String url = "http://localhost:" + port + "/api/v1/sns/getLatestPosts";
-
 
     HttpHeaders headers = new HttpHeaders();
     headers.setBearerAuth(tokenDto.getAccessToken());
@@ -910,32 +916,33 @@ class SnsIntegrationTest extends IntegrationTest {
 
     // when
     ResponseEntity<String> responseEntity = restTemplate.exchange(
-            url,
-            HttpMethod.GET,
-            requestEntity,
-            String.class
+        url,
+        HttpMethod.GET,
+        requestEntity,
+        String.class
     );
 
-
     ApiResponse<List<GetLatestPostsDto.Response>> apiResponse = gson.fromJson(
-            responseEntity.getBody(),
-            new TypeToken<ApiResponse<List<GetLatestPostsDto.Response>>>() {}.getType()
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<List<GetLatestPostsDto.Response>>>() {
+        }.getType()
     );
 
     // then
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(apiResponse.getData()).isNotNull();
 
-    Comparator<GetLatestPostsDto.Response> getMemberId = Comparator.comparing(GetLatestPostsDto.Response::memberId);
+    Comparator<GetLatestPostsDto.Response> getMemberId = Comparator.comparing(
+        GetLatestPostsDto.Response::memberId);
     List<GetLatestPostsDto.Response> actualList = apiResponse.getData().stream()
-            .map(dto -> new GetLatestPostsDto.Response(
-                    dto.memberId(),
-                    dto.profileUrl(),
-                    dto.dailyMessage(),
-                    dto.postIdList().stream().sorted().toList()
-            ))
-            .sorted(getMemberId)
-            .toList();
+        .map(dto -> new GetLatestPostsDto.Response(
+            dto.memberId(),
+            dto.profileUrl(),
+            dto.dailyMessage(),
+            dto.postIdList().stream().sorted().toList()
+        ))
+        .sorted(getMemberId)
+        .toList();
 
     assertThat(actualList).usingRecursiveComparison().isEqualTo(expectedList);
   }
@@ -949,9 +956,9 @@ class SnsIntegrationTest extends IntegrationTest {
     Member writeMember = createMember();
     PostType postType = RandomValue.getRandomEnum(PostType.class);
     Post post = createPost(postType, writeMember);
+    String reason = RandomValue.string(3, 10).setNullable(false).get();
 
-
-    ReportPostDto.Request request = new ReportPostDto.Request(post.getId());
+    ReportPostDto.Request request = new ReportPostDto.Request(post.getId(), reason);
 
     String url = "http://localhost:" + port + "/api/v1/sns/reportPost";
 
@@ -961,14 +968,15 @@ class SnsIntegrationTest extends IntegrationTest {
 
     // when
     ResponseEntity<String> responseEntity = restTemplate.postForEntity(
-            url,
-            requestEntity,
-            String.class
+        url,
+        requestEntity,
+        String.class
     );
 
     ApiResponse<CreateCommentDto.Response> apiResponse = gson.fromJson(
-            responseEntity.getBody(),
-            new TypeToken<ApiResponse<CreateCommentDto.Response>>() {}.getType()
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<CreateCommentDto.Response>>() {
+        }.getType()
     );
     // then
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -984,9 +992,9 @@ class SnsIntegrationTest extends IntegrationTest {
     PostType postType = RandomValue.getRandomEnum(PostType.class);
     Post post = createPost(postType, writeMember);
     createReportPost(post, member);
+    String reason = RandomValue.string(3, 10).setNullable(false).get();
 
-
-    ReportPostDto.Request request = new ReportPostDto.Request(post.getId());
+    ReportPostDto.Request request = new ReportPostDto.Request(post.getId(), reason);
 
     String url = "http://localhost:" + port + "/api/v1/sns/reportPost";
 
@@ -998,14 +1006,15 @@ class SnsIntegrationTest extends IntegrationTest {
 
     // when
     ResponseEntity<String> responseEntity = restTemplate.postForEntity(
-            url,
-            requestEntity,
-            String.class
+        url,
+        requestEntity,
+        String.class
     );
 
     ApiResponse<CreateCommentDto.Response> apiResponse = gson.fromJson(
-            responseEntity.getBody(),
-            new TypeToken<ApiResponse<CreateCommentDto.Response>>() {}.getType()
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<CreateCommentDto.Response>>() {
+        }.getType()
     );
     // then
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -1020,8 +1029,9 @@ class SnsIntegrationTest extends IntegrationTest {
     Member writeMember = createMember();
     PostType postType = RandomValue.getRandomEnum(PostType.class);
     Post post = createPost(postType, writeMember);
+    String reason = RandomValue.string(3, 10).setNullable(false).get();
 
-    ReportPostDto.Request request = new ReportPostDto.Request(post.getId());
+    ReportPostDto.Request request = new ReportPostDto.Request(post.getId(), reason);
 
     String url = "http://localhost:" + port + "/api/v1/sns/reportPost";
 
@@ -1029,14 +1039,15 @@ class SnsIntegrationTest extends IntegrationTest {
 
     // when
     ResponseEntity<String> responseEntity = restTemplate.postForEntity(
-            url,
-            request,
-            String.class
+        url,
+        request,
+        String.class
     );
 
     ApiResponse<CreateCommentDto.Response> apiResponse = gson.fromJson(
-            responseEntity.getBody(),
-            new TypeToken<ApiResponse<CreateCommentDto.Response>>() {}.getType()
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<CreateCommentDto.Response>>() {
+        }.getType()
     );
     // then
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -1051,7 +1062,9 @@ class SnsIntegrationTest extends IntegrationTest {
     TokenDto tokenDto = tokenProvider.getToken(createMember());
 
     Long postId = RandomValue.getRandomLong(-9999, -1);
-    ReportPostDto.Request request = new ReportPostDto.Request(postId);
+    String reason = RandomValue.string(3, 10).setNullable(false).get();
+
+    ReportPostDto.Request request = new ReportPostDto.Request(postId, reason);
 
     HttpHeaders headers = new HttpHeaders();
     headers.setBearerAuth(tokenDto.getAccessToken());
@@ -1061,14 +1074,15 @@ class SnsIntegrationTest extends IntegrationTest {
 
     // when
     ResponseEntity<String> responseEntity = restTemplate.postForEntity(
-            url,
-            requestEntity,
-            String.class
+        url,
+        requestEntity,
+        String.class
     );
 
     ApiResponse<CreateCommentDto.Response> apiResponse = gson.fromJson(
-            responseEntity.getBody(),
-            new TypeToken<ApiResponse<CreateCommentDto.Response>>() {}.getType()
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<CreateCommentDto.Response>>() {
+        }.getType()
     );
 
     // then
@@ -1093,22 +1107,22 @@ class SnsIntegrationTest extends IntegrationTest {
     String url = "http://localhost:" + port + "/api/v1/sns/reportComment";
 
     HttpEntity<ReportCommentDto.Request> requestEntity = new HttpEntity<>(request,
-            new HttpHeaders() {{
-              setBearerAuth(tokenDto.getAccessToken());
-            }}
+        new HttpHeaders() {{
+          setBearerAuth(tokenDto.getAccessToken());
+        }}
     );
-
 
     // when
     ResponseEntity<String> responseEntity = restTemplate.postForEntity(
-            url,
-            requestEntity,
-            String.class
+        url,
+        requestEntity,
+        String.class
     );
 
     ApiResponse<CreateCommentDto.Response> apiResponse = gson.fromJson(
-            responseEntity.getBody(),
-            new TypeToken<ApiResponse<CreateCommentDto.Response>>() {}.getType()
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<CreateCommentDto.Response>>() {
+        }.getType()
     );
     // then
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -1128,7 +1142,6 @@ class SnsIntegrationTest extends IntegrationTest {
     Comment comment = createComment(post, writeMember);
     createReportComment(comment, member);
 
-
     ReportCommentDto.Request request = new ReportCommentDto.Request(comment.getId());
 
     String url = "http://localhost:" + port + "/api/v1/sns/reportComment";
@@ -1136,22 +1149,22 @@ class SnsIntegrationTest extends IntegrationTest {
     DuplicateReportException exception = new DuplicateReportException();
 
     HttpEntity<ReportCommentDto.Request> requestEntity = new HttpEntity<>(request,
-            new HttpHeaders() {{
-              setBearerAuth(tokenDto.getAccessToken());
-            }}
+        new HttpHeaders() {{
+          setBearerAuth(tokenDto.getAccessToken());
+        }}
     );
-
 
     // when
     ResponseEntity<String> responseEntity = restTemplate.postForEntity(
-            url,
-            requestEntity,
-            String.class
+        url,
+        requestEntity,
+        String.class
     );
 
     ApiResponse<CreateCommentDto.Response> apiResponse = gson.fromJson(
-            responseEntity.getBody(),
-            new TypeToken<ApiResponse<CreateCommentDto.Response>>() {}.getType()
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<CreateCommentDto.Response>>() {
+        }.getType()
     );
     // then
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -1173,7 +1186,7 @@ class SnsIntegrationTest extends IntegrationTest {
     Comment comment = createComment(post, writeMember);
     ReportComment reportComment = createReportComment(comment, member);
 
-    int randomInt = RandomValue.getInt(0,2);
+    int randomInt = RandomValue.getInt(0, 2);
     ReportStatus status = (randomInt == 0) ? ReportStatus.CANCEL : ReportStatus.DELETED;
 
     Field contentField = ReportComment.class.getDeclaredField("status");
@@ -1189,22 +1202,22 @@ class SnsIntegrationTest extends IntegrationTest {
     DuplicateReportException exception = new DuplicateReportException();
 
     HttpEntity<ReportCommentDto.Request> requestEntity = new HttpEntity<>(request,
-            new HttpHeaders() {{
-              setBearerAuth(tokenDto.getAccessToken());
-            }}
+        new HttpHeaders() {{
+          setBearerAuth(tokenDto.getAccessToken());
+        }}
     );
-
 
     // when
     ResponseEntity<String> responseEntity = restTemplate.postForEntity(
-            url,
-            requestEntity,
-            String.class
+        url,
+        requestEntity,
+        String.class
     );
 
     ApiResponse<CreateCommentDto.Response> apiResponse = gson.fromJson(
-            responseEntity.getBody(),
-            new TypeToken<ApiResponse<CreateCommentDto.Response>>() {}.getType()
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<CreateCommentDto.Response>>() {
+        }.getType()
     );
     // then
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -1225,14 +1238,15 @@ class SnsIntegrationTest extends IntegrationTest {
 
     // when
     ResponseEntity<String> responseEntity = restTemplate.postForEntity(
-            url,
-            request,
-            String.class
+        url,
+        request,
+        String.class
     );
 
     ApiResponse<CreateCommentDto.Response> apiResponse = gson.fromJson(
-            responseEntity.getBody(),
-            new TypeToken<ApiResponse<CreateCommentDto.Response>>() {}.getType()
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<CreateCommentDto.Response>>() {
+        }.getType()
     );
     // then
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -1254,7 +1268,8 @@ class SnsIntegrationTest extends IntegrationTest {
     PostType postType = RandomValue.getRandomEnum(PostType.class);
     Post post = createPost(postType, writeMember);
 
-    String getPostDetailsUrl = "http://localhost:" + port + "/api/v1/sns/getPostDetails/" + post.getId();
+    String getPostDetailsUrl =
+        "http://localhost:" + port + "/api/v1/sns/getPostDetails/" + post.getId();
     String getLatestPostsUrl = "http://localhost:" + port + "/api/v1/sns/getLatestPosts";
 
     HttpHeaders headers = new HttpHeaders();
@@ -1263,26 +1278,28 @@ class SnsIntegrationTest extends IntegrationTest {
 
     // when
     ResponseEntity<String> getPostDetailsResponse = restTemplate.exchange(
-            getPostDetailsUrl,
-            HttpMethod.GET,
-            requestEntity,
-            String.class);
+        getPostDetailsUrl,
+        HttpMethod.GET,
+        requestEntity,
+        String.class);
 
     ApiResponse<GetPostDetailsDto.Response> postDetailsApiResponse = gson.fromJson(
-            getPostDetailsResponse.getBody(),
-            new TypeToken<ApiResponse<GetPostDetailsDto.Response>>() {}.getType()
+        getPostDetailsResponse.getBody(),
+        new TypeToken<ApiResponse<GetPostDetailsDto.Response>>() {
+        }.getType()
     );
 
     ResponseEntity<String> getLatestPostsResponse = restTemplate.exchange(
-            getLatestPostsUrl,
-            HttpMethod.GET,
-            requestEntity,
-            String.class
+        getLatestPostsUrl,
+        HttpMethod.GET,
+        requestEntity,
+        String.class
     );
 
     ApiResponse<List<GetLatestPostsDto.Response>> latestPostsApiResponse = gson.fromJson(
-            getLatestPostsResponse.getBody(),
-            new TypeToken<ApiResponse<List<GetLatestPostsDto.Response>>>() {}.getType()
+        getLatestPostsResponse.getBody(),
+        new TypeToken<ApiResponse<List<GetLatestPostsDto.Response>>>() {
+        }.getType()
     );
 
     // then

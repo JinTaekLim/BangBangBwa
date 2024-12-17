@@ -12,6 +12,7 @@ public interface ReportPostMapper {
   ReportPostMapper INSTANCE = Mappers.getMapper(ReportPostMapper.class);
 
   @Mapping(target = "postId", source = "request.postId")
+  @Mapping(target = "reason", source = "request.reason")
   ReportPost dtoToEntity(ReportPostDto.Request request);
 
 }

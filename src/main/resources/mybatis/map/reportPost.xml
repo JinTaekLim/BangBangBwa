@@ -8,6 +8,8 @@
   <insert id="save" parameterType="reportPost">
     INSERT INTO report_posts (status, post_id, created_at, created_id)
     VALUES (#{status}, #{postId}, #{createdAt}, #{createdId})
+    INSERT INTO report_posts (status, post_id, reason, created_at, created_id)
+    VALUES (#{status}, #{postId}, #{reason}, #{createdAt}, #{createdId})
   </insert>
 
   <select id="findByPostIdAndCreatedIdAndStatus" parameterType="reportPost" resultType="reportPost">
