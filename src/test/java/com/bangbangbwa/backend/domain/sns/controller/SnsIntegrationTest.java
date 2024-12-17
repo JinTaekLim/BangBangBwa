@@ -176,6 +176,7 @@ class SnsIntegrationTest extends IntegrationTest {
     return ReportPost.builder()
         .createdId(memberId)
         .postId(postId)
+        .reason(RandomValue.string(3, 5).setNullable(false).get())
         .build();
   }
 
@@ -970,8 +971,9 @@ class SnsIntegrationTest extends IntegrationTest {
     Member writeMember = createMember();
     PostType postType = RandomValue.getRandomEnum(PostType.class);
     Post post = createPost(postType, writeMember);
+    String reason = RandomValue.string(3, 10).setNullable(false).get();
 
-    ReportPostDto.Request request = new ReportPostDto.Request(post.getId());
+    ReportPostDto.Request request = new ReportPostDto.Request(post.getId(), reason);
 
     String url = "http://localhost:" + port + "/api/v1/sns/reportPost";
 
@@ -1005,8 +1007,9 @@ class SnsIntegrationTest extends IntegrationTest {
     PostType postType = RandomValue.getRandomEnum(PostType.class);
     Post post = createPost(postType, writeMember);
     createReportPost(post, member);
+    String reason = RandomValue.string(3, 10).setNullable(false).get();
 
-    ReportPostDto.Request request = new ReportPostDto.Request(post.getId());
+    ReportPostDto.Request request = new ReportPostDto.Request(post.getId(), reason);
 
     String url = "http://localhost:" + port + "/api/v1/sns/reportPost";
 
@@ -1041,8 +1044,9 @@ class SnsIntegrationTest extends IntegrationTest {
     Member writeMember = createMember();
     PostType postType = RandomValue.getRandomEnum(PostType.class);
     Post post = createPost(postType, writeMember);
+    String reason = RandomValue.string(3, 10).setNullable(false).get();
 
-    ReportPostDto.Request request = new ReportPostDto.Request(post.getId());
+    ReportPostDto.Request request = new ReportPostDto.Request(post.getId(), reason);
 
     String url = "http://localhost:" + port + "/api/v1/sns/reportPost";
 
@@ -1073,7 +1077,9 @@ class SnsIntegrationTest extends IntegrationTest {
     TokenDto tokenDto = tokenProvider.getToken(createMember());
 
     Long postId = RandomValue.getRandomLong(-9999, -1);
-    ReportPostDto.Request request = new ReportPostDto.Request(postId);
+    String reason = RandomValue.string(3, 10).setNullable(false).get();
+
+    ReportPostDto.Request request = new ReportPostDto.Request(postId, reason);
 
     HttpHeaders headers = new HttpHeaders();
     headers.setBearerAuth(tokenDto.getAccessToken());

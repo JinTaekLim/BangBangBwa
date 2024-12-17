@@ -6,11 +6,26 @@
 <mapper namespace="ReportPostMapper">
 
   <insert id="save" parameterType="reportPost">
-    INSERT INTO report_posts (status, post_id, created_at, created_id)
-    VALUES (#{status}, #{postId}, #{createdAt}, #{createdId})
+    INSERT INTO report_posts (status, post_id, reason, created_at, created_id)
+    VALUES (#{status}, #{postId}, #{reason}, #{createdAt}, #{createdId})
   </insert>
 
   <select id="findByPostIdAndCreatedIdAndStatus" parameterType="reportPost" resultType="reportPost">
     SELECT * FROM report_posts WHERE post_id = #{postId} AND created_id = #{createdId} AND status = #{status}
   </select>
+
+  <select id="findAllPendingReports" resultType="com.bangbangbwa.backend.domain.admin.common.dto.GetReportedPostsDto$GetReportedPostsResponse">
+    SELECT
+    p.id AS postId,
+    m.id AS writerId,
+    m.nickname AS nickname,
+    m.profile AS profile,
+    r.reason AS reason,
+    r.created_at AS reportDate
+    FROM
+    report_posts r INNER JOIN posts p ON r.post_id = p.id
+    INNER JOIN members m ON p.member_id = m.id
+    WHERE r.status = 'PENDING'
+  </select>
+
 </mapper>

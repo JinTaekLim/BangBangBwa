@@ -8,9 +8,12 @@ import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto;
 import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto.FollowerResponse;
 import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.member.common.dto.PromoteStreamerDto;
+import com.bangbangbwa.backend.domain.member.common.dto.ToggleFollowDto;
+import com.bangbangbwa.backend.domain.member.common.dto.ToggleFollowDto.Request;
 import com.bangbangbwa.backend.domain.member.common.dto.TogglePostPinDto;
 import com.bangbangbwa.backend.domain.member.common.entity.Follow;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
+import com.bangbangbwa.backend.domain.member.exception.NotFoundFollowException;
 import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.member.exception.UnAuthenticationMemberException;
 import com.bangbangbwa.backend.domain.member.repository.FollowRepository;
@@ -461,4 +464,146 @@ class MemberTest extends IntegrationTest {
     assertThat(apiResponse.getCode()).isEqualTo(exception.getCode());
     assertThat(apiResponse.getMessage()).isEqualTo(exception.getMessage());
   }
+
+  @Test()
+  void toggleFollow() {
+    // given
+    Member member = createMember();
+    TokenDto tokenDto = tokenProvider.getToken(member);
+    Member followeeMember = createMember();
+
+    ToggleFollowDto.Request request = new Request(followeeMember.getId(), true);
+
+    String url = "http://localhost:" + port + "/api/v1/members/toggleFollow";
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(tokenDto.getAccessToken());
+    HttpEntity<ToggleFollowDto.Request> requestEntity = new HttpEntity<>(request, headers);
+
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.postForEntity(
+        url,
+        requestEntity,
+        String.class
+    );
+
+    ApiResponse<?> apiResponse = gson.fromJson(
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<?>>() {}.getType()
+    );
+
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+
+  @Test()
+  void toggleFollow_중복_저장() {
+    // given
+    Member member = createMember();
+    TokenDto tokenDto = tokenProvider.getToken(member);
+    Member followeeMember = createMember();
+
+    Follow follow = Follow.builder()
+        .followeeId(followeeMember.getId())
+        .followerId(member.getId())
+        .build();
+    followRepository.save(follow);
+
+    ToggleFollowDto.Request request = new Request(followeeMember.getId(), true);
+
+    String url = "http://localhost:" + port + "/api/v1/members/toggleFollow";
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(tokenDto.getAccessToken());
+    HttpEntity<ToggleFollowDto.Request> requestEntity = new HttpEntity<>(request, headers);
+
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.postForEntity(
+        url,
+        requestEntity,
+        String.class
+    );
+
+    ApiResponse<?> apiResponse = gson.fromJson(
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<?>>() {}.getType()
+    );
+
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+
+  @Test()
+  void toggleFollow_삭제() {
+    // given
+    Member member = createMember();
+    TokenDto tokenDto = tokenProvider.getToken(member);
+    Member followeeMember = createMember();
+
+    Follow follow = Follow.builder()
+        .followeeId(followeeMember.getId())
+        .followerId(member.getId())
+        .build();
+    followRepository.save(follow);
+
+    ToggleFollowDto.Request request = new Request(followeeMember.getId(), false);
+
+    String url = "http://localhost:" + port + "/api/v1/members/toggleFollow";
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(tokenDto.getAccessToken());
+    HttpEntity<ToggleFollowDto.Request> requestEntity = new HttpEntity<>(request, headers);
+
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.postForEntity(
+        url,
+        requestEntity,
+        String.class
+    );
+
+    ApiResponse<?> apiResponse = gson.fromJson(
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<?>>() {}.getType()
+    );
+
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+
+  @Test()
+  void toggleFollow_존재하지않는_팔로우_삭제() {
+    // given
+    Member member = createMember();
+    TokenDto tokenDto = tokenProvider.getToken(member);
+    Member followeeMember = createMember();
+
+    ToggleFollowDto.Request request = new Request(followeeMember.getId(), false);
+
+    NotFoundFollowException exception = new NotFoundFollowException();
+
+    String url = "http://localhost:" + port + "/api/v1/members/toggleFollow";
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(tokenDto.getAccessToken());
+    HttpEntity<ToggleFollowDto.Request> requestEntity = new HttpEntity<>(request, headers);
+
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.postForEntity(
+        url,
+        requestEntity,
+        String.class
+    );
+
+    ApiResponse<?> apiResponse = gson.fromJson(
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<?>>() {}.getType()
+    );
+
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(apiResponse.getCode()).isEqualTo(exception.getCode());
+    assertThat(apiResponse.getMessage()).isEqualTo(exception.getMessage());
+  }
 }
+
