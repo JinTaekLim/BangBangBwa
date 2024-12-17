@@ -1,10 +1,12 @@
 package com.bangbangbwa.backend.domain.member;
 
-import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 import com.bangbangbwa.backend.domain.member.common.dto.FollowDto;
 import com.bangbangbwa.backend.domain.member.common.dto.FollowDto.FollowResponse;
 import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto;
 import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto.FollowerResponse;
+import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.member.common.dto.PromoteStreamerDto;
 import com.bangbangbwa.backend.domain.member.common.dto.ToggleFollowDto;
 import com.bangbangbwa.backend.domain.member.common.dto.ToggleFollowDto.Request;
@@ -18,8 +20,8 @@ import com.bangbangbwa.backend.domain.member.repository.FollowRepository;
 import com.bangbangbwa.backend.domain.member.repository.MemberRepository;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
-import com.bangbangbwa.backend.domain.sns.common.entity.Post;
-import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
+import com.bangbangbwa.backend.domain.post.common.entity.Post;
+import com.bangbangbwa.backend.domain.post.common.enums.PostType;
 import com.bangbangbwa.backend.domain.sns.exception.DuplicatePendingPromotionException;
 import com.bangbangbwa.backend.domain.sns.exception.MaxPinnedPostsExceededException;
 import com.bangbangbwa.backend.domain.sns.repository.PostRepository;
@@ -31,9 +33,9 @@ import com.bangbangbwa.backend.global.response.ApiResponse;
 import com.bangbangbwa.backend.global.test.IntegrationTest;
 import com.bangbangbwa.backend.global.util.randomValue.RandomValue;
 import com.google.gson.reflect.TypeToken;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
-import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -42,8 +44,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 class MemberTest extends IntegrationTest {
 
@@ -400,7 +400,7 @@ class MemberTest extends IntegrationTest {
     TokenDto tokenDto = tokenProvider.getToken(member);
     PostType postType = RandomValue.getRandomEnum(PostType.class);
 
-    List<Post> posts = IntStream.range(0,3)
+    List<Post> posts = IntStream.range(0, 3)
         .mapToObj(i -> {
           Post post = createPost(postType, member);
           postRepository.updatePostPin(post.getId(), true);
@@ -426,9 +426,9 @@ class MemberTest extends IntegrationTest {
 
     ApiResponse<?> apiResponse = gson.fromJson(
         responseEntity.getBody(),
-        new TypeToken<ApiResponse<?>>() {}.getType()
+        new TypeToken<ApiResponse<?>>() {
+        }.getType()
     );
-
 
     // when
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -455,9 +455,9 @@ class MemberTest extends IntegrationTest {
 
     ApiResponse<?> apiResponse = gson.fromJson(
         responseEntity.getBody(),
-        new TypeToken<ApiResponse<?>>() {}.getType()
+        new TypeToken<ApiResponse<?>>() {
+        }.getType()
     );
-
 
     // when
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);

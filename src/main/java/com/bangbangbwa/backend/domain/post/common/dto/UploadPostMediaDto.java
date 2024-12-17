@@ -1,4 +1,4 @@
-package com.bangbangbwa.backend.domain.sns.common.dto;
+package com.bangbangbwa.backend.domain.post.common.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -9,7 +9,9 @@ public class UploadPostMediaDto {
   public record Response(
       @Schema(description = "미디어 URL")
       String url
-  ){}
+  ) {
+
+  }
 
 
 }

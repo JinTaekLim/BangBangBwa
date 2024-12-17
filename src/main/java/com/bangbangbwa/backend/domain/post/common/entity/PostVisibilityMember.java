@@ -1,4 +1,4 @@
-package com.bangbangbwa.backend.domain.sns.common.entity;
+package com.bangbangbwa.backend.domain.post.common.entity;
 
 import com.bangbangbwa.backend.domain.sns.common.enums.VisibilityType;
 import java.time.LocalDateTime;

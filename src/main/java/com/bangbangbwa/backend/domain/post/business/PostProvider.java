@@ -1,8 +1,11 @@
-package com.bangbangbwa.backend.domain.sns.business;
+package com.bangbangbwa.backend.domain.post.business;
 
-import com.bangbangbwa.backend.domain.sns.common.entity.Post;
-import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
-import java.util.*;
+import com.bangbangbwa.backend.domain.post.common.entity.Post;
+import com.bangbangbwa.backend.domain.post.common.enums.PostType;
+import com.bangbangbwa.backend.domain.sns.business.PostRecommendationStrategy;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -33,19 +36,21 @@ public class PostProvider {
 
 
   private List<Post> getFollowPosts(Long memberId, Set<String> readPostIds) {
-    List<Post> posts = postReader.findPostsByFollowStreamerExcludingReadIds(POST_SIZE, memberId, readPostIds);
+    List<Post> posts = postReader.findPostsByFollowStreamerExcludingReadIds(POST_SIZE, memberId,
+        readPostIds);
     addReadPostIds(posts, readPostIds);
     return posts;
   }
 
   private List<Post> getTagPost(Long memberId, Set<String> readPostIds) {
-    List<Post> posts =  postReader.findPostsByFollowedStreamerExcludingReadIds(POST_SIZE, memberId, readPostIds);
+    List<Post> posts = postReader.findPostsByFollowedStreamerExcludingReadIds(POST_SIZE, memberId,
+        readPostIds);
     addReadPostIds(posts, readPostIds);
     return posts;
   }
 
   private List<Post> getRandomPost(PostType postType, Set<String> readPostIds) {
-    List<Post> posts =  postReader.findRandomPostsExcludingReadIds(postType,POST_SIZE, readPostIds);
+    List<Post> posts = postReader.findRandomPostsExcludingReadIds(postType, POST_SIZE, readPostIds);
     addReadPostIds(posts, readPostIds);
     return posts;
   }

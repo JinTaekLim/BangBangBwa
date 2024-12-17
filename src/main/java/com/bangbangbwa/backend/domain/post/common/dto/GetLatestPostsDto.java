@@ -1,4 +1,4 @@
-package com.bangbangbwa.backend.domain.sns.common.dto;
+package com.bangbangbwa.backend.domain.post.common.dto;
 
 import com.bangbangbwa.backend.domain.streamer.common.entity.DailyMessage;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -45,5 +45,7 @@ public class GetLatestPostsDto {
       String dailyMessage,
       @Schema(description = "최근 게시물")
       List<Long> postIdList
-  ) {}
+  ) {
+
+  }
 }

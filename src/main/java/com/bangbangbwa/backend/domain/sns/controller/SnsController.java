@@ -2,13 +2,21 @@ package com.bangbangbwa.backend.domain.sns.controller;
 
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.member.common.mapper.MemberMapper;
-import com.bangbangbwa.backend.domain.sns.common.dto.*;
+import com.bangbangbwa.backend.domain.post.common.dto.CreatePostDto;
+import com.bangbangbwa.backend.domain.post.common.dto.GetLatestPostsDto;
+import com.bangbangbwa.backend.domain.post.common.dto.GetPostDetailsDto;
+import com.bangbangbwa.backend.domain.post.common.dto.GetPostListDto;
+import com.bangbangbwa.backend.domain.post.common.dto.UploadPostMediaDto;
+import com.bangbangbwa.backend.domain.post.common.entity.Post;
+import com.bangbangbwa.backend.domain.post.common.enums.PostType;
+import com.bangbangbwa.backend.domain.post.common.mapper.PostMapper;
+import com.bangbangbwa.backend.domain.sns.common.dto.CreateCommentDto;
+import com.bangbangbwa.backend.domain.sns.common.dto.ReportCommentDto;
+import com.bangbangbwa.backend.domain.sns.common.dto.ReportPostDto;
+import com.bangbangbwa.backend.domain.sns.common.dto.SearchMemberDto;
 import com.bangbangbwa.backend.domain.sns.common.entity.Comment;
-import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
 import com.bangbangbwa.backend.domain.sns.common.mapper.CommentMapper;
-import com.bangbangbwa.backend.domain.sns.common.mapper.PostMapper;
 import com.bangbangbwa.backend.domain.sns.service.SnsService;
-import com.bangbangbwa.backend.domain.sns.common.entity.Post;
 import com.bangbangbwa.backend.global.annotation.authentication.AuthenticationContext;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import jakarta.validation.Valid;
@@ -28,7 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/v1/sns")
 @RequiredArgsConstructor
-public class SnsController implements SnsApi{
+public class SnsController implements SnsApi {
 
   private final SnsService snsService;
 
@@ -42,7 +50,8 @@ public class SnsController implements SnsApi{
 
   @GetMapping("/getPostDetails/{postId}")
   @PreAuthorize("permitAll()")
-  public ApiResponse<GetPostDetailsDto.Response> getPostDetails(@PathVariable("postId") Long postId) {
+  public ApiResponse<GetPostDetailsDto.Response> getPostDetails(
+      @PathVariable("postId") Long postId) {
     GetPostDetailsDto.Response response = snsService.getPostDetails(postId);
     return ApiResponse.ok(response);
   }
@@ -61,7 +70,7 @@ public class SnsController implements SnsApi{
   @PreAuthorize("hasAuthority('MEMBER')")
   public ApiResponse<UploadPostMediaDto.Response> uploadPostMedia(
       @RequestPart(value = "file", required = false) MultipartFile file
-      ) {
+  ) {
     String mediaUrl = snsService.uploadPostMedia(file);
     UploadPostMediaDto.Response response = PostMapper
         .INSTANCE
@@ -81,7 +90,8 @@ public class SnsController implements SnsApi{
 
   @GetMapping("/searchMember/{nickname}")
   @PreAuthorize("hasAuthority('MEMBER')")
-  public ApiResponse<List<SearchMemberDto.Response>> searchMember(@PathVariable("nickname") String nickname) {
+  public ApiResponse<List<SearchMemberDto.Response>> searchMember(
+      @PathVariable("nickname") String nickname) {
     List<Member> memberList = snsService.searchMember(nickname);
     List<SearchMemberDto.Response> response = MemberMapper
         .INSTANCE
@@ -99,7 +109,7 @@ public class SnsController implements SnsApi{
   @PostMapping("/reportPost")
   @PreAuthorize("hasAuthority('MEMBER')")
   public ApiResponse<?> reportPost(
-          @RequestBody @Valid ReportPostDto.Request request
+      @RequestBody @Valid ReportPostDto.Request request
   ) {
     snsService.reportPost(request);
     return ApiResponse.ok();
@@ -108,7 +118,7 @@ public class SnsController implements SnsApi{
   @PostMapping("/reportComment")
   @PreAuthorize("hasAuthority('MEMBER')")
   public ApiResponse<?> reportComment(
-          @RequestBody @Valid ReportCommentDto.Request request
+      @RequestBody @Valid ReportCommentDto.Request request
   ) {
     snsService.reportComment(request);
     return ApiResponse.ok();

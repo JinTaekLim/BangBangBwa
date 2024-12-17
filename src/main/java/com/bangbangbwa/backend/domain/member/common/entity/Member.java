@@ -3,7 +3,7 @@ package com.bangbangbwa.backend.domain.member.common.entity;
 import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
-import com.bangbangbwa.backend.domain.sns.common.entity.Post;
+import com.bangbangbwa.backend.domain.post.common.entity.Post;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AccessLevel;

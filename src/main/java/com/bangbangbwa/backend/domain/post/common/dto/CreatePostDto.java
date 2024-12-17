@@ -1,6 +1,6 @@
-package com.bangbangbwa.backend.domain.sns.common.dto;
+package com.bangbangbwa.backend.domain.post.common.dto;
 
-import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
+import com.bangbangbwa.backend.domain.post.common.enums.PostType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -28,7 +28,9 @@ public class CreatePostDto {
 
       @Schema(description = "게시글 비공개 대상 설정", example = "[1, 2]")
       List<Long> privateMembers
-  ){}
+  ) {
+
+  }
 
   @Schema(name = "CreatePostResponse", description = "글 작성 반환 DTO")
   public record Response(
@@ -38,5 +40,7 @@ public class CreatePostDto {
       String title,
       @Schema(description = "내용")
       String content
-  ){}
+  ) {
+
+  }
 }

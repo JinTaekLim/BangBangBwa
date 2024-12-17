@@ -12,10 +12,10 @@ import com.bangbangbwa.backend.domain.member.repository.FollowRepository;
 import com.bangbangbwa.backend.domain.member.repository.MemberRepository;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
+import com.bangbangbwa.backend.domain.post.common.entity.Post;
+import com.bangbangbwa.backend.domain.post.common.enums.PostType;
 import com.bangbangbwa.backend.domain.promotion.common.entity.Streamer;
 import com.bangbangbwa.backend.domain.promotion.repository.StreamerRepository;
-import com.bangbangbwa.backend.domain.sns.common.entity.Post;
-import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
 import com.bangbangbwa.backend.domain.sns.repository.PostRepository;
 import com.bangbangbwa.backend.domain.streamer.common.entity.PendingStreamer;
 import com.bangbangbwa.backend.domain.streamer.repository.PendingStreamerRepository;
@@ -42,7 +42,7 @@ class MemberSummaryIntegrationTest extends IntegrationTest {
 
   @Autowired
   private FollowRepository followRepository;
-  
+
   @Autowired
   private PostRepository postRepository;
 
@@ -61,7 +61,8 @@ class MemberSummaryIntegrationTest extends IntegrationTest {
         .snsType(SnsType.GOOGLE)
         .build();
     member.addOAuthInfo(oAuthInfo);
-    member.updateProfile("https://images.khan.co.kr/article/2024/03/05/news-p.v1.20240305.9dc707937ff0483e9f91ee16c87312dd_P1.jpg");
+    member.updateProfile(
+        "https://images.khan.co.kr/article/2024/03/05/news-p.v1.20240305.9dc707937ff0483e9f91ee16c87312dd_P1.jpg");
 
     return member;
   }
@@ -135,7 +136,7 @@ class MemberSummaryIntegrationTest extends IntegrationTest {
 
     // 스트리머 등록
     streamerRepository.save(testStreamer(member.getId()));
-    
+
     SummaryDto.Response expected = new SummaryDto.Response(
         followerCount,
         followingCount,

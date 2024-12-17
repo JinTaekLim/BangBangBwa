@@ -4,7 +4,7 @@ import com.bangbangbwa.backend.domain.member.common.dto.SummaryDto;
 import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.member.exception.DuplicatedNicknameException;
 import com.bangbangbwa.backend.domain.member.repository.MemberRepository;
-import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
+import com.bangbangbwa.backend.domain.post.common.enums.PostType;
 import com.bangbangbwa.backend.domain.sns.exception.NoPostPermissionException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
