@@ -65,6 +65,7 @@ public class MemberService {
   @Transactional
   public TokenDto signup(OAuthInfoDto oAuthInfo, MemberSignupDto.Request request,
       MultipartFile profileFile) {
+    memberValidator.validateUniqueMember(oAuthInfo);
     Member member = memberGenerator.generate(oAuthInfo, request, profileFile);
     memberCreator.save(member);
     List<Tag> tags = tagManager.getTags(request.tags(), String.valueOf(member.getId()));
