@@ -1,7 +1,9 @@
 package com.bangbangbwa.backend.domain.sns.repository;
 
+import com.bangbangbwa.backend.domain.admin.common.dto.GetReportedPostsDto.GetReportedPostsResponse;
 import com.bangbangbwa.backend.domain.sns.common.entity.ReportPost;
 import com.bangbangbwa.backend.domain.sns.common.enums.ReportStatus;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
@@ -26,5 +28,9 @@ public class ReportPostRepository {
         params.put("createdId", createdId);
         params.put("status", status);
         return Optional.ofNullable(mysql.selectOne("ReportPostMapper.findByPostIdAndCreatedIdAndStatus", params));
+    }
+
+    public List<GetReportedPostsResponse> findAllPendingReports() {
+        return mysql.selectList("ReportPostMapper.findAllPendingReports");
     }
 }

@@ -15,6 +15,7 @@ import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
 import com.bangbangbwa.backend.domain.member.common.dto.PromoteStreamerDto;
 import com.bangbangbwa.backend.domain.member.common.dto.SummaryDto;
+import com.bangbangbwa.backend.domain.member.common.dto.ToggleFollowDto;
 import com.bangbangbwa.backend.domain.member.common.dto.TogglePostPinDto;
 import com.bangbangbwa.backend.domain.member.common.mapper.MemberMapper;
 import com.bangbangbwa.backend.domain.member.common.mapper.ProfileMapper;
@@ -23,7 +24,7 @@ import com.bangbangbwa.backend.domain.member.service.MemberService;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import com.bangbangbwa.backend.domain.oauth.service.OAuthService;
-import com.bangbangbwa.backend.domain.sns.common.mapper.PostMapper;
+import com.bangbangbwa.backend.domain.post.common.mapper.PostMapper;
 import com.bangbangbwa.backend.domain.streamer.common.entity.PendingStreamer;
 import com.bangbangbwa.backend.domain.streamer.common.mapper.PendingStreamerMapper;
 import com.bangbangbwa.backend.domain.streamer.service.PendingStreamerService;
@@ -200,6 +201,13 @@ public class MemberController implements MemberApi {
   @PreAuthorize("hasAuthority('STREAMER')")
   public ApiResponse<?> togglePostPin(@RequestBody TogglePostPinDto.Request req) {
     memberService.togglePostPin(req);
+    return ApiResponse.ok();
+  }
+
+  @PostMapping("/toggleFollow")
+  @PreAuthorize("hasAuthority('MEMBER')")
+  public ApiResponse<?> toggleFollow(@RequestBody ToggleFollowDto.Request req) {
+    memberService.toggleFollow(req);
     return ApiResponse.ok();
   }
 }

@@ -18,6 +18,7 @@ public class ReportPost {
     private Long id;
     private ReportStatus status;
     private Long postId;
+    private String reason;
     private String createdId;
     private LocalDateTime createdAt;
     private String updatedId;
@@ -25,9 +26,10 @@ public class ReportPost {
     private LocalDateTime deletedAt;
 
     @Builder
-    public ReportPost(Long postId, String createdId) {
+    public ReportPost(Long postId, String reason, String createdId) {
         this.status = ReportStatus.PENDING;
         this.postId = postId;
+        this.reason = reason;
         this.createdId = createdId;
         this.createdAt = LocalDateTime.now();
     }

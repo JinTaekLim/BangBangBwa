@@ -4,6 +4,9 @@ package com.bangbangbwa.backend.domain.admin.controller;
 import com.bangbangbwa.backend.domain.admin.common.dto.ApproveStreamerDto;
 import com.bangbangbwa.backend.domain.admin.common.dto.GetPendingMembers;
 import com.bangbangbwa.backend.domain.admin.common.dto.GetPendingMembers.GetPendingMemberResponse;
+import com.bangbangbwa.backend.domain.admin.common.dto.GetReportedPostsDto;
+import com.bangbangbwa.backend.domain.admin.common.dto.GetReportedPostsDto.GetReportedPostsResponse;
+import com.bangbangbwa.backend.domain.admin.common.dto.GetReportedPostsDto.Response;
 import com.bangbangbwa.backend.domain.admin.service.AdminService;
 import com.bangbangbwa.backend.domain.streamer.common.entity.PendingStreamer;
 import com.bangbangbwa.backend.domain.streamer.common.mapper.PendingStreamerMapper;
@@ -43,6 +46,14 @@ public class AdminController {
   public ApiResponse<?> getPendingMembers() {
     List<GetPendingMemberResponse> getPendingMemberResponse = adminService.getPendingMembers();
     GetPendingMembers.Response response = new GetPendingMembers.Response(getPendingMemberResponse);
+    return ApiResponse.ok(response);
+  }
+
+  @GetMapping("/getReportedPosts")
+  @PreAuthorize("hasAuthority('ADMIN')")
+  public ApiResponse<GetReportedPostsDto.Response> getReportedPosts() {
+    List<GetReportedPostsResponse> posts = adminService.getReportedPosts();
+    GetReportedPostsDto.Response response = new Response(posts);
     return ApiResponse.ok(response);
   }
 }

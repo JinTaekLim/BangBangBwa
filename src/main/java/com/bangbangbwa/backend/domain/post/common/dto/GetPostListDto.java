@@ -1,4 +1,4 @@
-package com.bangbangbwa.backend.domain.sns.common.dto;
+package com.bangbangbwa.backend.domain.post.common.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -14,6 +14,8 @@ public class GetPostListDto {
       boolean hasImage,
       @Schema(description = "동영상 포함여부")
       boolean hasVideo
-  ) {}
+  ) {
+
+  }
 
 }

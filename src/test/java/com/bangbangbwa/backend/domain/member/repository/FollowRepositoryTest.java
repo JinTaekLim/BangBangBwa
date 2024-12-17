@@ -56,6 +56,27 @@ class FollowRepositoryTest extends MyBatisTest {
         .build();
   }
 
+  private Follow createFollow(Long followerId, Long followeeId) {
+    Follow follow = getFollow(followerId, followeeId);
+    followRepository.save(follow);
+    return follow;
+  }
+
+  @Test()
+  void save() {
+    // given
+    Member member = createMember();
+    Member followeeMember = createMember();
+    // when
+    Follow follow = getFollow(member.getId(), followeeMember.getId());
+    followRepository.save(follow);
+
+    // then
+    List<FollowResponse> follows = followRepository.findFollowsByMemberId(member.getId());
+    assertThat(follows.size()).isEqualTo(1);
+  }
+
+
   @Test
   void findFollowersByMemberId() {
     // given
@@ -65,8 +86,7 @@ class FollowRepositoryTest extends MyBatisTest {
     IntStream.range(0, followCount)
         .forEach(i -> {
           Member followMember = createMember();
-          Follow follow = getFollow(followMember.getId(), member.getId());
-          followRepository.save(follow);
+          createFollow(followMember.getId(), member.getId());
         });
 
     // when
@@ -85,8 +105,7 @@ class FollowRepositoryTest extends MyBatisTest {
     IntStream.range(0, followCount)
         .forEach(i -> {
           Member followeeMember = createMember();
-          Follow follow = getFollow(member.getId(), followeeMember.getId());
-          followRepository.save(follow);
+          createFollow(member.getId(), followeeMember.getId());
         });
 
     // when
@@ -94,5 +113,20 @@ class FollowRepositoryTest extends MyBatisTest {
 
     // then
     assertThat(responses.size()).isEqualTo(followCount);
+  }
+
+  @Test()
+  void deleteByFollowerIdAndFollowId() {
+    // given
+    Member member = createMember();
+    Member followeeMember = createMember();
+    createFollow(member.getId(), followeeMember.getId());
+
+    // when
+    followRepository.deleteByFollowerIdAndFollowId(member.getId(), followeeMember.getId());
+
+    // then
+    List<FollowResponse> follows = followRepository.findFollowsByMemberId(member.getId());
+    assertThat(follows.size()).isEqualTo(0);
   }
 }

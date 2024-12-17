@@ -1,10 +1,10 @@
-package com.bangbangbwa.backend.domain.sns.common.mapper;
+package com.bangbangbwa.backend.domain.post.common.mapper;
 
 import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
-import com.bangbangbwa.backend.domain.sns.common.dto.CreatePostDto;
-import com.bangbangbwa.backend.domain.sns.common.dto.GetPostListDto;
-import com.bangbangbwa.backend.domain.sns.common.dto.UploadPostMediaDto;
-import com.bangbangbwa.backend.domain.sns.common.entity.Post;
+import com.bangbangbwa.backend.domain.post.common.dto.CreatePostDto;
+import com.bangbangbwa.backend.domain.post.common.dto.GetPostListDto;
+import com.bangbangbwa.backend.domain.post.common.dto.UploadPostMediaDto;
+import com.bangbangbwa.backend.domain.post.common.entity.Post;
 import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -34,6 +34,7 @@ public interface PostMapper {
 
   @Mapping(target = "postId", source = "id")
   GetPostListDto.Response dtoToGetPostListResponse(Post post);
+
   List<GetPostListDto.Response> dtoToGetPostListResponse(List<Post> postList);
 
 

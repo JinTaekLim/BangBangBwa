@@ -1,4 +1,4 @@
-package com.bangbangbwa.backend.domain.sns.common.dto;
+package com.bangbangbwa.backend.domain.post.common.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -21,5 +21,7 @@ public class GetPostDetailsDto {
       String comment,
       @Schema(description = "팔로우 여부")
       boolean isFollowed
-  ) {}
+  ) {
+
+  }
 }

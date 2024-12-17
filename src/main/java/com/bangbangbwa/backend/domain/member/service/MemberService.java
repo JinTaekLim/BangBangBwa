@@ -1,5 +1,8 @@
 package com.bangbangbwa.backend.domain.member.service;
 
+import com.bangbangbwa.backend.domain.member.business.FollowCreator;
+import com.bangbangbwa.backend.domain.member.business.FollowDeleter;
+import com.bangbangbwa.backend.domain.member.business.FollowGenerator;
 import com.bangbangbwa.backend.domain.member.business.FollowReader;
 import com.bangbangbwa.backend.domain.member.business.MemberCreator;
 import com.bangbangbwa.backend.domain.member.business.MemberGenerator;
@@ -15,14 +18,16 @@ import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
 import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
 import com.bangbangbwa.backend.domain.member.common.dto.SummaryDto;
+import com.bangbangbwa.backend.domain.member.common.dto.ToggleFollowDto;
+import com.bangbangbwa.backend.domain.member.common.entity.Follow;
 import com.bangbangbwa.backend.domain.member.common.dto.TogglePostPinDto;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
+import com.bangbangbwa.backend.domain.post.business.PostReader;
+import com.bangbangbwa.backend.domain.post.business.PostValidator;
 import com.bangbangbwa.backend.domain.promotion.business.StreamerReader;
-import com.bangbangbwa.backend.domain.sns.business.PostReader;
 import com.bangbangbwa.backend.domain.sns.business.PostUpdater;
-import com.bangbangbwa.backend.domain.sns.business.PostValidator;
 import com.bangbangbwa.backend.domain.tag.business.TagManager;
 import com.bangbangbwa.backend.domain.tag.common.entity.Tag;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
@@ -51,6 +56,9 @@ public class MemberService {
   private final StreamerReader streamerReader;
   private final FollowReader followReader;
   private final PostReader postReader;
+  private final FollowGenerator followGenerator;
+  private final FollowCreator followCreator;
+  private final FollowDeleter followDeleter;
   private final PostValidator postValidator;
   private final PostUpdater postUpdater;
 
@@ -127,10 +135,19 @@ public class MemberService {
     return followReader.findFollowsByMemberId(memberId);
   }
 
+  public void toggleFollow(ToggleFollowDto.Request req) {
+    Long memberId = memberProvider.getCurrentMemberId();
+    Follow follow = followGenerator.generate(req, memberId);
+    if (req.isFollow()) { followCreator.save(follow);}
+    else { followDeleter.deleteByFollowerIdAndFollowId(memberId, req.memberId());}
+  }
+
   public void togglePostPin(TogglePostPinDto.Request req) {
     Long memberId = memberProvider.getCurrentMemberId();
     postValidator.validatePostWriter(req.postId(), memberId);
-    if (req.pinned()) postValidator.validatePostPinLimit(memberId);
+    if (req.pinned()) {
+      postValidator.validatePostPinLimit(memberId);
+    }
     postUpdater.updatePostPin(req.postId(), req.pinned());
   }
 }
