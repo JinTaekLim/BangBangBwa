@@ -23,6 +23,7 @@ public interface PostMapper {
   Post dtoToEntity(CreatePostDto.Request request);
 
 
+  @Mapping(target = "postId", source = "post.id")
   @Mapping(target = "postType", source = "post.postType")
   @Mapping(target = "title", source = "post.title")
   @Mapping(target = "content", source = "post.content")
