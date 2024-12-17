@@ -46,7 +46,7 @@ public class PostUpdateRepositoryTest extends MyBatisTest {
         .postType(PostType.STREAMER)
         .title("title")
         .content("content")
-        .memberId(1L)
+        .memberId(6L)
         .build();
     ReflectionTestUtils.setField(newPost, "id", 1L);
     return newPost;
