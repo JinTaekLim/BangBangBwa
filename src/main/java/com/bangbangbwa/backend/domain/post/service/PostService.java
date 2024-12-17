@@ -121,6 +121,8 @@ public class PostService {
   }
 
   public void deletePost(Long postId) {
+    Long memberId = memberProvider.getCurrentMemberId();
+    postValidator.validatePostWriter(postId, memberId);
     Post post = postReader.findById(postId);
     post.deletePost();
     postUpdater.updateForDeletion(post);
