@@ -5,7 +5,8 @@ import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto.Request;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.sns.common.dto.SearchMemberDto;
-import com.bangbangbwa.backend.domain.token.common.TokenDto;
+import com.bangbangbwa.backend.domain.token.common.dto.ReissueTokenDto.Response;
+import com.bangbangbwa.backend.domain.token.common.dto.TokenDto;
 import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -24,12 +25,24 @@ public interface MemberMapper {
 
   @Mapping(target = "accessToken", source = "token.accessToken")
   @Mapping(target = "refreshToken", source = "token.refreshToken")
+  @Mapping(target = "memberId", source = "token.memberId")
+  @Mapping(target = "role", source = "token.role")
+  @Mapping(target = "profileImage", source = "token.profileImage")
   MemberSignupDto.Response dtoToSignupResponse(TokenDto token);
 
   @Mapping(target = "accessToken", source = "token.accessToken")
   @Mapping(target = "refreshToken", source = "token.refreshToken")
+  @Mapping(target = "memberId", source = "token.memberId")
+  @Mapping(target = "role", source = "token.role")
+  @Mapping(target = "profileImage", source = "token.profileImage")
   MemberLoginDto.Response dtoToLoginResponse(TokenDto token);
 
+  @Mapping(target = "accessToken", source = "token.accessToken")
+  @Mapping(target = "refreshToken", source = "token.refreshToken")
+  @Mapping(target = "memberId", source = "token.memberId")
+  @Mapping(target = "role", source = "token.role")
+  @Mapping(target = "profileImage", source = "token.profileImage")
+  Response dtoToReissueResponse(TokenDto token);
 
   @Mapping(target = "memberId", source = "id")
   @Mapping(target = "nickname", source = "nickname")

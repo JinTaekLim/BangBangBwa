@@ -6,7 +6,7 @@ import com.bangbangbwa.backend.domain.token.business.TokenDeleter;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
 import com.bangbangbwa.backend.domain.token.business.TokenReader;
 import com.bangbangbwa.backend.domain.token.business.TokenValidator;
-import com.bangbangbwa.backend.domain.token.common.TokenDto;
+import com.bangbangbwa.backend.domain.token.common.dto.TokenDto;
 import com.bangbangbwa.backend.domain.token.common.entity.Token;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,6 +28,7 @@ public class TokenService {
   public TokenDto getToken(Member member) {
     return tokenProvider.getToken(member);
   }
+
   @Transactional
   public TokenDto reissueToken(String refreshToken) {
     tokenValidator.validateRefreshToken(refreshToken);

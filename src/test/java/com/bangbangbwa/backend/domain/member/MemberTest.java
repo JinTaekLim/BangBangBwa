@@ -13,8 +13,8 @@ import com.bangbangbwa.backend.domain.member.common.dto.ToggleFollowDto.Request;
 import com.bangbangbwa.backend.domain.member.common.dto.TogglePostPinDto;
 import com.bangbangbwa.backend.domain.member.common.entity.Follow;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
-import com.bangbangbwa.backend.domain.member.exception.NotFoundFollowException;
 import com.bangbangbwa.backend.domain.member.common.enums.Role;
+import com.bangbangbwa.backend.domain.member.exception.NotFoundFollowException;
 import com.bangbangbwa.backend.domain.member.exception.UnAuthenticationMemberException;
 import com.bangbangbwa.backend.domain.member.repository.FollowRepository;
 import com.bangbangbwa.backend.domain.member.repository.MemberRepository;
@@ -28,7 +28,7 @@ import com.bangbangbwa.backend.domain.sns.repository.PostRepository;
 import com.bangbangbwa.backend.domain.streamer.common.entity.PendingStreamer;
 import com.bangbangbwa.backend.domain.streamer.repository.PendingStreamerRepository;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
-import com.bangbangbwa.backend.domain.token.common.TokenDto;
+import com.bangbangbwa.backend.domain.token.common.dto.TokenDto;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import com.bangbangbwa.backend.global.test.IntegrationTest;
 import com.bangbangbwa.backend.global.util.randomValue.RandomValue;
@@ -489,7 +489,8 @@ class MemberTest extends IntegrationTest {
 
     ApiResponse<?> apiResponse = gson.fromJson(
         responseEntity.getBody(),
-        new TypeToken<ApiResponse<?>>() {}.getType()
+        new TypeToken<ApiResponse<?>>() {
+        }.getType()
     );
 
     // then
@@ -526,7 +527,8 @@ class MemberTest extends IntegrationTest {
 
     ApiResponse<?> apiResponse = gson.fromJson(
         responseEntity.getBody(),
-        new TypeToken<ApiResponse<?>>() {}.getType()
+        new TypeToken<ApiResponse<?>>() {
+        }.getType()
     );
 
     // then
@@ -564,7 +566,8 @@ class MemberTest extends IntegrationTest {
 
     ApiResponse<?> apiResponse = gson.fromJson(
         responseEntity.getBody(),
-        new TypeToken<ApiResponse<?>>() {}.getType()
+        new TypeToken<ApiResponse<?>>() {
+        }.getType()
     );
 
     // then
@@ -597,7 +600,8 @@ class MemberTest extends IntegrationTest {
 
     ApiResponse<?> apiResponse = gson.fromJson(
         responseEntity.getBody(),
-        new TypeToken<ApiResponse<?>>() {}.getType()
+        new TypeToken<ApiResponse<?>>() {
+        }.getType()
     );
 
     // then
