@@ -32,6 +32,8 @@ public class CreatePostDto {
 
   @Schema(name = "CreatePostResponse", description = "글 작성 반환 DTO")
   public record Response(
+      @Schema(description = "게시물 ID")
+      Long postId,
       @Schema(description = "게시글 타입")
       PostType postType,
       @Schema(description = "제목")
