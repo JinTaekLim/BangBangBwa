@@ -28,7 +28,8 @@ import com.bangbangbwa.backend.domain.post.common.mapper.PostMapper;
 import com.bangbangbwa.backend.domain.streamer.common.entity.PendingStreamer;
 import com.bangbangbwa.backend.domain.streamer.common.mapper.PendingStreamerMapper;
 import com.bangbangbwa.backend.domain.streamer.service.PendingStreamerService;
-import com.bangbangbwa.backend.domain.token.common.TokenDto;
+import com.bangbangbwa.backend.domain.token.common.dto.ReissueTokenDto;
+import com.bangbangbwa.backend.domain.token.common.dto.TokenDto;
 import com.bangbangbwa.backend.domain.token.service.TokenService;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import jakarta.validation.Valid;
@@ -97,9 +98,10 @@ public class MemberController implements MemberApi {
   }
 
   @PostMapping("/reissueToken")
-  public ApiResponse<TokenDto> reissueToken(@RequestParam String refreshToken) {
+  public ApiResponse<ReissueTokenDto.Response> reissueToken(@RequestParam String refreshToken) {
     TokenDto tokenDto = tokenService.reissueToken(refreshToken);
-    return ApiResponse.ok(tokenDto);
+    ReissueTokenDto.Response response = MemberMapper.INSTANCE.dtoToReissueResponse(tokenDto);
+    return ApiResponse.ok(response);
   }
 
   @PostMapping("/promoteStreamer")

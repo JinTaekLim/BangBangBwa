@@ -1,7 +1,7 @@
 package com.bangbangbwa.backend.domain.token.business;
 
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
-import com.bangbangbwa.backend.domain.token.common.TokenDto;
+import com.bangbangbwa.backend.domain.token.common.dto.TokenDto;
 import com.bangbangbwa.backend.domain.token.common.entity.Token;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -16,20 +16,19 @@ public class TokenProvider {
   private final TokenCreator tokenCreator;
   private final AuthenticationProvider authProvider;
 
-
   public TokenDto getToken(Member member) {
     Authentication authentication = authProvider.getAuthentication(member);
     TokenDto tokenDto = generateToken(authentication);
-    saveRefreshToken(tokenDto.getRefreshToken(), member);
+    tokenDto.setMemberInfo(member);
+    saveRefreshToken(tokenDto);
     return tokenDto;
   }
 
-
-  private void saveRefreshToken(String refreshToken, Member member) {
+  private void saveRefreshToken(TokenDto tokenDto) {
     Long refreshExp = tokenGenerator.getRefreshExp();
     Token token = Token.builder()
-        .memberId(member.getId())
-        .refreshToken(refreshToken)
+        .memberId(tokenDto.getMemberId())
+        .refreshToken(tokenDto.getRefreshToken())
         .expirationTime(refreshExp)
         .build();
     tokenCreator.saveRefreshToken(token);
@@ -45,7 +44,7 @@ public class TokenProvider {
         .build();
   }
 
-  public Authentication getAuthentication(Claims claims){
+  public Authentication getAuthentication(Claims claims) {
     return authProvider.getAuthentication(claims);
   }
 

@@ -19,8 +19,8 @@ import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
 import com.bangbangbwa.backend.domain.member.common.dto.SummaryDto;
 import com.bangbangbwa.backend.domain.member.common.dto.ToggleFollowDto;
-import com.bangbangbwa.backend.domain.member.common.entity.Follow;
 import com.bangbangbwa.backend.domain.member.common.dto.TogglePostPinDto;
+import com.bangbangbwa.backend.domain.member.common.entity.Follow;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
@@ -31,7 +31,7 @@ import com.bangbangbwa.backend.domain.sns.business.PostUpdater;
 import com.bangbangbwa.backend.domain.tag.business.TagManager;
 import com.bangbangbwa.backend.domain.tag.common.entity.Tag;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
-import com.bangbangbwa.backend.domain.token.common.TokenDto;
+import com.bangbangbwa.backend.domain.token.common.dto.TokenDto;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -138,8 +138,11 @@ public class MemberService {
   public void toggleFollow(ToggleFollowDto.Request req) {
     Long memberId = memberProvider.getCurrentMemberId();
     Follow follow = followGenerator.generate(req, memberId);
-    if (req.isFollow()) { followCreator.save(follow);}
-    else { followDeleter.deleteByFollowerIdAndFollowId(memberId, req.memberId());}
+    if (req.isFollow()) {
+      followCreator.save(follow);
+    } else {
+      followDeleter.deleteByFollowerIdAndFollowId(memberId, req.memberId());
+    }
   }
 
   public void togglePostPin(TogglePostPinDto.Request req) {

@@ -20,7 +20,7 @@ import com.bangbangbwa.backend.domain.sns.repository.PostRepository;
 import com.bangbangbwa.backend.domain.streamer.common.entity.PendingStreamer;
 import com.bangbangbwa.backend.domain.streamer.repository.PendingStreamerRepository;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
-import com.bangbangbwa.backend.domain.token.common.TokenDto;
+import com.bangbangbwa.backend.domain.token.common.dto.TokenDto;
 import com.bangbangbwa.backend.global.test.IntegrationTest;
 import com.bangbangbwa.backend.global.util.randomValue.RandomValue;
 import org.junit.jupiter.api.Test;

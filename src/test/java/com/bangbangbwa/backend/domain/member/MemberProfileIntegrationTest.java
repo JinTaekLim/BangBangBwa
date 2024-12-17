@@ -18,7 +18,7 @@ import com.bangbangbwa.backend.domain.streamer.repository.StreamerTagRepository;
 import com.bangbangbwa.backend.domain.tag.common.entity.Tag;
 import com.bangbangbwa.backend.domain.tag.repository.TagRepository;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
-import com.bangbangbwa.backend.domain.token.common.TokenDto;
+import com.bangbangbwa.backend.domain.token.common.dto.TokenDto;
 import com.bangbangbwa.backend.global.test.IntegrationTest;
 import com.bangbangbwa.backend.global.util.randomValue.RandomString;
 import com.bangbangbwa.backend.global.util.randomValue.RandomValue;
