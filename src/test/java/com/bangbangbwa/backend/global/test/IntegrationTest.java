@@ -1,6 +1,9 @@
 package com.bangbangbwa.backend.global.test;
 
+import com.bangbangbwa.backend.global.gson.LocalDateTimeAdapter;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -25,7 +28,10 @@ abstract public class IntegrationTest {
 
   protected MockMvc mvc;
 
-  protected Gson gson = new Gson();
+  protected Gson gson = new GsonBuilder()
+      .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+      .create();
+
 
   @Autowired
   private WebApplicationContext context;
