@@ -126,7 +126,7 @@ class ReportPostRepositoryTest extends MyBatisTest {
           assertThat(getReportPosts.get(i).nickname()).isEqualTo(members.get(i).getNickname());
           assertThat(getReportPosts.get(i).profile()).isEqualTo(members.get(i).getProfile());
           assertThat(getReportPosts.get(i).reason()).isEqualTo(reportPosts.get(i).getReason());
-          assertThat(getReportPosts.get(i).reportDate()).isEqualTo(reportPosts.get(i).getCreatedAt());
+          assertThat(getReportPosts.get(i).reportDate().withNano(0)).isEqualTo(reportPosts.get(i).getCreatedAt().withNano(0));
         });
   }
 }

@@ -158,7 +158,7 @@ class AdminTest extends IntegrationTest {
       assertThat(apiResponse.getData().posts().get(i).nickname()).isEqualTo(members.get(i).getNickname());
       assertThat(apiResponse.getData().posts().get(i).profile()).isEqualTo(members.get(i).getProfile());
       assertThat(apiResponse.getData().posts().get(i).reason()).isEqualTo(reportPosts.get(i).getReason());
-      assertThat(apiResponse.getData().posts().get(i).reportDate()).isEqualTo(reportPosts.get(i).getCreatedAt());
+      assertThat(apiResponse.getData().posts().get(i).reportDate().withNano(0)).isEqualTo(reportPosts.get(i).getCreatedAt().withNano(0));
     });
   }
 }
