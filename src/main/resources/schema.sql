@@ -194,7 +194,8 @@ CREATE TABLE follow (
     created_at      DATETIME            NOT NULL        COMMENT '생성일시',
     created_id      VARCHAR(255)        NOT NULL        COMMENT '생성자',
     updated_at      DATETIME                            COMMENT '수정일시',
-    updated_id      VARCHAR(255)                        COMMENT '수정자'
+    updated_id      VARCHAR(255)                        COMMENT '수정자',
+    CONSTRAINT unique_follow UNIQUE (follower_id, followee_id)
 );
 
 CREATE TABLE report_posts (

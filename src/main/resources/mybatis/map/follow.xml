@@ -32,4 +32,11 @@
     INNER JOIN members m ON f.followee_id = m.id
     WHERE f.follower_id = #{memberId}
   </select>
+
+  <delete id="deleteByFollowerIdAndFollowId" parameterType="map">
+    DELETE FROM follow
+    WHERE follower_id = #{followerId}
+    AND followee_id = #{followeeId};
+  </delete>
+
 </mapper>
