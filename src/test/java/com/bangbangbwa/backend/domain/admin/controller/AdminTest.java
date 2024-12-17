@@ -1,7 +1,6 @@
 package com.bangbangbwa.backend.domain.admin.controller;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import com.bangbangbwa.backend.domain.admin.common.dto.GetReportedPostsDto;
 import com.bangbangbwa.backend.domain.member.common.dto.PromoteStreamerDto.Request;
@@ -10,9 +9,9 @@ import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.member.repository.MemberRepository;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
-import com.bangbangbwa.backend.domain.sns.common.entity.Post;
+import com.bangbangbwa.backend.domain.post.common.entity.Post;
+import com.bangbangbwa.backend.domain.post.common.enums.PostType;
 import com.bangbangbwa.backend.domain.sns.common.entity.ReportPost;
-import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
 import com.bangbangbwa.backend.domain.sns.repository.PostRepository;
 import com.bangbangbwa.backend.domain.sns.repository.ReportPostRepository;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
@@ -90,10 +89,11 @@ class AdminTest extends IntegrationTest {
   private ReportPost getReportPost(Post post, Member writeMember) {
     return ReportPost.builder()
         .postId(post.getId())
-        .reason(RandomValue.string(3,10).setNullable(false).get())
+        .reason(RandomValue.string(3, 10).setNullable(false).get())
         .createdId(String.valueOf(writeMember.getId()))
         .build();
   }
+
   private ReportPost createReportPost(Post post, Member writeMember) {
     ReportPost reportPost = getReportPost(post, writeMember);
     reportPostRepository.save(reportPost);
@@ -116,7 +116,7 @@ class AdminTest extends IntegrationTest {
     TokenDto tokenDto = tokenProvider.getToken(admin);
 
     PostType postType = RandomValue.getRandomEnum(PostType.class);
-    int reportPostCount = RandomValue.getInt(3,5);
+    int reportPostCount = RandomValue.getInt(3, 5);
 
     List<Member> members = IntStream.range(0, reportPostCount)
         .mapToObj(i -> createMember())
@@ -127,7 +127,6 @@ class AdminTest extends IntegrationTest {
     List<ReportPost> reportPosts = IntStream.range(0, reportPostCount)
         .mapToObj(i -> createReportPost(posts.get(i), members.get(i)))
         .toList();
-
 
     String url = "http://localhost:" + port + "/api/v1/admin/getReportedPosts";
 
@@ -155,10 +154,14 @@ class AdminTest extends IntegrationTest {
     IntStream.range(0, reportPostCount).forEach(i -> {
       assertThat(apiResponse.getData().posts().get(i).postId()).isEqualTo(posts.get(i).getId());
       assertThat(apiResponse.getData().posts().get(i).writerId()).isEqualTo(members.get(i).getId());
-      assertThat(apiResponse.getData().posts().get(i).nickname()).isEqualTo(members.get(i).getNickname());
-      assertThat(apiResponse.getData().posts().get(i).profile()).isEqualTo(members.get(i).getProfile());
-      assertThat(apiResponse.getData().posts().get(i).reason()).isEqualTo(reportPosts.get(i).getReason());
-      assertThat(apiResponse.getData().posts().get(i).reportDate().withNano(0)).isEqualTo(reportPosts.get(i).getCreatedAt().withNano(0));
+      assertThat(apiResponse.getData().posts().get(i).nickname()).isEqualTo(
+          members.get(i).getNickname());
+      assertThat(apiResponse.getData().posts().get(i).profile()).isEqualTo(
+          members.get(i).getProfile());
+      assertThat(apiResponse.getData().posts().get(i).reason()).isEqualTo(
+          reportPosts.get(i).getReason());
+      assertThat(apiResponse.getData().posts().get(i).reportDate().withNano(0)).isEqualTo(
+          reportPosts.get(i).getCreatedAt().withNano(0));
     });
   }
 }
