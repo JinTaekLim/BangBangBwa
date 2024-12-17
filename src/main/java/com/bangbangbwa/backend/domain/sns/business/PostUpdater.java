@@ -19,4 +19,8 @@ public class PostUpdater {
   public void updatePostPin(Long postId, boolean pinned) {
     postRepository.updatePostPin(postId, pinned);
   }
+
+  public void updateForDeletion(Post post) {
+    postRepository.updatePost(post);
+  }
 }

@@ -16,6 +16,7 @@ import com.bangbangbwa.backend.domain.post.common.dto.GetPostDetailsDto;
 import com.bangbangbwa.backend.domain.post.common.entity.Post;
 import com.bangbangbwa.backend.domain.post.common.entity.PostVisibilityMember;
 import com.bangbangbwa.backend.domain.post.common.enums.PostType;
+import com.bangbangbwa.backend.domain.sns.business.PostUpdater;
 import com.bangbangbwa.backend.domain.sns.business.PostVisibilityMemberCreator;
 import com.bangbangbwa.backend.domain.sns.business.PostVisibilityMemberGenerator;
 import com.bangbangbwa.backend.domain.sns.business.ReaderPostCreator;
@@ -52,6 +53,7 @@ public class PostService {
   private final ReaderPostReader readerPostReader;
   private final DailyMessageReader dailyMessageReader;
   private final S3Manager s3Manager;
+  private final PostUpdater postUpdater;
 
   public String uploadPostMedia(MultipartFile file) {
     return s3Manager.upload(file);
@@ -121,5 +123,6 @@ public class PostService {
   public void deletePost(Long postId) {
     Post post = postReader.findById(postId);
     post.deletePost();
+    postUpdater.updateForDeletion(post);
   }
 }

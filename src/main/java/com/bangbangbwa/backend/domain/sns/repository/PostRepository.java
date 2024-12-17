@@ -105,5 +105,10 @@ public class PostRepository {
   public List<Post> findPinnedPostsByMemberId(Long memberId) {
     return mysql.selectList("PostMapper.findPinnedPostsByMemberId", memberId);
   }
+
+  public Post updatePost(Post post) {
+    mysql.update("PostMapper.updatePost", post);
+    return post;
+  }
 }
 

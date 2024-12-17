@@ -160,4 +160,14 @@
     SELECT * FROM posts WHERE member_id = #{memberId} AND pinned = true
   </select>
 
+  <update id="updatePost" parameterType="com.bangbangbwa.backend.domain.post.common.entity.Post">
+    UPDATE posts
+    SET
+    post_type = #{postType},
+    status = #{status},
+    title = #{title},
+    content = #{content},
+    deleted_at = #{deletedAt}
+    WHERE id = #{id}
+  </update>
 </mapper>
