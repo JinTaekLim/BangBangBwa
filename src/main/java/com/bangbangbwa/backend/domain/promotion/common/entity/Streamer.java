@@ -8,10 +8,12 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.apache.ibatis.type.Alias;
 
 @Alias("streamer")
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Streamer {
 
@@ -20,7 +22,7 @@ public class Streamer {
     tags = new ArrayList<>();
     platforms = new ArrayList<>();
   }
-  
+
   private Long id;
   private Long memberId;
   private List<Tag> tags;

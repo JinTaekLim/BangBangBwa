@@ -24,6 +24,10 @@ public class TagService {
 
   public List<TagDto> getTagList(List<String> tagList) {
     Long memberId = memberProvider.getCurrentMemberId();
+    return this.getTagList(tagList, memberId);
+  }
+
+  public List<TagDto> getTagList(List<String> tagList, Long memberId) {
     List<Tag> tags = tagManager.getTags(tagList, memberId.toString());
     return TagMapper.INSTANCE.toDto(tags);
   }

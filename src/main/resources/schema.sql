@@ -172,7 +172,8 @@ CREATE TABLE streamers_tags
     tag_id      BIGINT NOT NULL COMMENT '태그_ID',
     PRIMARY KEY (id),
     FOREIGN KEY (streamer_id) REFERENCES streamers (id),
-    FOREIGN KEY (tag_id) REFERENCES tags (id)
+    FOREIGN KEY (tag_id) REFERENCES tags (id),
+    UNIQUE (streamer_id, tag_id)
 );
 
 CREATE TABLE streamers_platforms

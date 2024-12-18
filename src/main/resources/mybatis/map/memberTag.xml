@@ -7,4 +7,20 @@
     INSERT INTO members_tags (member_id, tag_id)
     VALUES (#{memberId},#{tagId})
   </insert>
+  <insert id="saveList" parameterType="java.util.HashMap">
+    INSERT INTO members_tags (
+    member_id, tag_id
+    )
+    VALUES
+    <foreach collection="tagIdList" item="tagId" separator=",">
+      (#{memberId}, #{tagId})
+    </foreach>
+  </insert>
+  <delete id="deleteList">
+    DELETE FROM members_tags
+    WHERE 1=1
+    <foreach collection="tagIdList" item="tagId" open="AND" separator="OR">
+      (member_id = #{memberId} AND tag_id = #{tagId})
+    </foreach>
+  </delete>
 </mapper>

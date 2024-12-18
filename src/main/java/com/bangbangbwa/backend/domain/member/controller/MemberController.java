@@ -11,6 +11,7 @@ import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto.FollowerResp
 import com.bangbangbwa.backend.domain.member.common.dto.MemberLoginDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberNicknameDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
+import com.bangbangbwa.backend.domain.member.common.dto.MemberUpdateDto;
 import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
 import com.bangbangbwa.backend.domain.member.common.dto.PromoteStreamerDto;
@@ -44,6 +45,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -70,8 +72,9 @@ public class MemberController implements MemberApi {
   ) {
     String oauthToken = request.oauthToken();
     OAuthInfoDto oAuthInfo = oAuthService.getInfoByToken(snsType, oauthToken);
-    List<TagDto> tagList = tagService.getTagList(request.tags());
-    TokenDto token = memberService.signup(oAuthInfo, tagList, request, file);
+    TokenDto token = memberService.signup(oAuthInfo, request, file);
+    List<TagDto> tagList = tagService.getTagList(request.tags(), token.getMember().getId());
+    memberService.memberTagRelation(token.getMember(), tagList);
     MemberSignupDto.Response response = MemberMapper.INSTANCE.dtoToSignupResponse(token);
     return ApiResponse.ok(response);
   }
@@ -215,5 +218,17 @@ public class MemberController implements MemberApi {
   public ApiResponse<?> toggleFollow(@RequestBody ToggleFollowDto.Request req) {
     memberService.toggleFollow(req);
     return ApiResponse.ok();
+  }
+
+  @PutMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+  @PreAuthorize("hasAuthority('MEMBER')")
+  public ApiResponse<ProfileDto.Response> updateMember(
+      @RequestPart(value = "file", required = false) MultipartFile file,
+      @RequestPart @Valid MemberUpdateDto.Request request
+  ) {
+    List<TagDto> tagList = tagService.getTagList(request.tagList());
+    ProfileDto infoDto = memberService.updateMember(tagList, request, file);
+    ProfileDto.Response response = ProfileMapper.INSTANCE.dtoToResponse(infoDto);
+    return ApiResponse.ok(response);
   }
 }
