@@ -25,23 +25,23 @@ public interface MemberMapper {
 
   @Mapping(target = "accessToken", source = "token.accessToken")
   @Mapping(target = "refreshToken", source = "token.refreshToken")
-  @Mapping(target = "memberId", source = "token.memberId")
-  @Mapping(target = "role", source = "token.role")
-  @Mapping(target = "profileImage", source = "token.profileImage")
+  @Mapping(target = "memberId", source = "token.member.id")
+  @Mapping(target = "role", source = "token.member.role")
+  @Mapping(target = "profileImage", source = "token.member.profile")
   MemberSignupDto.Response dtoToSignupResponse(TokenDto token);
 
   @Mapping(target = "accessToken", source = "token.accessToken")
   @Mapping(target = "refreshToken", source = "token.refreshToken")
-  @Mapping(target = "memberId", source = "token.memberId")
-  @Mapping(target = "role", source = "token.role")
-  @Mapping(target = "profileImage", source = "token.profileImage")
+  @Mapping(target = "memberId", source = "token.member.id")
+  @Mapping(target = "role", source = "token.member.role")
+  @Mapping(target = "profileImage", source = "token.member.profile")
   MemberLoginDto.Response dtoToLoginResponse(TokenDto token);
 
   @Mapping(target = "accessToken", source = "token.accessToken")
   @Mapping(target = "refreshToken", source = "token.refreshToken")
-  @Mapping(target = "memberId", source = "token.memberId")
-  @Mapping(target = "role", source = "token.role")
-  @Mapping(target = "profileImage", source = "token.profileImage")
+  @Mapping(target = "memberId", source = "token.member.id")
+  @Mapping(target = "role", source = "token.member.role")
+  @Mapping(target = "profileImage", source = "token.member.profile")
   Response dtoToReissueResponse(TokenDto token);
 
   @Mapping(target = "memberId", source = "id")
@@ -49,4 +49,5 @@ public interface MemberMapper {
   SearchMemberDto.Response dtoToSearchNicknameResponse(Member member);
 
   List<SearchMemberDto.Response> dtoToSearchNicknameResponse(List<Member> members);
+
 }

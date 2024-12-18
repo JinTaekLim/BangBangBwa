@@ -40,9 +40,9 @@ import com.bangbangbwa.backend.domain.sns.repository.ReaderPostRepository;
 import com.bangbangbwa.backend.domain.sns.repository.ReportCommentRepository;
 import com.bangbangbwa.backend.domain.sns.repository.ReportPostRepository;
 import com.bangbangbwa.backend.domain.streamer.repository.DailyMessageRepository;
-import com.bangbangbwa.backend.domain.streamer.repository.StreamerTagRepository;
 import com.bangbangbwa.backend.domain.tag.common.entity.Tag;
 import com.bangbangbwa.backend.domain.tag.repository.MemberTagRepository;
+import com.bangbangbwa.backend.domain.tag.repository.StreamerTagRepository;
 import com.bangbangbwa.backend.domain.tag.repository.TagRepository;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
 import com.bangbangbwa.backend.domain.token.common.dto.TokenDto;
@@ -267,7 +267,7 @@ class SnsIntegrationTest extends IntegrationTest {
     Member writeTagMember = createMember();
     Streamer streamer = createStreamer(writeTagMember);
     streamerRepository.save(streamer);
-    streamerTagRepository.save(streamer.getId(), tag);
+    streamerTagRepository.save(streamer.getId(), tag.getId());
     int tagPostCount = RandomValue.getInt(0, 5);
     List<Post> tagPostList = IntStream.range(0, tagPostCount)
         .mapToObj(i -> createPost(postType, writeTagMember))

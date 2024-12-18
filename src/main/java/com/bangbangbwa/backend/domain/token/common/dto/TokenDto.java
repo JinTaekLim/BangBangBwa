@@ -14,13 +14,9 @@ public class TokenDto {
 
   private String accessToken;
   private String refreshToken;
-  private Long memberId;
-  private String role;
-  private String profileImage;
+  private Member member;
 
   public void setMemberInfo(Member member) {
-    this.memberId = member.getId();
-    this.role = member.getRole().name();
-    this.profileImage = member.getProfile();
+    this.member = member;
   }
 }

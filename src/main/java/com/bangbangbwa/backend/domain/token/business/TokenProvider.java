@@ -27,7 +27,7 @@ public class TokenProvider {
   private void saveRefreshToken(TokenDto tokenDto) {
     Long refreshExp = tokenGenerator.getRefreshExp();
     Token token = Token.builder()
-        .memberId(tokenDto.getMemberId())
+        .memberId(tokenDto.getMember().getId())
         .refreshToken(tokenDto.getRefreshToken())
         .expirationTime(refreshExp)
         .build();
