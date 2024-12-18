@@ -21,7 +21,7 @@
   </resultMap>
 
   <resultMap id="streamerPlatformMap"
-    type="com.bangbangbwa.backend.domain.promotion.common.dto.PlatformDto">
+    type="com.bangbangbwa.backend.domain.platform.common.dto.PlatformDto">
     <id property="id" column="platform_id"/>
     <result property="name" column="platform_name"/>
     <result property="imageUrl" column="platform_image_url"/>

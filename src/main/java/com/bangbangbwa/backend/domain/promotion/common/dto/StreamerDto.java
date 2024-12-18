@@ -1,5 +1,6 @@
 package com.bangbangbwa.backend.domain.promotion.common.dto;
 
+import com.bangbangbwa.backend.domain.platform.common.dto.PlatformDto;
 import com.bangbangbwa.backend.domain.tag.common.dto.TagDto;
 import java.util.List;
 import lombok.AllArgsConstructor;

@@ -1,5 +1,6 @@
 package com.bangbangbwa.backend.domain.promotion.common.entity;
 
+import com.bangbangbwa.backend.domain.platform.common.entity.Platform;
 import com.bangbangbwa.backend.domain.tag.common.entity.Tag;
 import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;

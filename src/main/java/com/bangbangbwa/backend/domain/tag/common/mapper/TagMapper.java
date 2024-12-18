@@ -5,7 +5,6 @@ import com.bangbangbwa.backend.domain.tag.common.entity.Tag;
 import java.util.List;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
@@ -18,7 +17,5 @@ public interface TagMapper {
   List<TagDto> toDto(List<Tag> tags);
 
   @Named("toDto")
-  @Mapping(target = "id", source = "tag.id")
-  @Mapping(target = "name", source = "tag.name")
   TagDto toDto(Tag tag);
 }

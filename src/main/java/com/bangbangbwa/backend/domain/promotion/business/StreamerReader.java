@@ -1,6 +1,6 @@
 package com.bangbangbwa.backend.domain.promotion.business;
 
-import com.bangbangbwa.backend.domain.promotion.common.dto.PlatformDto;
+import com.bangbangbwa.backend.domain.platform.common.dto.PlatformDto;
 import com.bangbangbwa.backend.domain.promotion.common.dto.StreamerDto;
 import com.bangbangbwa.backend.domain.promotion.common.entity.Streamer;
 import com.bangbangbwa.backend.domain.promotion.repository.StreamerRepository;
