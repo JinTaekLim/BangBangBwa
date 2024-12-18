@@ -28,6 +28,8 @@ import com.bangbangbwa.backend.domain.post.common.mapper.PostMapper;
 import com.bangbangbwa.backend.domain.streamer.common.entity.PendingStreamer;
 import com.bangbangbwa.backend.domain.streamer.common.mapper.PendingStreamerMapper;
 import com.bangbangbwa.backend.domain.streamer.service.PendingStreamerService;
+import com.bangbangbwa.backend.domain.tag.common.dto.TagDto;
+import com.bangbangbwa.backend.domain.tag.service.TagService;
 import com.bangbangbwa.backend.domain.token.common.dto.ReissueTokenDto;
 import com.bangbangbwa.backend.domain.token.common.dto.TokenDto;
 import com.bangbangbwa.backend.domain.token.service.TokenService;
@@ -58,6 +60,7 @@ public class MemberController implements MemberApi {
   private final MemberService memberService;
   private final TokenService tokenService;
   private final PendingStreamerService pendingStreamerService;
+  private final TagService tagService;
 
   @PostMapping(value = "/{snsType}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
   public ApiResponse<MemberSignupDto.Response> signup(
@@ -67,7 +70,8 @@ public class MemberController implements MemberApi {
   ) {
     String oauthToken = request.oauthToken();
     OAuthInfoDto oAuthInfo = oAuthService.getInfoByToken(snsType, oauthToken);
-    TokenDto token = memberService.signup(oAuthInfo, request, file);
+    List<TagDto> tagList = tagService.getTagList(request.tags());
+    TokenDto token = memberService.signup(oAuthInfo, tagList, request, file);
     MemberSignupDto.Response response = MemberMapper.INSTANCE.dtoToSignupResponse(token);
     return ApiResponse.ok(response);
   }

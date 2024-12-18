@@ -4,7 +4,7 @@ import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
 import com.bangbangbwa.backend.domain.member.common.dto.SummaryDto;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
-import com.bangbangbwa.backend.domain.tag.common.entity.Tag;
+import com.bangbangbwa.backend.domain.tag.common.dto.TagDto;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,12 +44,13 @@ public class MemberRepository {
     return mysql.selectList("MemberMapper.findByNicknameContaining", nickname);
   }
 
-  public void save(Member member, Tag tag) {
+  public void save(Member member, TagDto tag) {
     Map<String, Object> params = new HashMap<>();
     params.put("memberId", member.getId());
     params.put("tagId", tag.getId());
     mysql.insert("MemberTagMapper.save", params);
   }
+
   public Optional<ProfileDto> findProfile(ProfileDto profileDto) {
     return Optional.ofNullable(mysql.selectOne("MemberMapper.findProfile", profileDto));
   }

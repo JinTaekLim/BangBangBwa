@@ -28,8 +28,8 @@ import com.bangbangbwa.backend.domain.post.business.PostReader;
 import com.bangbangbwa.backend.domain.post.business.PostValidator;
 import com.bangbangbwa.backend.domain.promotion.business.StreamerReader;
 import com.bangbangbwa.backend.domain.sns.business.PostUpdater;
-import com.bangbangbwa.backend.domain.tag.business.TagManager;
-import com.bangbangbwa.backend.domain.tag.common.entity.Tag;
+import com.bangbangbwa.backend.domain.tag.business.TagReader;
+import com.bangbangbwa.backend.domain.tag.common.dto.TagDto;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
 import com.bangbangbwa.backend.domain.token.common.dto.TokenDto;
 import java.util.List;
@@ -63,14 +63,16 @@ public class MemberService {
   private final PostUpdater postUpdater;
 
   @Transactional
-  public TokenDto signup(OAuthInfoDto oAuthInfo, MemberSignupDto.Request request,
+  public TokenDto signup(
+      OAuthInfoDto oAuthInfo,
+      List<TagDto> tagList,
+      MemberSignupDto.Request request,
       MultipartFile profileFile) {
     memberValidator.validateUniqueMember(oAuthInfo);
     Member member = memberGenerator.generate(oAuthInfo, request, profileFile);
     memberCreator.save(member);
-    List<Tag> tags = tagManager.getTags(request.tags(), String.valueOf(member.getId()));
     // TODO : Bulk 연산 학습 후 적용 예정
-    for (Tag tag : tags) {
+    for (TagDto tag : tagList) {
       memberTagRelation.relation(member, tag);
     }
     return tokenProvider.getToken(member);
