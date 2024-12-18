@@ -1,4 +1,4 @@
-package com.bangbangbwa.backend.domain.sns.business;
+package com.bangbangbwa.backend.domain.streamer.common;
 
 import com.bangbangbwa.backend.domain.post.common.entity.Post;
 import java.util.ArrayList;
@@ -10,25 +10,27 @@ import java.util.stream.Stream;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PostRecommendationStrategy {
+public class StreamerPostRecommender {
 
   private static final ThreadLocalRandom RAND = ThreadLocalRandom.current();
 
-  // 각 게시물에 대한 확률 (팔로우한 사람, 비슷한 태그, 랜덤)
+  // 각 게시물에 대한 확률 (팔로워 게시물, 랜덤)
   private static final int[][] PROBABILITIES = {
-      {70, 20, 10}, // 첫 번째 게시물
-      {60, 25, 15}, // 두 번째 게시물
-      {50, 30, 20}  // 이후 게시물
+      {100, 0}, // 첫 번째 게시물
+      {90, 10}, // 두 번째 게시물
+      {80, 20}, // 세 번째 게시물
+      {60, 40}, // 네 번째 게시물
+      {50, 50}  // 다섯 번째 게시물
   };
 
   private static final int MAX_POSTS = 7;
 
   public List<Post> getPosts(
-      List<Post> followPosts, List<Post> tagPosts, List<Post> randomPosts
+      List<Post> followerPosts, List<Post> randomPosts
   ) {
     List<Post> selectedPosts = new ArrayList<>();
     IntStream.range(0, MAX_POSTS)
-        .mapToObj(i -> selectPost(i, followPosts, tagPosts, randomPosts, selectedPosts))
+        .mapToObj(i -> selectPost(i, followerPosts, randomPosts, selectedPosts))
         .filter(Objects::nonNull)
         .forEach(selectedPosts::add);
     return selectedPosts;
@@ -37,8 +39,7 @@ public class PostRecommendationStrategy {
 
   private Post selectPost(
       int num,
-      List<Post> followPosts,
-      List<Post> tagPosts,
+      List<Post> followerPosts,
       List<Post> randomPosts,
       List<Post> selectedPosts
   ) {
@@ -46,21 +47,20 @@ public class PostRecommendationStrategy {
     int[] currentProbabilities = PROBABILITIES[Math.min(num, PROBABILITIES.length - 1)];
 
     if (randomValue < currentProbabilities[0]) {
-      return findUniquePost(followPosts, tagPosts, randomPosts, selectedPosts);
+      return findUniquePost(followerPosts, randomPosts, selectedPosts);
     } else if (randomValue < currentProbabilities[0] + currentProbabilities[1]) {
-      return findUniquePost(tagPosts, followPosts, randomPosts, selectedPosts);
+      return findUniquePost(followerPosts, randomPosts, selectedPosts);
     } else {
-      return findUniquePost(randomPosts, followPosts, tagPosts, selectedPosts);
+      return findUniquePost(randomPosts, followerPosts, selectedPosts);
     }
   }
 
   private Post findUniquePost(
       List<Post> firstPosts,
       List<Post> secondPosts,
-      List<Post> thirdPosts,
       List<Post> selectedPosts
   ) {
-    return Stream.of(firstPosts, secondPosts, thirdPosts)
+    return Stream.of(firstPosts, secondPosts)
         .flatMap(List::stream)
         .filter(post -> !selectedPosts.contains(post))
         .findFirst()

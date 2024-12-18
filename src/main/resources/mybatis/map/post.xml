@@ -170,4 +170,24 @@
     deleted_at = #{deletedAt}
     WHERE id = #{id}
   </update>
+
+
+  <select id="findPostsByFollowerExcludingRead" parameterType="map" resultType="Post">
+    SELECT p.*
+    FROM posts p
+    WHERE p.post_type = 'MEMBER'
+    AND p.member_id IN (
+    SELECT f.follower_id
+    FROM follow f
+    WHERE f.followee_id = #{memberId}
+    )
+    <if test="readPostIds != null and readPostIds.size() > 0">
+      AND p.id NOT IN
+      <foreach item="id" collection="readPostIds" open="(" separator="," close=")">
+        #{id}
+      </foreach>
+    </if>
+    LIMIT #{limit}
+  </select>
+
 </mapper>
