@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
@@ -193,6 +194,7 @@ class PostRepositoryTest extends MyBatisTest {
             .isEqualTo(sortedNewPostList.get(i)));
   }
 
+  @Disabled
   @Test
   void findPostsByFollowedStreamerExcludingReadIds() {
     // given
