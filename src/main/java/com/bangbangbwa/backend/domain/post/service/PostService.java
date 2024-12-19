@@ -6,6 +6,7 @@ import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.post.business.PostCreator;
 import com.bangbangbwa.backend.domain.post.business.PostGenerator;
+import com.bangbangbwa.backend.domain.post.business.PostMediaExtractor;
 import com.bangbangbwa.backend.domain.post.business.PostProvider;
 import com.bangbangbwa.backend.domain.post.business.PostReader;
 import com.bangbangbwa.backend.domain.post.business.PostValidator;
@@ -14,6 +15,7 @@ import com.bangbangbwa.backend.domain.post.common.dto.CreatePostDto;
 import com.bangbangbwa.backend.domain.post.common.dto.GetLatestPostsDto;
 import com.bangbangbwa.backend.domain.post.common.dto.GetPostDetailsDto;
 import com.bangbangbwa.backend.domain.post.common.entity.Post;
+import com.bangbangbwa.backend.domain.post.common.enums.MediaType;
 import com.bangbangbwa.backend.domain.post.common.enums.PostType;
 import com.bangbangbwa.backend.domain.sns.business.PostUpdater;
 import com.bangbangbwa.backend.domain.sns.business.ReaderPostCreator;
@@ -48,17 +50,18 @@ public class PostService {
   private final S3Manager s3Manager;
   private final PostUpdater postUpdater;
   private final PostVisibilityProvider postVisibilityProvider;
+  private final PostMediaExtractor postMediaExtractor;
 
   public String uploadPostMedia(MultipartFile file) {
     return s3Manager.upload(file);
   }
 
-  // 게시글 저장 전, content에서 url을 추출 후 redis 값 삭제하는 과정 필요
   @Transactional
   public Post createPost(CreatePostDto.Request req) {
     Member member = memberProvider.getCurrentMember();
     memberValidator.validateRole(member.getRole(), req.postType());
-    Post post = postGenerator.generate(req, member);
+    MediaType mediaType = postMediaExtractor.getMediaType(req.content());
+    Post post = postGenerator.generate(req, mediaType, member);
     postVisibilityProvider.saveVisibilityIfPresent(post, req.publicMembers(), req.privateMembers());
     postCreator.save(post);
     return post;
