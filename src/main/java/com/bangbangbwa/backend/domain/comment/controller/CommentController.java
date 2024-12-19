@@ -1,4 +1,4 @@
-package com.bangbangbwa.backend.domain.comment;
+package com.bangbangbwa.backend.domain.comment.controller;
 
 import com.bangbangbwa.backend.domain.comment.common.dto.AddCommentReplyDto;
 import com.bangbangbwa.backend.domain.comment.service.CommentService;
