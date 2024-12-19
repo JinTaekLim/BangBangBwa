@@ -4,11 +4,15 @@ import com.bangbangbwa.backend.domain.member.business.MemberProvider;
 import com.bangbangbwa.backend.domain.platform.business.PlatformRelation;
 import com.bangbangbwa.backend.domain.platform.business.PlatformValidator;
 import com.bangbangbwa.backend.domain.platform.common.dto.StreamerPlatformDto;
+import com.bangbangbwa.backend.domain.post.business.PostProvider;
+import com.bangbangbwa.backend.domain.post.common.entity.Post;
 import com.bangbangbwa.backend.domain.promotion.business.RandomStreamerProvider;
 import com.bangbangbwa.backend.domain.promotion.business.StreamerReader;
 import com.bangbangbwa.backend.domain.promotion.common.dto.PromotionStreamerDto;
 import com.bangbangbwa.backend.domain.promotion.common.entity.Streamer;
+import com.bangbangbwa.backend.domain.sns.business.ReaderPostReader;
 import com.bangbangbwa.backend.domain.streamer.common.dto.AddPlatformDto.Request;
+import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +26,8 @@ public class StreamerService {
   private final StreamerReader streamerReader;
   private final PlatformRelation platformRelation;
   private final PlatformValidator platformValidator;
+  private final PostProvider postProvider;
+  private final ReaderPostReader readerPostReader;
 
   public Set<PromotionStreamerDto.PromotionStreamer> getRandomStreamers() {
     return randomStreamerProvider.getStreamers(memberProvider.getCurrentMemberIdOrNull());
@@ -41,5 +47,11 @@ public class StreamerService {
     platformValidator.validateStreamerPlatform(streamerId, platformId);
     StreamerPlatformDto dto = new StreamerPlatformDto(streamerId, platformId, null);
     platformRelation.breakRelation(dto);
+  }
+
+  public List<Post> getPostList() {
+    Long memberId = memberProvider.getCurrentMemberId();
+    Set<String> readPostIds = readerPostReader.findAllReadPostsByMemberId(memberId);
+    return postProvider.getStreamerPersonalizedPosts(memberId, readPostIds);
   }
 }

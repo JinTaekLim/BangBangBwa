@@ -9,7 +9,6 @@ import com.bangbangbwa.backend.domain.post.business.PostCreator;
 import com.bangbangbwa.backend.domain.post.business.PostGenerator;
 import com.bangbangbwa.backend.domain.post.business.PostProvider;
 import com.bangbangbwa.backend.domain.post.business.PostReader;
-import com.bangbangbwa.backend.domain.post.business.PostTypeProvider;
 import com.bangbangbwa.backend.domain.post.business.PostValidator;
 import com.bangbangbwa.backend.domain.post.common.dto.CreatePostDto;
 import com.bangbangbwa.backend.domain.post.common.dto.GetLatestPostsDto;
@@ -67,7 +66,6 @@ public class SnsService {
   private final S3Manager s3Manager;
   private final CommentGenerator commentGenerator;
   private final CommentCreator commentCreator;
-  private final PostTypeProvider postTypeProvider;
   private final ReportValidator reportValidator;
   private final ReportPostCreator reportPostCreator;
   private final ReportPostGenerator reportPostGenerator;
@@ -130,19 +128,6 @@ public class SnsService {
       readerPostCreator.addReadPost(memberId, response.postId());
     }
     return response;
-  }
-
-  // note. streamer 계정이 조회했을 때의 작업 필요
-  public List<Post> getPostList() {
-    Role role = memberProvider.getCurrentRole();
-    PostType postType = postTypeProvider.getInversePostTypeForRole(role);
-
-    if (role == Role.GUEST || role == Role.STREAMER) {
-      return postProvider.getRandomPost(postType);
-    }
-    Long memberId = memberProvider.getCurrentMemberId();
-    Set<String> readPostIds = readerPostReader.findAllReadPostsByMemberId(memberId);
-    return postProvider.getMemberPersonalizedPosts(memberId, readPostIds);
   }
 
   public List<GetLatestPostsDto.Response> getLatestPosts(PostType postType) {

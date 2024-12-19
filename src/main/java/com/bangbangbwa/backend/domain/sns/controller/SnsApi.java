@@ -35,22 +35,22 @@ public interface SnsApi {
 //  )
 //  public ApiResponse<Response> getFollowedLatestPosts();
 
-  @Operation(
-      tags = {"SnsAPI"},
-      summary = "게시글 목록 조회",
-      description = "게시글 목록을 조회합니다.",
-      responses = {
-          @io.swagger.v3.oas.annotations.responses.ApiResponse(
-              responseCode = "200",
-              description = "OK",
-              content = @Content(
-                  mediaType = MediaType.APPLICATION_JSON_VALUE,
-                  schema = @Schema(implementation = GetPostListDto.Response.class)
-              )
-          )
-      }
-  )
-  public ApiResponse<List<GetPostListDto.Response>> getPostList();
+//  @Operation(
+//      tags = {"SnsAPI"},
+//      summary = "게시글 목록 조회",
+//      description = "게시글 목록을 조회합니다.",
+//      responses = {
+//          @io.swagger.v3.oas.annotations.responses.ApiResponse(
+//              responseCode = "200",
+//              description = "OK",
+//              content = @Content(
+//                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+//                  schema = @Schema(implementation = GetPostListDto.Response.class)
+//              )
+//          )
+//      }
+//  )
+//  public ApiResponse<List<GetPostListDto.Response>> getPostList();
 
   @Operation(
       tags = {"SnsAPI"},
