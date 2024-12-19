@@ -6,23 +6,22 @@ import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.post.business.PostCreator;
 import com.bangbangbwa.backend.domain.post.business.PostGenerator;
+import com.bangbangbwa.backend.domain.post.business.PostMediaExtractor;
 import com.bangbangbwa.backend.domain.post.business.PostProvider;
 import com.bangbangbwa.backend.domain.post.business.PostReader;
 import com.bangbangbwa.backend.domain.post.business.PostValidator;
+import com.bangbangbwa.backend.domain.post.business.PostVisibilityProvider;
 import com.bangbangbwa.backend.domain.post.common.dto.CreatePostDto;
 import com.bangbangbwa.backend.domain.post.common.dto.GetLatestPostsDto;
 import com.bangbangbwa.backend.domain.post.common.dto.GetPostDetailsDto;
 import com.bangbangbwa.backend.domain.post.common.entity.Post;
-import com.bangbangbwa.backend.domain.post.common.entity.PostVisibilityMember;
+import com.bangbangbwa.backend.domain.post.common.enums.MediaType;
 import com.bangbangbwa.backend.domain.post.common.enums.PostType;
 import com.bangbangbwa.backend.domain.promotion.business.StreamerReader;
 import com.bangbangbwa.backend.domain.promotion.common.entity.Streamer;
 import com.bangbangbwa.backend.domain.sns.business.PostUpdater;
-import com.bangbangbwa.backend.domain.sns.business.PostVisibilityMemberCreator;
-import com.bangbangbwa.backend.domain.sns.business.PostVisibilityMemberGenerator;
 import com.bangbangbwa.backend.domain.sns.business.ReaderPostCreator;
 import com.bangbangbwa.backend.domain.sns.business.ReaderPostReader;
-import com.bangbangbwa.backend.domain.sns.common.enums.VisibilityType;
 import com.bangbangbwa.backend.domain.streamer.common.business.DailyMessageReader;
 import com.bangbangbwa.backend.domain.streamer.common.business.PostViewStreamerCreator;
 import com.bangbangbwa.backend.domain.streamer.common.business.PostViewStreamerGenerator;
@@ -48,8 +47,6 @@ public class PostService {
   private final PostGenerator postGenerator;
   private final PostCreator postCreator;
   private final PostValidator postValidator;
-  private final PostVisibilityMemberGenerator postVisibilityMemberGenerator;
-  private final PostVisibilityMemberCreator postVisibilityMemberCreator;
   private final PostReader postReader;
   private final ReaderPostCreator readerPostCreator;
   private final PostProvider postProvider;
@@ -57,6 +54,8 @@ public class PostService {
   private final DailyMessageReader dailyMessageReader;
   private final S3Manager s3Manager;
   private final PostUpdater postUpdater;
+  private final PostVisibilityProvider postVisibilityProvider;
+  private final PostMediaExtractor postMediaExtractor;
   private final PostViewStreamerCreator postViewStreamerCreator;
   private final PostViewStreamerGenerator postViewStreamerGenerator;
   private final StreamerReader streamerReader;
@@ -65,26 +64,14 @@ public class PostService {
     return s3Manager.upload(file);
   }
 
-  // 게시글 저장 전, content에서 url을 추출 후 redis 값 삭제하는 과정 필요
   @Transactional
-  public Post createPost(CreatePostDto.Request request) {
+  public Post createPost(CreatePostDto.Request req) {
     Member member = memberProvider.getCurrentMember();
-    PostType postType = request.postType();
-    memberValidator.validateRole(member.getRole(), postType);
-    Post post = postGenerator.generate(request, member);
+    memberValidator.validateRole(member.getRole(), req.postType());
+    MediaType mediaType = postMediaExtractor.getMediaType(req.content());
+    Post post = postGenerator.generate(req, mediaType, member);
+    postVisibilityProvider.saveVisibilityIfPresent(post, req.publicMembers(), req.privateMembers());
     postCreator.save(post);
-    VisibilityType type = postValidator.validateMembers(
-        request.publicMembers(),
-        request.privateMembers()
-    );
-    if (type != null) {
-      List<Long> memberList = (type == VisibilityType.PRIVATE) ?
-          request.privateMembers() : request.publicMembers();
-      List<PostVisibilityMember> postVisibilityMember = postVisibilityMemberGenerator.generate(
-          post, type, memberList
-      );
-      postVisibilityMemberCreator.saveList(postVisibilityMember);
-    }
     return post;
   }
 
