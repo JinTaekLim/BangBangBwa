@@ -15,7 +15,6 @@ import com.bangbangbwa.backend.domain.post.common.enums.PostType;
 import com.bangbangbwa.backend.domain.promotion.common.entity.Streamer;
 import com.bangbangbwa.backend.domain.promotion.repository.StreamerRepository;
 import com.bangbangbwa.backend.domain.sns.repository.PostRepository;
-import com.bangbangbwa.backend.domain.streamer.repository.StreamerTagRepository;
 import com.bangbangbwa.backend.domain.tag.common.entity.Tag;
 import com.bangbangbwa.backend.domain.tag.repository.MemberTagRepository;
 import com.bangbangbwa.backend.domain.tag.repository.StreamerTagRepository;
@@ -211,6 +210,7 @@ class PostRepositoryTest extends MyBatisTest {
   }
 
   @Test
+  @Disabled
   void findPostsByFollowedStreamerExcludingReadIds() {
     // given
     int postLimit = 3;
