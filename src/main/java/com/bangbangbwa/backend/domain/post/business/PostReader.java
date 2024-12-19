@@ -60,6 +60,12 @@ public class PostReader {
         excludedPostIds);
   }
 
+  public List<Post> findPostsByFollowerExcludingRead(
+      int limit, Long memberId, Set<String> excludedPostIds
+  ) {
+    return postRepository.findPostsByFollowerExcludingRead(limit, memberId, excludedPostIds);
+  }
+
   public List<PostDto> findPostsByMemberId(Long memberId) {
     return postRepository.findPostsByMemberId(memberId);
   }

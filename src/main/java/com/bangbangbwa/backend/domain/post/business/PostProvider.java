@@ -2,7 +2,8 @@ package com.bangbangbwa.backend.domain.post.business;
 
 import com.bangbangbwa.backend.domain.post.common.entity.Post;
 import com.bangbangbwa.backend.domain.post.common.enums.PostType;
-import com.bangbangbwa.backend.domain.sns.business.PostRecommendationStrategy;
+import com.bangbangbwa.backend.domain.sns.business.MemberPostRecommender;
+import com.bangbangbwa.backend.domain.streamer.common.StreamerPostRecommender;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -17,7 +18,8 @@ public class PostProvider {
   private final int POST_SIZE = 7;
 
 
-  private final PostRecommendationStrategy postRecommendationStrategy;
+  private final MemberPostRecommender memberPostRecommender;
+  private final StreamerPostRecommender streamerPostRecommender;
   private final PostReader postReader;
 
 
@@ -27,13 +29,27 @@ public class PostProvider {
     return postList;
   }
 
+  public List<Post> getStreamerPersonalizedPosts(Long memberId, Set<String> readPostIds) {
+    List<Post> followerPost = getFollowerPost(memberId, readPostIds);
+    List<Post> randomPost = getRandomPost(PostType.MEMBER, readPostIds);
+    return streamerPostRecommender.getPosts(followerPost, randomPost);
+  }
+
   public List<Post> getMemberPersonalizedPosts(Long memberId, Set<String> readPostIds) {
     List<Post> followPost = getFollowPosts(memberId, readPostIds);
     List<Post> tagPost = getTagPost(memberId, readPostIds);
     List<Post> randomPost = getRandomPost(PostType.STREAMER, readPostIds);
-    return postRecommendationStrategy.getPosts(followPost, tagPost, randomPost);
+    return memberPostRecommender.getPosts(followPost, tagPost, randomPost);
   }
 
+
+  private List<Post> getFollowerPost(Long memberId, Set<String> readPostIds) {
+    List<Post> posts = postReader.findPostsByFollowerExcludingRead(
+        POST_SIZE, memberId, readPostIds
+    );
+    addReadPostIds(posts, readPostIds);
+    return posts;
+  }
 
   private List<Post> getFollowPosts(Long memberId, Set<String> readPostIds) {
     List<Post> posts = postReader.findPostsByFollowStreamerExcludingReadIds(POST_SIZE, memberId,

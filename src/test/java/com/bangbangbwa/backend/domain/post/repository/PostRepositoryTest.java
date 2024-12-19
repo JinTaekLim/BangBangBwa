@@ -1,4 +1,4 @@
-package com.bangbangbwa.backend.domain.sns.repository;
+package com.bangbangbwa.backend.domain.post.repository;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -14,6 +14,7 @@ import com.bangbangbwa.backend.domain.post.common.entity.Post;
 import com.bangbangbwa.backend.domain.post.common.enums.PostType;
 import com.bangbangbwa.backend.domain.promotion.common.entity.Streamer;
 import com.bangbangbwa.backend.domain.promotion.repository.StreamerRepository;
+import com.bangbangbwa.backend.domain.sns.repository.PostRepository;
 import com.bangbangbwa.backend.domain.tag.common.entity.Tag;
 import com.bangbangbwa.backend.domain.tag.repository.MemberTagRepository;
 import com.bangbangbwa.backend.domain.tag.repository.StreamerTagRepository;
@@ -23,6 +24,7 @@ import com.bangbangbwa.backend.global.util.randomValue.RandomValue;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -124,6 +126,19 @@ class PostRepositoryTest extends MyBatisTest {
     return tag;
   }
 
+  private Follow getFollow(Long followeeId, Long followerId) {
+    return Follow.builder()
+        .followeeId(followeeId)
+        .followerId(followerId)
+        .build();
+  }
+
+  private Follow createFollow(Long followeeId, Long followerId) {
+    Follow follow = getFollow(followeeId, followerId);
+    followRepository.save(follow);
+    return follow;
+  }
+
   @Test()
   void findPostsWithinLast24Hours() {
     // given
@@ -194,8 +209,8 @@ class PostRepositoryTest extends MyBatisTest {
             .isEqualTo(sortedNewPostList.get(i)));
   }
 
-  @Disabled
   @Test
+  @Disabled
   void findPostsByFollowedStreamerExcludingReadIds() {
     // given
     int postLimit = 3;
@@ -381,6 +396,41 @@ class PostRepositoryTest extends MyBatisTest {
             .isEqualTo(posts.get(i)));
 
   }
+
+  @Test()
+  void findPostsByFollowerExcludingRead() {
+    // given
+    Member member = createMember();
+    PostType postType = PostType.MEMBER;
+    int postCount = RandomValue.getInt(1, 3);
+
+    List<Post> posts = IntStream.range(0, postCount)
+        .mapToObj(i -> {
+          Member writeMember = createMember();
+          createFollow(member.getId(), writeMember.getId());
+          return createPost(postType, writeMember);
+        })
+        .toList();
+
+    // when
+    Set<String> readerIds = new HashSet<>();
+    List<Post> postList = postRepository.findPostsByFollowerExcludingRead(
+        7, member.getId(), readerIds
+    );
+
+    // then
+    assertThat(postList.size()).isEqualTo(postCount);
+    IntStream.range(0, postCount).forEach(i -> {
+      assertThat(postList.get(i).getId()).isEqualTo(posts.get(i).getId());
+      assertThat(postList.get(i).getTitle()).isEqualTo(posts.get(i).getTitle());
+      assertThat(postList.get(i).getContent()).isEqualTo(posts.get(i).getContent());
+      assertThat(postList.get(i).getMemberId()).isEqualTo(posts.get(i).getMemberId());
+
+    });
+  }
+
+
+
 
 //    @Test()
 //    void getUnreadAndFilteredPosts() throws Exception {

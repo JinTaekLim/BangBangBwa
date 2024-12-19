@@ -84,6 +84,18 @@ public class PostRepository {
     return mysql.selectList("PostMapper.findPostsByFollowStreamerExcludingReadIds", params);
   }
 
+  public List<Post> findPostsByFollowerExcludingRead(
+      int limit,
+      Long memberId,
+      Set<String> readPostIds
+  ) {
+    Map<String, Object> params = new HashMap<>();
+    params.put("limit", limit);
+    params.put("memberId", memberId);
+    params.put("readPostIds", readPostIds);
+    return mysql.selectList("PostMapper.findPostsByFollowerExcludingRead", params);
+  }
+
   public List<PostDto> findPostsByMemberId(Long memberId) {
     return mysql.selectList("PostMapper.findPostsByMemberId", memberId);
   }

@@ -40,14 +40,6 @@ public class SnsController implements SnsApi {
 
   private final SnsService snsService;
 
-  @GetMapping("/getPostList")
-  @AuthenticationContext
-  public ApiResponse<List<GetPostListDto.Response>> getPostList() {
-    List<Post> postList = snsService.getPostList();
-    List<GetPostListDto.Response> response = PostMapper.INSTANCE.dtoToGetPostListResponse(postList);
-    return ApiResponse.ok(response);
-  }
-
   @GetMapping("/getPostDetails/{postId}")
   @PreAuthorize("permitAll()")
   public ApiResponse<GetPostDetailsDto.Response> getPostDetails(

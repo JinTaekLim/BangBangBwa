@@ -8,7 +8,6 @@ import com.bangbangbwa.backend.domain.post.business.PostCreator;
 import com.bangbangbwa.backend.domain.post.business.PostGenerator;
 import com.bangbangbwa.backend.domain.post.business.PostProvider;
 import com.bangbangbwa.backend.domain.post.business.PostReader;
-import com.bangbangbwa.backend.domain.post.business.PostTypeProvider;
 import com.bangbangbwa.backend.domain.post.business.PostValidator;
 import com.bangbangbwa.backend.domain.post.common.dto.CreatePostDto;
 import com.bangbangbwa.backend.domain.post.common.dto.GetLatestPostsDto;
@@ -48,7 +47,6 @@ public class PostService {
   private final PostVisibilityMemberCreator postVisibilityMemberCreator;
   private final PostReader postReader;
   private final ReaderPostCreator readerPostCreator;
-  private final PostTypeProvider postTypeProvider;
   private final PostProvider postProvider;
   private final ReaderPostReader readerPostReader;
   private final DailyMessageReader dailyMessageReader;
@@ -94,10 +92,7 @@ public class PostService {
   // note. streamer 계정이 조회했을 때의 작업 필요
   public List<Post> getPostList() {
     Role role = memberProvider.getCurrentRole();
-    PostType postType = postTypeProvider.getInversePostTypeForRole(role);
-    if (role == Role.GUEST || role == Role.STREAMER) {
-      return postProvider.getRandomPost(postType);
-    }
+    if (!role.equals( Role.MEMBER)) {return postProvider.getRandomPost(PostType.STREAMER);}
     Long memberId = memberProvider.getCurrentMemberId();
     Set<String> readPostIds = readerPostReader.findAllReadPostsByMemberId(memberId);
     return postProvider.getMemberPersonalizedPosts(memberId, readPostIds);
