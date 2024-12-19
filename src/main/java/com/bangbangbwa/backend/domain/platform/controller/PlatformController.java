@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/platforms")
 @RequiredArgsConstructor
-public class PlatformController {
+public class PlatformController implements PlatformApi {
 
   private final PlatformService platformService;
 

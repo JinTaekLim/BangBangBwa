@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/streamer")
 @RequiredArgsConstructor
-public class StreamerController {
+public class StreamerController implements StreamerApi {
 
   private final DailyMessageService dailyMessageService;
   private final StreamerService streamerService;
