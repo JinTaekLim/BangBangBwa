@@ -9,4 +9,22 @@
     VALUES (#{postId}, #{memberId}, #{content}, #{createdId}, #{createdAt})
   </insert>
 
+  <select id="findById" parameterType="Long" resultType="comment">
+    SELECT
+    id,
+    post_id,
+    member_id,
+    reply_comment
+    FROM comments
+    WHERE id = #{commentId}
+  </select>
+
+  <update id="updateForAddReply" parameterType="comment">
+    UPDATE comments
+    SET
+    reply_comment = #{replyComment},
+    updated_id = #{updatedId},
+    updated_at = #{updatedAt}
+    WHERE id = #{id}
+  </update>
 </mapper>
