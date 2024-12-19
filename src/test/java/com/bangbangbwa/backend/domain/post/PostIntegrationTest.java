@@ -1,6 +1,7 @@
 package com.bangbangbwa.backend.domain.post;
 
 import static com.mongodb.assertions.Assertions.assertNotNull;
+import static com.mongodb.assertions.Assertions.assertNull;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import com.bangbangbwa.backend.domain.member.common.entity.Follow;
@@ -10,6 +11,7 @@ import com.bangbangbwa.backend.domain.member.repository.FollowRepository;
 import com.bangbangbwa.backend.domain.member.repository.MemberRepository;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
+import com.bangbangbwa.backend.domain.post.common.dto.GetPostDetailsDto;
 import com.bangbangbwa.backend.domain.post.common.dto.GetPostListDto;
 import com.bangbangbwa.backend.domain.post.common.entity.Post;
 import com.bangbangbwa.backend.domain.post.common.enums.PostType;
@@ -18,6 +20,7 @@ import com.bangbangbwa.backend.domain.promotion.repository.StreamerRepository;
 import com.bangbangbwa.backend.domain.sns.common.entity.Comment;
 import com.bangbangbwa.backend.domain.sns.common.entity.ReportComment;
 import com.bangbangbwa.backend.domain.sns.common.entity.ReportPost;
+import com.bangbangbwa.backend.domain.sns.exception.NotFoundPostException;
 import com.bangbangbwa.backend.domain.sns.repository.CommentRepository;
 import com.bangbangbwa.backend.domain.sns.repository.PostRepository;
 import com.bangbangbwa.backend.domain.sns.repository.ReaderPostRepository;
@@ -308,4 +311,167 @@ class PostIntegrationTest extends IntegrationTest {
     assertThat(apiResponse.getData().size()).isEqualTo(postCount);
 
   }
+
+
+  @Test
+  void getPostDetails() {
+    // given
+    Member member = createMember();
+    TokenDto tokenDto = tokenProvider.getToken(member);
+
+    Member writeMember = createMember();
+    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    Post post = createPost(postType, writeMember);
+
+    boolean isFollow = RandomValue.getRandomBoolean();
+    if (isFollow) {
+      createFollow(member, writeMember);
+    }
+
+    String url = "http://localhost:" + port + "/api/v1/posts/getPostDetails/" + post.getId();
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(tokenDto.getAccessToken());
+    HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.exchange(
+        url,
+        HttpMethod.GET,
+        requestEntity,
+        String.class
+    );
+
+    ApiResponse<GetPostDetailsDto.Response> apiResponse = gson.fromJson(
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<GetPostDetailsDto.Response>>() {
+        }.getType()
+    );
+
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertNotNull(apiResponse.getData());
+    assertThat(apiResponse.getData().postId()).isEqualTo(post.getId());
+    assertThat(apiResponse.getData().writerId()).isEqualTo(writeMember.getId());
+    assertThat(apiResponse.getData().title()).isEqualTo(post.getTitle());
+    assertThat(apiResponse.getData().nickname()).isEqualTo(writeMember.getNickname());
+    assertThat(apiResponse.getData().profileUrl()).isEqualTo(writeMember.getProfile());
+    assertThat(apiResponse.getData().content()).isEqualTo(post.getContent());
+    assertThat(apiResponse.getData().isFollowed()).isEqualTo(isFollow);
+
+  }
+
+  // 이후 읽은 게시물에 저장 여부 확인 필요
+  @Test
+  void getPostDetails_방송인_조회() {
+    // given
+    Member member = getMember();
+    member.updateRole(Role.STREAMER);
+    memberRepository.save(member);
+    createStreamer(member);
+    TokenDto tokenDto = tokenProvider.getToken(member);
+
+    Member writeMember = createMember();
+    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    Post post = createPost(postType, writeMember);
+
+    boolean isFollow = RandomValue.getRandomBoolean();
+    if (isFollow) {
+      createFollow(member, writeMember);
+    }
+
+    String url = "http://localhost:" + port + "/api/v1/posts/getPostDetails/" + post.getId();
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(tokenDto.getAccessToken());
+    HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.exchange(
+        url,
+        HttpMethod.GET,
+        requestEntity,
+        String.class
+    );
+
+    ApiResponse<GetPostDetailsDto.Response> apiResponse = gson.fromJson(
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<GetPostDetailsDto.Response>>() {
+        }.getType()
+    );
+
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertNotNull(apiResponse.getData());
+    assertThat(apiResponse.getData().postId()).isEqualTo(post.getId());
+    assertThat(apiResponse.getData().writerId()).isEqualTo(writeMember.getId());
+    assertThat(apiResponse.getData().title()).isEqualTo(post.getTitle());
+    assertThat(apiResponse.getData().nickname()).isEqualTo(writeMember.getNickname());
+    assertThat(apiResponse.getData().profileUrl()).isEqualTo(writeMember.getProfile());
+    assertThat(apiResponse.getData().content()).isEqualTo(post.getContent());
+    assertThat(apiResponse.getData().isFollowed()).isEqualTo(isFollow);
+
+  }
+
+  @Test
+  void getPostDetails_토큰_미입력() {
+    // given
+    Member writeMember = createMember();
+    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    Post post = createPost(postType, writeMember);
+
+    String url = "http://localhost:" + port + "/api/v1/posts/getPostDetails/" + post.getId();
+
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.getForEntity(
+        url,
+        String.class
+    );
+
+    ApiResponse<GetPostDetailsDto.Response> apiResponse = gson.fromJson(
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<GetPostDetailsDto.Response>>() {
+        }.getType()
+    );
+
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertNotNull(apiResponse.getData());
+    assertThat(apiResponse.getData().postId()).isEqualTo(post.getId());
+    assertThat(apiResponse.getData().writerId()).isEqualTo(writeMember.getId());
+    assertThat(apiResponse.getData().title()).isEqualTo(post.getTitle());
+    assertThat(apiResponse.getData().nickname()).isEqualTo(writeMember.getNickname());
+    assertThat(apiResponse.getData().profileUrl()).isEqualTo(writeMember.getProfile());
+    assertThat(apiResponse.getData().content()).isEqualTo(post.getContent());
+    assertThat(apiResponse.getData().isFollowed()).isEqualTo(false);
+
+  }
+
+
+  @Test
+  void getPostDetails_존재하지_않는_게시물() {
+    // given
+    Long postId = RandomValue.getRandomLong(-999, -1);
+
+    String url = "http://localhost:" + port + "/api/v1/posts/getPostDetails/" + postId;
+
+    NotFoundPostException exception = new NotFoundPostException();
+
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
+
+    ApiResponse<GetPostDetailsDto.Response> apiResponse = gson.fromJson(
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<GetPostDetailsDto.Response>>() {
+        }.getType()
+    );
+
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertNull(apiResponse.getData());
+    assertThat(apiResponse.getCode()).isEqualTo(exception.getCode());
+    assertThat(apiResponse.getMessage()).isEqualTo(exception.getMessage());
+
+  }
+
 }

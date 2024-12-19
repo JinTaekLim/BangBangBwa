@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS post_view_streamer;
 DROP TABLE IF EXISTS report_comments;
 DROP TABLE IF EXISTS report_posts;
 DROP TABLE IF EXISTS streamers_tags;
@@ -15,6 +16,7 @@ DROP TABLE IF EXISTS tags;
 DROP TABLE IF EXISTS banners;
 DROP TABLE IF EXISTS platforms;
 DROP TABLE IF EXISTS follow;
+
 
 CREATE TABLE members
 (
@@ -172,8 +174,7 @@ CREATE TABLE streamers_tags
     tag_id      BIGINT NOT NULL COMMENT '태그_ID',
     PRIMARY KEY (id),
     FOREIGN KEY (streamer_id) REFERENCES streamers (id),
-    FOREIGN KEY (tag_id) REFERENCES tags (id),
-    UNIQUE (streamer_id, tag_id)
+    FOREIGN KEY (tag_id) REFERENCES tags (id)
 );
 
 CREATE TABLE streamers_platforms
@@ -220,4 +221,14 @@ CREATE TABLE report_comments (
     updated_at      DATETIME                            COMMENT '수정일시',
     updated_id      VARCHAR(255)                        COMMENT '수정자',
     FOREIGN KEY (comment_id) REFERENCES comments (id)
+);
+
+CREATE TABLE post_view_streamer(
+    id              BIGINT AUTO_INCREMENT PRIMARY KEY   COMMENT '게시물 신고 ID',
+    post_id         BIGINT              NOT NULL        COMMENT '게시물 ID',
+    streamer_id     BIGINT              NOT NULL        COMMENT '방송인 ID',
+    created_at      DATETIME            NOT NULL        COMMENT '생성일시',
+    FOREIGN KEY (post_id) REFERENCES posts (id),
+    FOREIGN KEY (streamer_id) REFERENCES streamers (id),
+    CONSTRAINT unique_post_view_streamer UNIQUE (post_id, streamer_id)
 );

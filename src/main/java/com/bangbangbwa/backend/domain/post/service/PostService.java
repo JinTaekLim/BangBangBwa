@@ -15,6 +15,8 @@ import com.bangbangbwa.backend.domain.post.common.dto.GetPostDetailsDto;
 import com.bangbangbwa.backend.domain.post.common.entity.Post;
 import com.bangbangbwa.backend.domain.post.common.entity.PostVisibilityMember;
 import com.bangbangbwa.backend.domain.post.common.enums.PostType;
+import com.bangbangbwa.backend.domain.promotion.business.StreamerReader;
+import com.bangbangbwa.backend.domain.promotion.common.entity.Streamer;
 import com.bangbangbwa.backend.domain.sns.business.PostUpdater;
 import com.bangbangbwa.backend.domain.sns.business.PostVisibilityMemberCreator;
 import com.bangbangbwa.backend.domain.sns.business.PostVisibilityMemberGenerator;
@@ -22,7 +24,10 @@ import com.bangbangbwa.backend.domain.sns.business.ReaderPostCreator;
 import com.bangbangbwa.backend.domain.sns.business.ReaderPostReader;
 import com.bangbangbwa.backend.domain.sns.common.enums.VisibilityType;
 import com.bangbangbwa.backend.domain.streamer.common.business.DailyMessageReader;
+import com.bangbangbwa.backend.domain.streamer.common.business.PostViewStreamerCreator;
+import com.bangbangbwa.backend.domain.streamer.common.business.PostViewStreamerGenerator;
 import com.bangbangbwa.backend.domain.streamer.common.entity.DailyMessage;
+import com.bangbangbwa.backend.domain.streamer.common.entity.PostViewStreamer;
 import com.bangbangbwa.backend.global.util.S3Manager;
 import java.util.HashSet;
 import java.util.List;
@@ -52,6 +57,9 @@ public class PostService {
   private final DailyMessageReader dailyMessageReader;
   private final S3Manager s3Manager;
   private final PostUpdater postUpdater;
+  private final PostViewStreamerCreator postViewStreamerCreator;
+  private final PostViewStreamerGenerator postViewStreamerGenerator;
+  private final StreamerReader streamerReader;
 
   public String uploadPostMedia(MultipartFile file) {
     return s3Manager.upload(file);
@@ -85,6 +93,11 @@ public class PostService {
     GetPostDetailsDto.Response response = postReader.getPostDetails(postId, memberId);
     if (memberId != null) {
       readerPostCreator.addReadPost(memberId, response.postId());
+    }
+    if(memberProvider.getCurrentRole() == Role.STREAMER) {
+      Streamer streamer = streamerReader.findByMemberId(memberId);
+      PostViewStreamer postViewStreamer = postViewStreamerGenerator.generate(postId, streamer);
+      postViewStreamerCreator.save(postViewStreamer);
     }
     return response;
   }
