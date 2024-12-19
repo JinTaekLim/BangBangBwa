@@ -1,6 +1,6 @@
 package com.bangbangbwa.backend.domain.member.common.dto;
 
-import com.bangbangbwa.backend.domain.promotion.common.dto.PlatformDto;
+import com.bangbangbwa.backend.domain.platform.common.dto.PlatformDto;
 import com.bangbangbwa.backend.domain.streamer.common.enums.PendingType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
@@ -17,12 +17,15 @@ public class SummaryDto {
   private Long memberId;
   private Long currentMemberId;
   private Long followerCount;
-  @Setter private Long followingCount;
+  @Setter
+  private Long followingCount;
   private Long postCount;
   private Boolean isStreamer;
-  @Setter private Boolean isSubmittedToStreamer;
+  @Setter
+  private Boolean isSubmittedToStreamer;
   private String pendingType;
-  @Setter private List<PlatformDto> platforms;
+  @Setter
+  private List<PlatformDto> platforms;
 
   public SummaryDto(Long memberId, Long currentMemberId) {
     this.memberId = memberId;

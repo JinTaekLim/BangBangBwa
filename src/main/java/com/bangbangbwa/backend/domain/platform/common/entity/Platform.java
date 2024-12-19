@@ -1,4 +1,4 @@
-package com.bangbangbwa.backend.domain.promotion.common.entity;
+package com.bangbangbwa.backend.domain.platform.common.entity;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

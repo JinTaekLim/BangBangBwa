@@ -1,6 +1,6 @@
 package com.bangbangbwa.backend.domain.promotion.common.mapper;
 
-import com.bangbangbwa.backend.domain.promotion.common.dto.PlatformDto;
+import com.bangbangbwa.backend.domain.platform.common.dto.PlatformDto;
 import com.bangbangbwa.backend.domain.promotion.common.dto.PromotionStreamerDto.PromotionStreamer;
 import com.bangbangbwa.backend.domain.promotion.common.dto.PromotionStreamerDto.PromotionStreamerInterested;
 import com.bangbangbwa.backend.domain.promotion.common.dto.PromotionStreamerDto.PromotionStreamerPlatform;

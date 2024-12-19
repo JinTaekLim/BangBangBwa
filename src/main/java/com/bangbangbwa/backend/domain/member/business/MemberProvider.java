@@ -61,7 +61,9 @@ public class MemberProvider {
   public Long getCurrentMemberIdOrNull() {
     try {
       Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-      if (authentication.getPrincipal().equals(GUEST)) return null;
+      if (authentication.getPrincipal().equals(GUEST)) {
+        return null;
+      }
       return getCurrentMemberId();
     } catch (Exception e) {
       return null;
@@ -70,7 +72,9 @@ public class MemberProvider {
 
   public Role getCurrentRole() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (authentication.getPrincipal().equals(GUEST)) return Role.GUEST;
+    if (authentication.getPrincipal().equals(GUEST)) {
+      return Role.GUEST;
+    }
 
     User userDetails = (User) authentication.getPrincipal();
     String authority = userDetails.getAuthorities().stream()

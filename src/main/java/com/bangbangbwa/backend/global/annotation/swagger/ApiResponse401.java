@@ -23,12 +23,34 @@ import org.springframework.http.MediaType;
         array = @ArraySchema(schema = @Schema(implementation = com.bangbangbwa.backend.global.response.ApiResponse.class)),
         examples = {
             @ExampleObject(
-                name = "NOT_AUTHENTICATED_ACCESS",
+                name = "AUTHENTICATION_NULL_ERROR",
                 summary = "인증되지 않은 접근",
                 value = """
                     {
-                      "code": "UNAUTHENTICATED",
-                      "message": "로그인 후 이용 바랍니다.",
+                      "code": "AUTHENTICATION_NULL_ERROR",
+                      "message": "Authentication 이 NULL 입니다.",
+                      "data": null
+                    }
+                    """
+            ),
+            @ExampleObject(
+                name = "UN_AUTHENTICATION_MEMBER_EXCEPTION",
+                summary = "인증되지 않은 접근",
+                value = """
+                    {
+                      "code": "UN_AUTHENTICATION_MEMBER_EXCEPTION",
+                      "message": "인증되지 않은 사용자입니다.",
+                      "data": null
+                    }
+                    """
+            ),
+            @ExampleObject(
+                name = "AUTHENTICATION_NAME_NULL_ERROR",
+                summary = "인증되지 않은 접근",
+                value = """
+                    {
+                      "code": "AUTHENTICATION_NAME_NULL_ERROR",
+                      "message": "Authentication name 이 NULL 입니다.",
                       "data": null
                     }
                     """

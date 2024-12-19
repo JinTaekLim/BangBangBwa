@@ -1,4 +1,4 @@
-package com.bangbangbwa.backend.domain.promotion.common.dto;
+package com.bangbangbwa.backend.domain.platform.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
