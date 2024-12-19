@@ -11,4 +11,26 @@
     FROM platforms
     ORDER BY id
   </select>
+
+  <select id="findByStreamerIdAndPlatformId" parameterType="java.util.HashMap"
+    resultType="com.bangbangbwa.backend.domain.platform.common.dto.StreamerPlatformDto">
+    SELECT
+    streamer_id,
+    platform_id,
+    streamer_profile_url as platformProfileUrl
+    FROM streamers_platforms
+    WHERE streamer_id = #{streamerId} AND platform_id = #{platformId}
+  </select>
+
+  <insert id="saveStreamerPlatform"
+    parameterType="com.bangbangbwa.backend.domain.platform.common.dto.StreamerPlatformDto">
+    INSERT INTO streamers_platforms(streamer_id, platform_id, streamer_profile_url)
+    VALUES(#{streamerId}, #{platformId}, #{platformProfileUrl})
+  </insert>
+
+  <delete id="removeStreamerPlatform"
+    parameterType="com.bangbangbwa.backend.domain.platform.common.dto.StreamerPlatformDto">
+    DELETE FROM streamers_platforms
+    WHERE streamer_id = #{streamerId} AND platform_id = #{platformId}
+  </delete>
 </mapper>
