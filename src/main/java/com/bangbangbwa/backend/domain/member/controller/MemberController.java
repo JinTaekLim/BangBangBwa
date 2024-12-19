@@ -34,6 +34,7 @@ import com.bangbangbwa.backend.domain.tag.service.TagService;
 import com.bangbangbwa.backend.domain.token.common.dto.ReissueTokenDto;
 import com.bangbangbwa.backend.domain.token.common.dto.TokenDto;
 import com.bangbangbwa.backend.domain.token.service.TokenService;
+import com.bangbangbwa.backend.global.annotation.authentication.PermitAll;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import jakarta.validation.Valid;
 import java.util.ArrayList;
@@ -131,7 +132,7 @@ public class MemberController implements MemberApi {
   }
 
   @GetMapping("/profile/{memberId}")
-  @PreAuthorize("permitAll()")
+  @PermitAll()
   public ApiResponse<ProfileDto.Response> getProfile(@PathVariable("memberId") Long memberId) {
     ProfileDto profile = memberService.getProfile(memberId);
     ProfileDto.Response response = ProfileMapper.INSTANCE.dtoToResponse(profile);
@@ -139,7 +140,7 @@ public class MemberController implements MemberApi {
   }
 
   @GetMapping("/summary/{memberId}")
-  @PreAuthorize("permitAll()")
+  @PermitAll()
   public ApiResponse<SummaryDto.Response> getSummary(@PathVariable("memberId") Long memberId) {
     SummaryDto summaryDto = memberService.getSummary(memberId);
     SummaryDto.Response response = SummaryMapper.INSTANCE.dtoToResponse(summaryDto);
@@ -147,7 +148,7 @@ public class MemberController implements MemberApi {
   }
 
   @GetMapping("/posts/{memberId}")
-  @PreAuthorize("permitAll()")
+  @PermitAll()
   public ApiResponse<PostDto.Response> getPosts(@PathVariable("memberId") Long memberId) {
     List<PostDto> postDtos = memberService.getPosts(memberId);
     PostDto.Response response = PostMapper.INSTANCE.dtoToResponse(postDtos);
@@ -155,7 +156,7 @@ public class MemberController implements MemberApi {
   }
 
   @GetMapping("/comments/{memberId}")
-  @PreAuthorize("permitAll()")
+  @PermitAll()
   public ApiResponse<CommentDto.Response> getComments(@PathVariable("memberId") Long memberId) {
     List<CommentResponse> commentResponses = new ArrayList<>();
     CommentResponsePostInfo postInfo;
@@ -191,7 +192,7 @@ public class MemberController implements MemberApi {
   }
 
   @GetMapping("/followers/{memberId}")
-  @PreAuthorize("permitAll()")
+  @PermitAll()
   public ApiResponse<FollowerDto.Response> getFollowers(@PathVariable("memberId") Long memberId) {
     List<FollowerResponse> followerResponses = memberService.getFollowers(memberId);
     FollowerDto.Response response = new FollowerDto.Response(followerResponses);
@@ -199,7 +200,7 @@ public class MemberController implements MemberApi {
   }
 
   @GetMapping("/follows/{memberId}")
-  @PreAuthorize("permitAll()")
+  @PermitAll()
   public ApiResponse<FollowDto.Response> getFollows(@PathVariable("memberId") Long memberId) {
     List<FollowResponse> followerResponses = memberService.getFollows(memberId);
     FollowDto.Response response = new FollowDto.Response(followerResponses);
