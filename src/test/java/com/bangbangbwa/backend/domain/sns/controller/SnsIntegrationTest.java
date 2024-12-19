@@ -46,6 +46,7 @@ import com.bangbangbwa.backend.domain.tag.repository.StreamerTagRepository;
 import com.bangbangbwa.backend.domain.tag.repository.TagRepository;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
 import com.bangbangbwa.backend.domain.token.common.dto.TokenDto;
+import com.bangbangbwa.backend.domain.token.common.exception.AuthenticationRequiredException;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import com.bangbangbwa.backend.global.test.IntegrationTest;
 import com.bangbangbwa.backend.global.util.S3Manager;
@@ -447,7 +448,7 @@ class SnsIntegrationTest extends IntegrationTest {
 
     String url = "http://localhost:" + port + "/api/v1/sns/createPost";
 
-    UnAuthenticationMemberException exception = new UnAuthenticationMemberException();
+    AuthenticationRequiredException exception = new AuthenticationRequiredException();
 
     // when
     ResponseEntity<String> responseEntity = restTemplate.postForEntity(
@@ -463,7 +464,7 @@ class SnsIntegrationTest extends IntegrationTest {
     );
 
     // then
-    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     assertThat(apiResponse.getCode()).isEqualTo(exception.getCode());
     assertThat(apiResponse.getMessage()).isEqualTo(exception.getMessage());
     assertNull(apiResponse.getData());
@@ -473,6 +474,9 @@ class SnsIntegrationTest extends IntegrationTest {
   @Test
   void uploadPostMedia() {
     // given
+    Member member = createMember();
+    TokenDto tokenDto = tokenProvider.getToken(member);
+
     String url = "http://localhost:" + port + "/api/v1/sns/uploadPostMedia";
     String returnUrl =
         "http://" + RandomValue.string(10, 50).setNullable(false).setLanguages(Language.ENGLISH)
@@ -490,6 +494,7 @@ class SnsIntegrationTest extends IntegrationTest {
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+    headers.setBearerAuth(tokenDto.getAccessToken());
 
     MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
     body.add("file", mockFile.getResource());
@@ -567,7 +572,7 @@ class SnsIntegrationTest extends IntegrationTest {
 
     String url = "http://localhost:" + port + "/api/v1/sns/createComment";
 
-    UnAuthenticationMemberException exception = new UnAuthenticationMemberException();
+    AuthenticationRequiredException exception = new AuthenticationRequiredException();
 
     // when
     ResponseEntity<String> responseEntity = restTemplate.postForEntity(
@@ -582,7 +587,7 @@ class SnsIntegrationTest extends IntegrationTest {
         }.getType()
     );
     // then
-    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     assertThat(apiResponse.getCode()).isEqualTo(exception.getCode());
     assertThat(apiResponse.getMessage()).isEqualTo(exception.getMessage());
     assertNull(apiResponse.getData());
@@ -619,11 +624,13 @@ class SnsIntegrationTest extends IntegrationTest {
     HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
     // when
-    ResponseEntity<String> responseEntity = restTemplate.getForEntity(
+    ResponseEntity<String> responseEntity = restTemplate.exchange(
         url,
-        String.class,
-        requestEntity
+        HttpMethod.GET,
+        requestEntity,
+        String.class
     );
+
 
     ApiResponse<List<SearchMemberDto.Response>> apiResponse = gson.fromJson(
         responseEntity.getBody(),
@@ -889,7 +896,7 @@ class SnsIntegrationTest extends IntegrationTest {
 
     String url = "http://localhost:" + port + "/api/v1/sns/reportPost";
 
-    UnAuthenticationMemberException exception = new UnAuthenticationMemberException();
+    AuthenticationRequiredException exception = new AuthenticationRequiredException();
 
     // when
     ResponseEntity<String> responseEntity = restTemplate.postForEntity(
@@ -904,7 +911,7 @@ class SnsIntegrationTest extends IntegrationTest {
         }.getType()
     );
     // then
-    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     assertThat(apiResponse.getCode()).isEqualTo(exception.getCode());
     assertThat(apiResponse.getMessage()).isEqualTo(exception.getMessage());
     assertNull(apiResponse.getData());
@@ -1088,7 +1095,7 @@ class SnsIntegrationTest extends IntegrationTest {
 
     String url = "http://localhost:" + port + "/api/v1/sns/reportComment";
 
-    UnAuthenticationMemberException exception = new UnAuthenticationMemberException();
+    AuthenticationRequiredException exception = new AuthenticationRequiredException();
 
     // when
     ResponseEntity<String> responseEntity = restTemplate.postForEntity(
@@ -1103,7 +1110,7 @@ class SnsIntegrationTest extends IntegrationTest {
         }.getType()
     );
     // then
-    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     assertThat(apiResponse.getCode()).isEqualTo(exception.getCode());
     assertThat(apiResponse.getMessage()).isEqualTo(exception.getMessage());
     assertThat(apiResponse.getData()).isNull();

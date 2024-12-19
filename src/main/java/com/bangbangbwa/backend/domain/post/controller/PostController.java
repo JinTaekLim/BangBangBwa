@@ -10,6 +10,7 @@ import com.bangbangbwa.backend.domain.post.common.entity.Post;
 import com.bangbangbwa.backend.domain.post.common.enums.PostType;
 import com.bangbangbwa.backend.domain.post.common.mapper.PostMapper;
 import com.bangbangbwa.backend.domain.post.service.PostService;
+import com.bangbangbwa.backend.global.annotation.authentication.PermitAll;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.validation.Valid;
@@ -58,7 +59,7 @@ public class PostController implements PostApi {
   }
 
   @GetMapping("/getPostList")
-  @PreAuthorize("permitAll()")
+  @PermitAll()
   public ApiResponse<List<GetPostListDto.Response>> getPostList() {
     List<Post> postList = postService.getPostList();
     List<GetPostListDto.Response> response = PostMapper.INSTANCE.dtoToGetPostListResponse(postList);
@@ -66,7 +67,7 @@ public class PostController implements PostApi {
   }
 
   @GetMapping("/getPostDetails/{postId}")
-  @PreAuthorize("permitAll()")
+  @PermitAll()
   public ApiResponse<GetPostDetailsDto.Response> getPostDetails(
       @PathVariable("postId") Long postId) {
     GetPostDetailsDto.Response response = postService.getPostDetails(postId);
@@ -74,7 +75,7 @@ public class PostController implements PostApi {
   }
 
   @GetMapping("/getLatestPosts")
-  @PreAuthorize("permitAll()")
+  @PermitAll()
   public ApiResponse<List<GetLatestPostsDto.Response>> getLatestPosts() {
     List<GetLatestPostsDto.Response> response = postService.getLatestPosts(PostType.STREAMER);
     return ApiResponse.ok(response);

@@ -29,6 +29,7 @@ import com.bangbangbwa.backend.domain.streamer.common.entity.PendingStreamer;
 import com.bangbangbwa.backend.domain.streamer.repository.PendingStreamerRepository;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
 import com.bangbangbwa.backend.domain.token.common.dto.TokenDto;
+import com.bangbangbwa.backend.domain.token.common.exception.AuthenticationRequiredException;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import com.bangbangbwa.backend.global.test.IntegrationTest;
 import com.bangbangbwa.backend.global.util.randomValue.RandomValue;
@@ -166,7 +167,7 @@ class MemberTest extends IntegrationTest {
 
     String url = "http://localhost:" + port + "/api/v1/members/promoteStreamer";
 
-    UnAuthenticationMemberException exception = new UnAuthenticationMemberException();
+    AuthenticationRequiredException exception = new AuthenticationRequiredException();
 
     // when
     ResponseEntity<String> responseEntity = restTemplate.postForEntity(
@@ -181,7 +182,7 @@ class MemberTest extends IntegrationTest {
         }.getType()
     );
     // then
-    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     assertThat(apiResponse.getData()).isNull();
     assertThat(apiResponse.getCode()).isEqualTo(exception.getCode());
     assertThat(apiResponse.getMessage()).isEqualTo(exception.getMessage());
@@ -443,7 +444,7 @@ class MemberTest extends IntegrationTest {
     // given
     TogglePostPinDto.Request request = new TogglePostPinDto.Request(null, true);
 
-    UnAuthenticationMemberException exception = new UnAuthenticationMemberException();
+    AuthenticationRequiredException exception = new AuthenticationRequiredException();
     String url = "http://localhost:" + port + "/api/v1/members/togglePostPin";
 
     // then
@@ -460,7 +461,7 @@ class MemberTest extends IntegrationTest {
     );
 
     // when
-    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     assertThat(apiResponse.getCode()).isEqualTo(exception.getCode());
     assertThat(apiResponse.getMessage()).isEqualTo(exception.getMessage());
   }

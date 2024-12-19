@@ -5,6 +5,7 @@ import com.bangbangbwa.backend.domain.promotion.common.dto.PromotionStreamerDto;
 import com.bangbangbwa.backend.domain.promotion.common.dto.PromotionStreamerDto.PromotionStreamer;
 import com.bangbangbwa.backend.domain.promotion.service.BannerService;
 import com.bangbangbwa.backend.domain.promotion.service.StreamerService;
+import com.bangbangbwa.backend.global.annotation.authentication.PermitAll;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import java.util.List;
 import java.util.Set;
@@ -22,7 +23,7 @@ public class PromotionController implements PromotionApi {
   private final BannerService bannerService;
   private final StreamerService streamerService;
 
-  @PreAuthorize("permitAll()")
+  @PermitAll()
   @GetMapping("/banners")
   public ApiResponse<PromotionBannerDto.Response> getBanners() {
     List<PromotionBannerDto.PromotionBanner> banners = bannerService.getBanners();
@@ -31,7 +32,7 @@ public class PromotionController implements PromotionApi {
     return ApiResponse.ok(response);
   }
 
-  @PreAuthorize("permitAll()")
+  @PermitAll()
   @GetMapping("/streamers")
   public ApiResponse<PromotionStreamerDto.Response> getStreamers() {
     Set<PromotionStreamer> streamerList = streamerService.getRandomStreamers();

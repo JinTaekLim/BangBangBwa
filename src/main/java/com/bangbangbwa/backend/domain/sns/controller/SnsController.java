@@ -5,7 +5,6 @@ import com.bangbangbwa.backend.domain.member.common.mapper.MemberMapper;
 import com.bangbangbwa.backend.domain.post.common.dto.CreatePostDto;
 import com.bangbangbwa.backend.domain.post.common.dto.GetLatestPostsDto;
 import com.bangbangbwa.backend.domain.post.common.dto.GetPostDetailsDto;
-import com.bangbangbwa.backend.domain.post.common.dto.GetPostListDto;
 import com.bangbangbwa.backend.domain.post.common.dto.UploadPostMediaDto;
 import com.bangbangbwa.backend.domain.post.common.entity.Post;
 import com.bangbangbwa.backend.domain.post.common.enums.PostType;
@@ -17,7 +16,7 @@ import com.bangbangbwa.backend.domain.sns.common.dto.SearchMemberDto;
 import com.bangbangbwa.backend.domain.sns.common.entity.Comment;
 import com.bangbangbwa.backend.domain.sns.common.mapper.CommentMapper;
 import com.bangbangbwa.backend.domain.sns.service.SnsService;
-import com.bangbangbwa.backend.global.annotation.authentication.AuthenticationContext;
+import com.bangbangbwa.backend.global.annotation.authentication.PermitAll;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -41,7 +40,7 @@ public class SnsController implements SnsApi {
   private final SnsService snsService;
 
   @GetMapping("/getPostDetails/{postId}")
-  @PreAuthorize("permitAll()")
+  @PermitAll()
   public ApiResponse<GetPostDetailsDto.Response> getPostDetails(
       @PathVariable("postId") Long postId) {
     GetPostDetailsDto.Response response = snsService.getPostDetails(postId);
@@ -92,7 +91,7 @@ public class SnsController implements SnsApi {
   }
 
   @GetMapping("/getLatestPosts")
-  @PreAuthorize("permitAll()")
+  @PermitAll()
   public ApiResponse<List<GetLatestPostsDto.Response>> getLatestPosts() {
     List<GetLatestPostsDto.Response> response = snsService.getLatestPosts(PostType.STREAMER);
     return ApiResponse.ok(response);
