@@ -18,6 +18,7 @@ import com.bangbangbwa.backend.domain.sns.repository.PostRepository;
 import com.bangbangbwa.backend.domain.streamer.repository.StreamerTagRepository;
 import com.bangbangbwa.backend.domain.tag.common.entity.Tag;
 import com.bangbangbwa.backend.domain.tag.repository.MemberTagRepository;
+import com.bangbangbwa.backend.domain.tag.repository.StreamerTagRepository;
 import com.bangbangbwa.backend.domain.tag.repository.TagRepository;
 import com.bangbangbwa.backend.global.test.MyBatisTest;
 import com.bangbangbwa.backend.global.util.randomValue.RandomValue;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
@@ -224,7 +226,7 @@ class PostRepositoryTest extends MyBatisTest {
     Streamer streamer = createStreamer(writeMember);
     List<Long> tagIds = Collections.singletonList(tag.getId());
     IntStream.range(0, tagCount)
-        .forEach(i -> streamerTagRepository.save(streamer.getId(), tag));
+        .forEach(i -> streamerTagRepository.save(streamer.getId(), tagIds));
 
     IntStream.range(0, postCount)
         .forEach(i -> createPost(PostType.STREAMER, writeMember));

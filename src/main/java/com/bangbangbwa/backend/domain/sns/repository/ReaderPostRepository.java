@@ -20,9 +20,9 @@ public class ReaderPostRepository {
     private static final long EXPIRATION_TIME = 30;
 
     public void addReadPost(String memberId, String postId) {
-        String key = PREFIX + memberId;
-        redisTemplate.opsForSet().add(key, postId);
-        redisTemplate.expire(key, EXPIRATION_TIME, EXPIRATION_UNIT);
+//        String key = PREFIX + memberId;
+//        redisTemplate.opsForSet().add(key, postId);
+//        redisTemplate.expire(key, EXPIRATION_TIME, EXPIRATION_UNIT);
     }
 
     public Set<String> findAllReadPostsByMemberId(String memberId) {

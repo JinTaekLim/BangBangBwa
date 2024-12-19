@@ -8,13 +8,14 @@ import com.bangbangbwa.backend.domain.member.business.MemberCreator;
 import com.bangbangbwa.backend.domain.member.business.MemberGenerator;
 import com.bangbangbwa.backend.domain.member.business.MemberProvider;
 import com.bangbangbwa.backend.domain.member.business.MemberReader;
-import com.bangbangbwa.backend.domain.member.business.MemberTagRelation;
+import com.bangbangbwa.backend.domain.member.business.MemberUpdater;
 import com.bangbangbwa.backend.domain.member.business.MemberValidator;
 import com.bangbangbwa.backend.domain.member.business.NicknameProvider;
 import com.bangbangbwa.backend.domain.member.common.dto.CommentDto;
 import com.bangbangbwa.backend.domain.member.common.dto.FollowDto.FollowResponse;
 import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto.FollowerResponse;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
+import com.bangbangbwa.backend.domain.member.common.dto.MemberUpdateDto.Request;
 import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
 import com.bangbangbwa.backend.domain.member.common.dto.SummaryDto;
@@ -28,10 +29,12 @@ import com.bangbangbwa.backend.domain.post.business.PostReader;
 import com.bangbangbwa.backend.domain.post.business.PostValidator;
 import com.bangbangbwa.backend.domain.promotion.business.StreamerReader;
 import com.bangbangbwa.backend.domain.sns.business.PostUpdater;
-import com.bangbangbwa.backend.domain.tag.business.TagManager;
-import com.bangbangbwa.backend.domain.tag.common.entity.Tag;
+import com.bangbangbwa.backend.domain.tag.business.TagRelation;
+import com.bangbangbwa.backend.domain.tag.business.TagUpdater;
+import com.bangbangbwa.backend.domain.tag.common.dto.TagDto;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
 import com.bangbangbwa.backend.domain.token.common.dto.TokenDto;
+import com.bangbangbwa.backend.global.util.S3Manager;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -44,7 +47,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class MemberService {
 
-  private final MemberTagRelation memberTagRelation;
   private final MemberGenerator memberGenerator;
   private final MemberValidator memberValidator;
   private final MemberCreator memberCreator;
@@ -52,7 +54,6 @@ public class MemberService {
   private final TokenProvider tokenProvider;
   private final NicknameProvider nicknameProvider;
   private final MemberProvider memberProvider;
-  private final TagManager tagManager;
   private final StreamerReader streamerReader;
   private final FollowReader followReader;
   private final PostReader postReader;
@@ -61,18 +62,24 @@ public class MemberService {
   private final FollowDeleter followDeleter;
   private final PostValidator postValidator;
   private final PostUpdater postUpdater;
+  private final MemberUpdater memberUpdater;
+  private final S3Manager s3Manager;
+  private final TagRelation tagRelation;
+  private final TagUpdater tagUpdater;
 
   @Transactional
-  public TokenDto signup(OAuthInfoDto oAuthInfo, MemberSignupDto.Request request,
-      MultipartFile profileFile) {
+  public TokenDto signup(
+      OAuthInfoDto oAuthInfo,
+      MemberSignupDto.Request request,
+      MultipartFile profileFile
+  ) {
     memberValidator.validateUniqueMember(oAuthInfo);
-    Member member = memberGenerator.generate(oAuthInfo, request, profileFile);
-    memberCreator.save(member);
-    List<Tag> tags = tagManager.getTags(request.tags(), String.valueOf(member.getId()));
-    // TODO : Bulk 연산 학습 후 적용 예정
-    for (Tag tag : tags) {
-      memberTagRelation.relation(member, tag);
+    Member member = memberGenerator.generate(oAuthInfo, request);
+    if (Objects.nonNull(profileFile)) {
+      String profileImage = s3Manager.upload(profileFile);
+      member.updateProfile(profileImage);
     }
+    memberCreator.save(member);
     return tokenProvider.getToken(member);
   }
 
@@ -153,5 +160,39 @@ public class MemberService {
       postValidator.validatePostPinLimit(memberId);
     }
     postUpdater.updatePostPin(req.postId(), req.pinned());
+  }
+
+  @Transactional
+  public ProfileDto updateMember(
+      List<TagDto> tagList,
+      Request request,
+      MultipartFile file
+  ) {
+    Member member = memberReader.findById(memberProvider.getCurrentMemberId());
+
+    // 프로필 갱신
+    if (file != null) {
+      String newProfile = s3Manager.upload(file);
+      member.updateProfile(newProfile);
+    }
+
+    // 회원 정보 갱신 - 닉네임 중복여부 처리
+    String newNickname = request.nickname();
+    String newSelfIntroduction = request.selfIntroduction();
+    if (!member.getNickname().equals(newNickname)) {
+      memberValidator.validateNicknameDuplication(newNickname);
+    }
+    member.updateInfo(newNickname, newSelfIntroduction);
+    memberUpdater.updateMember(member);
+
+    // 태그목록 갱신 - 일반회원/스트리머 구분하여 변경.
+    tagUpdater.updateTagRelations(member, tagList);
+
+    // 프로필 DTO 변환
+    return memberReader.getProfile(new ProfileDto(member.getId(), member.getId()));
+  }
+
+  public void memberTagRelation(Member member, List<TagDto> tagList) {
+    tagRelation.relation(member, tagList);
   }
 }

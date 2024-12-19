@@ -9,28 +9,28 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class MemberTagRepository {
+public class StreamerTagRepository {
 
   private final SqlSession mysql;
 
-  public void save(Long memberId, Long tagId) {
+  public void save(Long streamerId, Long tagId) {
     Map<String, Object> params = new HashMap<>();
-    params.put("memberId", memberId);
+    params.put("streamerId", streamerId);
     params.put("tagId", tagId);
-    mysql.insert("MemberTagMapper.save", params);
+    mysql.insert("StreamerTagMapper.save", params);
   }
 
-  public void save(Long memberId, List<Long> tagIdList) {
+  public void save(Long streamerId, List<Long> tagIdList) {
     Map<String, Object> params = new HashMap<>();
-    params.put("memberId", memberId);
+    params.put("streamerId", streamerId);
     params.put("tagIdList", tagIdList);
-    mysql.insert("MemberTagMapper.saveList", params);
+    mysql.insert("StreamerTagMapper.saveList", params);
   }
 
-  public void delete(Long memberId, List<Long> tagIdList) {
+  public void delete(Long streamerId, List<Long> tagIdList) {
     Map<String, Object> params = new HashMap<>();
-    params.put("memberId", memberId);
+    params.put("streamerId", streamerId);
     params.put("tagIdList", tagIdList);
-    mysql.insert("MemberTagMapper.deleteList", params);
+    mysql.delete("StreamerTagMapper.deleteList", params);
   }
 }

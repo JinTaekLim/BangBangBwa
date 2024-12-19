@@ -37,4 +37,8 @@ public class S3Manager {
       throw new ServerException();
     }
   }
+
+  public void delete(String profile) {
+    s3Template.deleteObject(profile);
+  }
 }

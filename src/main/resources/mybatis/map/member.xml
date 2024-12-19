@@ -143,4 +143,15 @@
     WHERE member_id = #{memberId}
     ) t;
   </select>
+
+  <update id="updateMember">
+    UPDATE members
+    SET
+    nickname = #{nickname},
+    profile = #{profile},
+    self_introduction = #{selfIntroduction},
+    updated_id = #{updatedId},
+    updated_at = #{updatedAt}
+    WHERE id = #{id}
+  </update>
 </mapper>
