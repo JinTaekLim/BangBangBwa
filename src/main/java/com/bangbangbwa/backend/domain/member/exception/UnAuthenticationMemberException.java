@@ -1,11 +1,11 @@
 package com.bangbangbwa.backend.domain.member.exception;
 
 import com.bangbangbwa.backend.domain.member.exception.type.MemberErrorType;
-import com.bangbangbwa.backend.global.error.exception.UnAuthenticatedException;
+import com.bangbangbwa.backend.global.error.exception.ServerException;
 import lombok.Getter;
 
 @Getter
-public class UnAuthenticationMemberException extends UnAuthenticatedException {
+public class UnAuthenticationMemberException extends ServerException {
 
   private final String code;
 
