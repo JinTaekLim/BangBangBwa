@@ -5,6 +5,7 @@ import com.bangbangbwa.backend.domain.post.common.dto.CreatePostDto.Response;
 import com.bangbangbwa.backend.domain.post.common.dto.GetLatestPostsDto;
 import com.bangbangbwa.backend.domain.post.common.dto.GetPostDetailsDto;
 import com.bangbangbwa.backend.domain.post.common.dto.GetPostListDto;
+import com.bangbangbwa.backend.domain.post.common.dto.MyPostDto;
 import com.bangbangbwa.backend.domain.post.common.dto.UploadPostMediaDto;
 import com.bangbangbwa.backend.domain.post.common.entity.Post;
 import com.bangbangbwa.backend.domain.post.common.enums.PostType;
@@ -78,6 +79,15 @@ public class PostController implements PostApi {
   @PermitAll()
   public ApiResponse<List<GetLatestPostsDto.Response>> getLatestPosts() {
     List<GetLatestPostsDto.Response> response = postService.getLatestPosts(PostType.STREAMER);
+    return ApiResponse.ok(response);
+  }
+
+  @GetMapping("/mypost/{postId}")
+  @PreAuthorize("hasAuthority('MEMBER')")
+  public ApiResponse<?> getMyPost(
+      @PathVariable("postId") Long postId
+  ) {
+    MyPostDto.Response response = postService.getMyPost(postId);
     return ApiResponse.ok(response);
   }
 

@@ -3,6 +3,7 @@ package com.bangbangbwa.backend.domain.sns.repository;
 import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.post.common.dto.GetLatestPostsDto;
 import com.bangbangbwa.backend.domain.post.common.dto.GetPostDetailsDto;
+import com.bangbangbwa.backend.domain.post.common.dto.MyPostDto.MyPostResponsePostInfo;
 import com.bangbangbwa.backend.domain.post.common.entity.Post;
 import com.bangbangbwa.backend.domain.post.common.enums.PostType;
 import java.util.HashMap;
@@ -121,6 +122,10 @@ public class PostRepository {
   public Post updatePost(Post post) {
     mysql.update("PostMapper.updatePost", post);
     return post;
+  }
+
+  public MyPostResponsePostInfo getMyPostInfo(Long postId) {
+    return mysql.selectOne("PostMapper.getMyPostInfo", postId);
   }
 }
 

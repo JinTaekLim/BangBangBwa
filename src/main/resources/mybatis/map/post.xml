@@ -5,8 +5,10 @@
 <mapper namespace="PostMapper">
 
   <insert id="save" parameterType="Post" keyProperty="id" useGeneratedKeys="true">
-    INSERT INTO posts (post_type, member_id, title, content, status, media_type, created_id, created_at)
-    VALUES (#{postType}, #{memberId}, #{title}, #{content}, #{status}, #{mediaType}, #{createdId}, #{createdAt})
+    INSERT INTO posts (post_type, member_id, title, content, status, media_type, created_id,
+    created_at)
+    VALUES (#{postType}, #{memberId}, #{title}, #{content}, #{status}, #{mediaType}, #{createdId},
+    #{createdAt})
   </insert>
 
   <select id="findById" parameterType="Long" resultType="post">
@@ -196,4 +198,17 @@
     LIMIT #{size}
   </select>
 
+  <select id="getMyPostInfo" parameterType="Long"
+    resultType="com.bangbangbwa.backend.domain.post.common.dto.MyPostDto$MyPostResponsePostInfo">
+    SELECT
+    p.id AS postId,
+    m.id AS postMemberId,
+    m.profile AS postMemberProfile,
+    m.nickname AS postMemberNickname,
+    p.title AS postTitle,
+    p.content AS postContent
+    FROM posts p
+    INNER JOIN members m ON p.member_id = m.id
+    WHERE p.id = #{postId}
+  </select>
 </mapper>
