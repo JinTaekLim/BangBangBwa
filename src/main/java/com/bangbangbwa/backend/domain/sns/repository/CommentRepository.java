@@ -1,7 +1,7 @@
 package com.bangbangbwa.backend.domain.sns.repository;
 
-import com.bangbangbwa.backend.domain.comment.common.dto.MyPostCommentDto.MyPostCommentResponse;
 import com.bangbangbwa.backend.domain.member.common.dto.CommentDto.CommentResponse;
+import com.bangbangbwa.backend.domain.post.common.dto.MyPostDto.MyPostResponseCommentInfo;
 import com.bangbangbwa.backend.domain.sns.common.entity.Comment;
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +27,7 @@ public class CommentRepository {
     mysql.update("CommentMapper.updateForAddReply", comment);
   }
 
-  public List<MyPostCommentResponse> findCommentListByPostId(Long postId) {
+  public List<MyPostResponseCommentInfo> findCommentListByPostId(Long postId) {
     return mysql.selectList("CommentMapper.findCommentListByPostId", postId);
   }
 

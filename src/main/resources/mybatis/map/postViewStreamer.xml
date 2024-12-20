@@ -13,5 +13,18 @@
     );
   </insert>
 
-
+  <select id="findStreamersByPostId" parameterType="Long"
+    resultType="com.bangbangbwa.backend.domain.post.common.dto.MyPostDto$MyPostResponseReadStreamerInfo">
+    SELECT
+    s.id AS streamerId,
+    m.profile AS streamerImage
+    FROM streamers s
+    INNER JOIN members m ON s.member_id = m.id
+    WHERE s.id IN (
+    SELECT
+    streamer_id
+    FROM post_view_streamer
+    WHERE post_id = #{postId}
+    )
+  </select>
 </mapper>

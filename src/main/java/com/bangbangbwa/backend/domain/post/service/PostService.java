@@ -1,5 +1,6 @@
 package com.bangbangbwa.backend.domain.post.service;
 
+import com.bangbangbwa.backend.domain.comment.business.CommentReader;
 import com.bangbangbwa.backend.domain.member.business.MemberProvider;
 import com.bangbangbwa.backend.domain.member.business.MemberValidator;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
@@ -14,6 +15,10 @@ import com.bangbangbwa.backend.domain.post.business.PostVisibilityProvider;
 import com.bangbangbwa.backend.domain.post.common.dto.CreatePostDto;
 import com.bangbangbwa.backend.domain.post.common.dto.GetLatestPostsDto;
 import com.bangbangbwa.backend.domain.post.common.dto.GetPostDetailsDto;
+import com.bangbangbwa.backend.domain.post.common.dto.MyPostDto.MyPostResponseCommentInfo;
+import com.bangbangbwa.backend.domain.post.common.dto.MyPostDto.MyPostResponsePostInfo;
+import com.bangbangbwa.backend.domain.post.common.dto.MyPostDto.MyPostResponseReadStreamerInfo;
+import com.bangbangbwa.backend.domain.post.common.dto.MyPostDto.Response;
 import com.bangbangbwa.backend.domain.post.common.entity.Post;
 import com.bangbangbwa.backend.domain.post.common.enums.MediaType;
 import com.bangbangbwa.backend.domain.post.common.enums.PostType;
@@ -59,6 +64,7 @@ public class PostService {
   private final PostViewStreamerCreator postViewStreamerCreator;
   private final PostViewStreamerGenerator postViewStreamerGenerator;
   private final StreamerReader streamerReader;
+  private final CommentReader commentReader;
 
   public String uploadPostMedia(MultipartFile file) {
     return s3Manager.upload(file);
@@ -81,7 +87,7 @@ public class PostService {
     if (memberId != null) {
       readerPostCreator.addReadPost(memberId, response.postId());
     }
-    if(memberProvider.getCurrentRole() == Role.STREAMER) {
+    if (memberProvider.getCurrentRole() == Role.STREAMER) {
       Streamer streamer = streamerReader.findByMemberId(memberId);
       PostViewStreamer postViewStreamer = postViewStreamerGenerator.generate(postId, streamer);
       postViewStreamerCreator.save(postViewStreamer);
@@ -92,7 +98,9 @@ public class PostService {
   // note. streamer 계정이 조회했을 때의 작업 필요
   public List<Post> getPostList() {
     Role role = memberProvider.getCurrentRole();
-    if (!role.equals( Role.MEMBER)) {return postProvider.getRandomPost(PostType.STREAMER);}
+    if (!role.equals(Role.MEMBER)) {
+      return postProvider.getRandomPost(PostType.STREAMER);
+    }
     Long memberId = memberProvider.getCurrentMemberId();
     Set<String> readPostIds = readerPostReader.findAllReadPostsByMemberId(memberId);
     return postProvider.getMemberPersonalizedPosts(memberId, readPostIds);
@@ -121,5 +129,14 @@ public class PostService {
     Post post = postReader.findById(postId);
     post.deletePost();
     postUpdater.updateForDeletion(post);
+  }
+
+  public Response getMyPost(Long postId) {
+    Long memberId = memberProvider.getCurrentMemberId();
+    postValidator.validatePostWriter(postId, memberId);
+    MyPostResponsePostInfo postInfo = postReader.getMyPostInfo(postId);
+    List<MyPostResponseReadStreamerInfo> readStreamerList = postReader.findReadStreamerList(postId);
+    List<MyPostResponseCommentInfo> commentList = commentReader.findCommentListByPostId(postId);
+    return new Response(postInfo, readStreamerList, commentList);
   }
 }

@@ -3,6 +3,7 @@ package com.bangbangbwa.backend.domain.sns.repository;
 import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.post.common.dto.GetLatestPostsDto;
 import com.bangbangbwa.backend.domain.post.common.dto.GetPostDetailsDto;
+import com.bangbangbwa.backend.domain.post.common.dto.MyPostDto.MyPostResponsePostInfo;
 import com.bangbangbwa.backend.domain.post.common.entity.Post;
 import com.bangbangbwa.backend.domain.post.common.enums.PostType;
 import java.time.LocalDateTime;
@@ -129,6 +130,10 @@ public class PostRepository {
     params.put("postId", postId);
     params.put("deletedAt", LocalDateTime.now());
     mysql.update("PostMapper.deletePost", params);
+  }
+
+  public MyPostResponsePostInfo getMyPostInfo(Long postId) {
+    return mysql.selectOne("PostMapper.getMyPostInfo", postId);
   }
 }
 
