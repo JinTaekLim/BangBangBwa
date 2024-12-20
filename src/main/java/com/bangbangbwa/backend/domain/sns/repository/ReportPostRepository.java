@@ -1,8 +1,8 @@
 package com.bangbangbwa.backend.domain.sns.repository;
 
 import com.bangbangbwa.backend.domain.admin.common.dto.GetReportedPostsDto.GetReportedPostsResponse;
-import com.bangbangbwa.backend.domain.sns.common.entity.ReportPost;
-import com.bangbangbwa.backend.domain.sns.common.enums.ReportStatus;
+import com.bangbangbwa.backend.domain.post.common.entity.ReportPost;
+import com.bangbangbwa.backend.domain.post.common.enums.ReportStatus;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSession;

@@ -1,4 +1,4 @@
-package com.bangbangbwa.backend.domain.sns.business;
+package com.bangbangbwa.backend.domain.post.business;
 
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.post.common.entity.Post;

@@ -1,6 +1,6 @@
 package com.bangbangbwa.backend.domain.admin.common.dto;
 
-import com.bangbangbwa.backend.domain.sns.common.enums.ReportStatus;
+import com.bangbangbwa.backend.domain.post.common.enums.ReportStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 

@@ -23,7 +23,7 @@ import com.bangbangbwa.backend.domain.promotion.common.entity.Streamer;
 import com.bangbangbwa.backend.domain.promotion.repository.StreamerRepository;
 import com.bangbangbwa.backend.domain.sns.common.entity.Comment;
 import com.bangbangbwa.backend.domain.sns.common.entity.ReportComment;
-import com.bangbangbwa.backend.domain.sns.common.entity.ReportPost;
+import com.bangbangbwa.backend.domain.post.common.entity.ReportPost;
 import com.bangbangbwa.backend.domain.sns.common.enums.VisibilityType;
 import com.bangbangbwa.backend.domain.sns.exception.NotFoundPostException;
 import com.bangbangbwa.backend.domain.sns.exception.InvalidMemberVisibilityException;

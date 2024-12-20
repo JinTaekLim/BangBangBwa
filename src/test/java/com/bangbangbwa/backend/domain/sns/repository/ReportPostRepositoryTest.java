@@ -9,7 +9,7 @@ import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import com.bangbangbwa.backend.domain.post.common.entity.Post;
 import com.bangbangbwa.backend.domain.post.common.enums.PostType;
-import com.bangbangbwa.backend.domain.sns.common.entity.ReportPost;
+import com.bangbangbwa.backend.domain.post.common.entity.ReportPost;
 import com.bangbangbwa.backend.global.test.MyBatisTest;
 import com.bangbangbwa.backend.global.util.randomValue.RandomValue;
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.bangbangbwa.backend.domain.sns.common.mapper;
 
 import com.bangbangbwa.backend.domain.sns.common.dto.ReportPostDto;
-import com.bangbangbwa.backend.domain.sns.common.entity.ReportPost;
+import com.bangbangbwa.backend.domain.post.common.entity.ReportPost;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

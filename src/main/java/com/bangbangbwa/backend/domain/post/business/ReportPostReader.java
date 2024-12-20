@@ -1,8 +1,8 @@
-package com.bangbangbwa.backend.domain.sns.business;
+package com.bangbangbwa.backend.domain.post.business;
 
 import com.bangbangbwa.backend.domain.admin.common.dto.GetReportedPostsDto.GetReportedPostsResponse;
-import com.bangbangbwa.backend.domain.sns.common.entity.ReportPost;
-import com.bangbangbwa.backend.domain.sns.common.enums.ReportStatus;
+import com.bangbangbwa.backend.domain.post.common.entity.ReportPost;
+import com.bangbangbwa.backend.domain.post.common.enums.ReportStatus;
 import com.bangbangbwa.backend.domain.sns.exception.NotFoundReportException;
 import com.bangbangbwa.backend.domain.sns.repository.ReportPostRepository;
 import java.util.List;

@@ -5,7 +5,6 @@ import com.bangbangbwa.backend.domain.post.common.dto.CreatePostDto;
 import com.bangbangbwa.backend.domain.post.common.entity.Post;
 import com.bangbangbwa.backend.domain.post.common.enums.MediaType;
 import com.bangbangbwa.backend.domain.sns.business.PostParser;
-import com.bangbangbwa.backend.domain.sns.business.PostUpdater;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

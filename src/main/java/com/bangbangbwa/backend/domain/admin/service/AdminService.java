@@ -7,11 +7,11 @@ import com.bangbangbwa.backend.domain.admin.common.dto.GetReportedPostsDto.GetRe
 import com.bangbangbwa.backend.domain.admin.common.dto.ResolveReportedPostDto;
 import com.bangbangbwa.backend.domain.admin.common.entity.Admin;
 import com.bangbangbwa.backend.domain.member.business.MemberProvider;
-import com.bangbangbwa.backend.domain.sns.business.PostUpdater;
-import com.bangbangbwa.backend.domain.sns.business.ReportPostReader;
-import com.bangbangbwa.backend.domain.sns.business.ReportPostUpdater;
-import com.bangbangbwa.backend.domain.sns.common.entity.ReportPost;
-import com.bangbangbwa.backend.domain.sns.common.enums.ReportStatus;
+import com.bangbangbwa.backend.domain.post.business.PostUpdater;
+import com.bangbangbwa.backend.domain.post.business.ReportPostReader;
+import com.bangbangbwa.backend.domain.post.business.ReportPostUpdater;
+import com.bangbangbwa.backend.domain.post.common.entity.ReportPost;
+import com.bangbangbwa.backend.domain.post.common.enums.ReportStatus;
 import com.bangbangbwa.backend.domain.streamer.common.business.PendingStreamerGenerator;
 import com.bangbangbwa.backend.domain.streamer.common.business.PendingStreamerReader;
 import com.bangbangbwa.backend.domain.streamer.common.business.PendingStreamerUpdater;
