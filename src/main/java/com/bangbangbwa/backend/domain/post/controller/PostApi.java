@@ -192,6 +192,46 @@ public interface PostApi {
   ApiResponse<List<GetLatestPostsDto.Response>> getLatestPosts();
 
   @Operation(
+      summary = "내 게시물 조회",
+      description = "내 게시물 조회 페이지 API",
+      tags = {"PostAPI"},
+      responses = {
+          @io.swagger.v3.oas.annotations.responses.ApiResponse(
+              responseCode = "200",
+              description = "OK",
+              content = @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = GetLatestPostsDto.Response.class)
+              )
+          ),
+          @io.swagger.v3.oas.annotations.responses.ApiResponse(
+              responseCode = "400",
+              description = "BAD_REQUEST",
+              content = @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ApiResponse.class),
+                  examples = {
+                      @ExampleObject(
+                          name = "NOT_FOUND_POST_OR_PERMISSION",
+                          summary = "비작성자 접근",
+                          value = """
+                              {
+                                "code" : "NOT_FOUND_POST_OR_PERMISSION",
+                                "message" : "존재하지 않거나 작성 권한이 없는 게시물입니다.",
+                                "data" : null
+                              }
+                              """
+                      )
+                  }
+              )
+          )
+      }
+  )
+  @ApiResponse401
+  @ApiResponse403
+  ApiResponse<?> getMyPost(Long postId);
+
+  @Operation(
       summary = "게시물 삭제",
       description = "해당 게시물을 삭제합니다.",
       tags = {"PostAPI"},
