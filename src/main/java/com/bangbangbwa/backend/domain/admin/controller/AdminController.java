@@ -33,7 +33,7 @@ public class AdminController {
   @PreAuthorize("hasAuthority('ADMIN')")
   public ApiResponse<ApproveStreamerDto.Response> updatePendingStatus(
       @RequestBody @Valid ApproveStreamerDto.Request request
-  ){
+  ) {
     PendingStreamer pendingStreamer = adminService.updatePendingStatus(request);
     ApproveStreamerDto.Response response = PendingStreamerMapper
         .INSTANCE
@@ -60,7 +60,8 @@ public class AdminController {
 
   @PostMapping("/resolveReportedPost")
   @PreAuthorize("hasAuthority('ADMIN')")
-  public ApiResponse<?> resolveReportedPost(@RequestBody ResolveReportedPostDto.Request request) {
+  public ApiResponse<?> resolveReportedPost(
+      @Valid @RequestBody ResolveReportedPostDto.Request request) {
     adminService.resolveReportedPost(request);
     return ApiResponse.ok();
   }
