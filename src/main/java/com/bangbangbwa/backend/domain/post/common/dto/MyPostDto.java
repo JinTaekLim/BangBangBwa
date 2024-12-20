@@ -40,7 +40,9 @@ public class MyPostDto {
       @Schema(description = "스트리머 아이디")
       Long streamerId,
       @Schema(description = "스트리머 프로필 이미지")
-      String streamerImage
+      String streamerImage,
+      @Schema(description = "스트리머 닉네임")
+      String streamerNickname
   ) {
 
   }
