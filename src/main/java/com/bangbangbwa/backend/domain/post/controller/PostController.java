@@ -84,7 +84,7 @@ public class PostController implements PostApi {
 
   @GetMapping("/mypost/{postId}")
   @PreAuthorize("hasAuthority('MEMBER')")
-  public ApiResponse<?> getMyPost(
+  public ApiResponse<MyPostDto.Response> getMyPost(
       @PathVariable("postId") Long postId
   ) {
     MyPostDto.Response response = postService.getMyPost(postId);
