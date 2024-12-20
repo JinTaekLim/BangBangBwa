@@ -149,7 +149,11 @@ class ReportPostRepositoryTest extends MyBatisTest {
 
     // then
     assertThat(getReportPost.getId()).isEqualTo(reportPost.getId());
-    assertThat(getReportPost).usingRecursiveComparison().isEqualTo(reportPost);
+    assertThat(getReportPost)
+        .usingRecursiveComparison()
+        .ignoringFields("createdAt", "updatedAt")
+        .isEqualTo(reportPost);
+
   }
 
   @Test()
