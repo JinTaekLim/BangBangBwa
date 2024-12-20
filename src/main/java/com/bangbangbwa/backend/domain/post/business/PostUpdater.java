@@ -28,4 +28,8 @@ public class PostUpdater {
   public void updateForDeletion(Post post) {
     postRepository.updatePost(post);
   }
+
+  public void deletePost(Long postId) {
+    postRepository.deletePost(postId);
+  }
 }

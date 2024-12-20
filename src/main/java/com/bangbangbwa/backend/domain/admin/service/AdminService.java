@@ -19,6 +19,7 @@ import com.bangbangbwa.backend.domain.streamer.common.entity.PendingStreamer;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -48,13 +49,14 @@ public class AdminService {
     return reportPostReader.findAllPendingReports();
   }
 
+  @Transactional
   public void resolveReportedPost(ResolveReportedPostDto.Request request) {
     Long memberId = memberProvider.getCurrentMemberId();
     ReportPost reportPost = reportPostReader.findById(request.reportPostId());
     reportPost.updateStatus(request.status(), memberId);
     if (request.status() == ReportStatus.DELETED) {
-      // 게시물 삭제 로직 필요
+      postUpdater.deletePost(reportPost.getPostId());
     }
-      reportPostUpdater.updateStatus(reportPost);
+    reportPostUpdater.updateStatus(reportPost);
   }
 }

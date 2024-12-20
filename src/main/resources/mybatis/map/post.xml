@@ -196,4 +196,14 @@
     LIMIT #{size}
   </select>
 
+  <update id="deletePost" parameterType="Long">
+    UPDATE posts
+    SET
+    status = 'DELETED',
+    deleted_at = NOW()
+    WHERE id = #{id}
+  </update>
+
+
+
 </mapper>

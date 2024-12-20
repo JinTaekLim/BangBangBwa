@@ -1,4 +1,4 @@
-package com.bangbangbwa.backend.domain.sns.repository;
+package com.bangbangbwa.backend.domain.post.repository;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -10,6 +10,9 @@ import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import com.bangbangbwa.backend.domain.post.common.entity.Post;
 import com.bangbangbwa.backend.domain.post.common.enums.PostType;
 import com.bangbangbwa.backend.domain.post.common.entity.ReportPost;
+import com.bangbangbwa.backend.domain.post.common.enums.ReportStatus;
+import com.bangbangbwa.backend.domain.sns.repository.PostRepository;
+import com.bangbangbwa.backend.domain.sns.repository.ReportPostRepository;
 import com.bangbangbwa.backend.global.test.MyBatisTest;
 import com.bangbangbwa.backend.global.util.randomValue.RandomValue;
 import java.util.List;
@@ -147,5 +150,27 @@ class ReportPostRepositoryTest extends MyBatisTest {
     // then
     assertThat(getReportPost.getId()).isEqualTo(reportPost.getId());
     assertThat(getReportPost).usingRecursiveComparison().isEqualTo(reportPost);
+  }
+
+  @Test()
+  void updateStatus() {
+    // given
+    Member member = createMember();
+    PostType postType = RandomValue.getRandomEnum(PostType.class);
+    Post post = createPost(postType, member);
+    ReportPost reportPost = createReportPost(post, member);
+    ReportStatus reportStatus = (ReportStatus.DELETED == reportPost.getStatus())
+        ? ReportStatus.DELETED
+        : ReportStatus.PENDING;
+
+    reportPost.updateStatus(reportStatus, member.getId());
+
+    // when
+    reportPostRepository.updateStatus(reportPost);
+    ReportPost getReportPost = reportPostRepository.findById(reportPost.getId())
+        .orElseThrow(AssertionError::new);
+
+    // then
+    assertThat(getReportPost.getStatus()).isEqualTo(reportStatus);
   }
 }

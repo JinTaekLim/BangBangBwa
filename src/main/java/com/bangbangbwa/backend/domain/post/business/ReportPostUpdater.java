@@ -16,6 +16,6 @@ public class ReportPostUpdater {
     }
 
     public void updateStatus(ReportPost reportPost) {
-
+        reportPostRepository.updateStatus(reportPost);
     }
 }

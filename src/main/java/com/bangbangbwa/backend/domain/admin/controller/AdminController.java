@@ -58,7 +58,8 @@ public class AdminController {
     return ApiResponse.ok(response);
   }
 
-  @PostMapping("/ResolveReportedPost")
+  @PostMapping("/resolveReportedPost")
+  @PreAuthorize("hasAuthority('ADMIN')")
   public ApiResponse<?> resolveReportedPost(@RequestBody ResolveReportedPostDto.Request request) {
     adminService.resolveReportedPost(request);
     return ApiResponse.ok();

@@ -37,4 +37,8 @@ public class ReportPostRepository {
     public Optional<ReportPost> findById(Long id) {
         return Optional.ofNullable(mysql.selectOne("ReportPostMapper.findById", id));
     }
+
+    public void updateStatus(ReportPost reportPost) {
+        mysql.update("ReportPostMapper.updateStatus", reportPost);
+    }
 }

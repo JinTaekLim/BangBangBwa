@@ -1,18 +1,11 @@
-package com.bangbangbwa.backend.domain.sns.repository;
+package com.bangbangbwa.backend.domain.post.repository;
 
+import com.bangbangbwa.backend.domain.sns.repository.ReaderPostRepository;
 import com.bangbangbwa.backend.global.test.RedisTest;
-import com.bangbangbwa.backend.global.util.randomValue.RandomValue;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.IntStream;
-
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @Import(ReaderPostRepository.class)
 class ReaderPostRepositoryTest extends RedisTest {

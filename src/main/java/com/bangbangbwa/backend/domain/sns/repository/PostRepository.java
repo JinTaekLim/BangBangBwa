@@ -122,5 +122,9 @@ public class PostRepository {
     mysql.update("PostMapper.updatePost", post);
     return post;
   }
+
+  public void deletePost(Long postId) {
+    mysql.update("PostMapper.deletePost", postId);
+  }
 }
 

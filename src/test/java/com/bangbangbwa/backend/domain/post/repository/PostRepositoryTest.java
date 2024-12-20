@@ -429,6 +429,17 @@ class PostRepositoryTest extends MyBatisTest {
     });
   }
 
+  @Test()
+  void deletePost() {
+    // given
+    Member member = createMember();
+    Post post = createPost(PostType.MEMBER, member);
+
+    // when
+    postRepository.deletePost(post.getId());
+
+    // then
+  }
 
 
 
