@@ -6,6 +6,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -28,6 +30,16 @@ public class SecurityConfig {
   public WebSecurityCustomizer webSecurityCustomizer() {
     return web -> web.ignoring() // Security ignore
         .requestMatchers("/h2-console/**", "/favicon.ico");
+  }
+
+  @Bean
+  public RoleHierarchy roleHierarchy() {
+    String hierarchy = """
+          ADMIN > STREAMER
+          ADMIN > MEMBER
+          STREAMER > MEMBER
+        """;
+    return RoleHierarchyImpl.fromHierarchy(hierarchy);
   }
 
   @Bean
