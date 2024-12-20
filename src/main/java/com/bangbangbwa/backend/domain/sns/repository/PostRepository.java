@@ -5,6 +5,7 @@ import com.bangbangbwa.backend.domain.post.common.dto.GetLatestPostsDto;
 import com.bangbangbwa.backend.domain.post.common.dto.GetPostDetailsDto;
 import com.bangbangbwa.backend.domain.post.common.entity.Post;
 import com.bangbangbwa.backend.domain.post.common.enums.PostType;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -124,7 +125,10 @@ public class PostRepository {
   }
 
   public void deletePost(Long postId) {
-    mysql.update("PostMapper.deletePost", postId);
+    Map<String, Object> params = new HashMap<>();
+    params.put("postId", postId);
+    params.put("deletedAt", LocalDateTime.now());
+    mysql.update("PostMapper.deletePost", params);
   }
 }
 
