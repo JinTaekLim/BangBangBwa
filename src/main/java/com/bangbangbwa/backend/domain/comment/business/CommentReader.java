@@ -1,8 +1,8 @@
 package com.bangbangbwa.backend.domain.comment.business;
 
-import com.bangbangbwa.backend.domain.comment.common.dto.MyPostCommentDto.MyPostCommentResponse;
 import com.bangbangbwa.backend.domain.comment.exception.NotFoundCommentException;
 import com.bangbangbwa.backend.domain.member.common.dto.CommentDto.CommentResponse;
+import com.bangbangbwa.backend.domain.post.common.dto.MyPostDto.MyPostResponseCommentInfo;
 import com.bangbangbwa.backend.domain.sns.common.entity.Comment;
 import com.bangbangbwa.backend.domain.sns.repository.CommentRepository;
 import java.util.List;
@@ -19,7 +19,7 @@ public class CommentReader {
     return commentRepository.findById(commentId).orElseThrow(NotFoundCommentException::new);
   }
 
-  public List<MyPostCommentResponse> findCommentListByPostId(Long postId) {
+  public List<MyPostResponseCommentInfo> findCommentListByPostId(Long postId) {
     return commentRepository.findCommentListByPostId(postId);
   }
 
