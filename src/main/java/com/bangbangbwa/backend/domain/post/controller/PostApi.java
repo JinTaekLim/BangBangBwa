@@ -5,6 +5,7 @@ import com.bangbangbwa.backend.domain.post.common.dto.CreatePostDto.Response;
 import com.bangbangbwa.backend.domain.post.common.dto.GetLatestPostsDto;
 import com.bangbangbwa.backend.domain.post.common.dto.GetPostDetailsDto;
 import com.bangbangbwa.backend.domain.post.common.dto.GetPostListDto;
+import com.bangbangbwa.backend.domain.post.common.dto.MyPostDto;
 import com.bangbangbwa.backend.domain.post.common.dto.UploadPostMediaDto;
 import com.bangbangbwa.backend.global.annotation.swagger.ApiResponse200;
 import com.bangbangbwa.backend.global.annotation.swagger.ApiResponse401;
@@ -201,7 +202,7 @@ public interface PostApi {
               description = "OK",
               content = @Content(
                   mediaType = MediaType.APPLICATION_JSON_VALUE,
-                  schema = @Schema(implementation = GetLatestPostsDto.Response.class)
+                  schema = @Schema(implementation = MyPostDto.Response.class)
               )
           ),
           @io.swagger.v3.oas.annotations.responses.ApiResponse(
@@ -229,7 +230,7 @@ public interface PostApi {
   )
   @ApiResponse401
   @ApiResponse403
-  ApiResponse<?> getMyPost(Long postId);
+  ApiResponse<MyPostDto.Response> getMyPost(Long postId);
 
   @Operation(
       summary = "게시물 삭제",
