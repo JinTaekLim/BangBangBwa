@@ -18,6 +18,7 @@
     SELECT
     s.id AS streamerId,
     m.profile AS streamerImage
+    m.nickname AS streamerNickname
     FROM streamers s
     INNER JOIN members m ON s.member_id = m.id
     WHERE s.id IN (
