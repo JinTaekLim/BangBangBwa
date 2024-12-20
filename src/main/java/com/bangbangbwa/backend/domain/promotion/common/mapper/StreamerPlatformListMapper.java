@@ -1,7 +1,7 @@
 package com.bangbangbwa.backend.domain.promotion.common.mapper;
 
+import com.bangbangbwa.backend.domain.platform.common.entity.Platform;
 import com.bangbangbwa.backend.domain.promotion.common.dto.PromotionStreamerDto.PromotionStreamerPlatform;
-import com.bangbangbwa.backend.domain.promotion.common.entity.Platform;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,7 +1,7 @@
 package com.bangbangbwa.backend.domain.sns.business;
 
-import com.bangbangbwa.backend.domain.sns.common.entity.Post;
-import com.bangbangbwa.backend.domain.sns.common.entity.PostVisibilityMember;
+import com.bangbangbwa.backend.domain.post.common.entity.Post;
+import com.bangbangbwa.backend.domain.post.common.entity.PostVisibilityMember;
 import com.bangbangbwa.backend.domain.sns.common.enums.VisibilityType;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,8 @@ public class PostVisibilityMemberGenerator {
   }
 
 
-  private List<PostVisibilityMember> generateVisibilityMembers(Post post, List<Long> memberList, VisibilityType type) {
+  private List<PostVisibilityMember> generateVisibilityMembers(Post post, List<Long> memberList,
+      VisibilityType type) {
     return memberList.stream()
         .map(memberId -> PostVisibilityMember.builder()
             .createdId(post.getMemberId().toString())

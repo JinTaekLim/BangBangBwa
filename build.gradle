@@ -76,6 +76,8 @@ dependencies {
     implementation 'org.mapstruct:mapstruct:1.6.2'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.2'
 
+    // Jsoup
+    implementation 'org.jsoup:jsoup:1.18.3'
 
     // Test
     testRuntimeOnly 'com.h2database:h2:2.2.224'
@@ -84,7 +86,12 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
-    testImplementation 'org.springframework.security:spring-security-test:6.3.3'}
+    testImplementation 'org.springframework.security:spring-security-test:6.3.3'
+    testImplementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.3.1'
+
+
+
+}
 
 dependencyManagement {
     imports {

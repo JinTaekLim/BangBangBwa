@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PostViewStreamerMapper">
+
+  <insert id="save" parameterType="postViewStreamer" keyProperty="id">
+    INSERT INTO post_view_streamer (post_id, streamer_id, created_at)
+    SELECT #{postId}, #{streamerId}, #{createdAt}
+    WHERE NOT EXISTS (
+    SELECT 1 FROM post_view_streamer
+    WHERE post_id = #{postId} AND streamer_id = #{streamerId}
+    );
+  </insert>
+
+
+</mapper>

@@ -5,9 +5,25 @@
 <mapper namespace="StreamerTagMapper">
   <insert id="save" parameterType="java.util.HashMap">
     INSERT INTO streamers_tags (
-      streamer_id,    tag_id
+    streamer_id, tag_id
     ) VALUES (
-      #{streamerId},  #{tagId}
+    #{streamerId}, #{tagId}
     )
   </insert>
+  <insert id="saveList" parameterType="java.util.HashMap">
+    INSERT INTO streamers_tags (
+    streamer_id, tag_id
+    )
+    VALUES
+    <foreach collection="tagIdList" item="tagId" separator=",">
+      (#{streamerId}, #{tagId})
+    </foreach>
+  </insert>
+  <delete id="deleteList">
+    DELETE FROM streamers_tags
+    WHERE 1=1
+    <foreach collection="tagIdList" item="tagId" open="AND" separator="OR">
+      (streamer_id = #{streamerId} AND tag_id = #{tagId})
+    </foreach>
+  </delete>
 </mapper>

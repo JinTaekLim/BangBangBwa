@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.bangbangbwa.backend.domain.member.service.MemberService;
 import com.bangbangbwa.backend.domain.oauth.service.OAuthService;
 import com.bangbangbwa.backend.domain.streamer.service.PendingStreamerService;
+import com.bangbangbwa.backend.domain.tag.service.TagService;
 import com.bangbangbwa.backend.domain.token.service.TokenService;
 import com.bangbangbwa.backend.global.test.ControllerTest;
 import org.junit.jupiter.api.Test;
@@ -27,10 +28,13 @@ class MemberControllerTest extends ControllerTest {
   private TokenService tokenService;
   @MockBean
   private PendingStreamerService pendingStreamerService;
+  @MockBean
+  private TagService tagService;
 
   @Override
   protected Object initController() {
-    return new MemberController(oAuthService, memberService, tokenService, pendingStreamerService);
+    return new MemberController(oAuthService, memberService, tokenService, pendingStreamerService,
+        tagService);
   }
 
   @Test

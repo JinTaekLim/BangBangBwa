@@ -1,16 +1,15 @@
 package com.bangbangbwa.backend.domain.sns.repository;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import com.bangbangbwa.backend.domain.admin.common.dto.GetReportedPostsDto.GetReportedPostsResponse;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.member.repository.MemberRepository;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
-import com.bangbangbwa.backend.domain.sns.common.entity.Post;
+import com.bangbangbwa.backend.domain.post.common.entity.Post;
+import com.bangbangbwa.backend.domain.post.common.enums.PostType;
 import com.bangbangbwa.backend.domain.sns.common.entity.ReportPost;
-import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
 import com.bangbangbwa.backend.global.test.MyBatisTest;
 import com.bangbangbwa.backend.global.util.randomValue.RandomValue;
 import java.util.List;
@@ -69,10 +68,11 @@ class ReportPostRepositoryTest extends MyBatisTest {
   private ReportPost getReportPost(Post post, Member writeMember) {
     return ReportPost.builder()
         .postId(post.getId())
-        .reason(RandomValue.string(3,10).setNullable(false).get())
+        .reason(RandomValue.string(3, 10).setNullable(false).get())
         .createdId(String.valueOf(writeMember.getId()))
         .build();
   }
+
   private ReportPost createReportPost(Post post, Member writeMember) {
     ReportPost reportPost = getReportPost(post, writeMember);
     reportPostRepository.save(reportPost);
@@ -102,7 +102,7 @@ class ReportPostRepositoryTest extends MyBatisTest {
   void findAllPendingReports() {
     // given
     PostType postType = RandomValue.getRandomEnum(PostType.class);
-    int reportPostCount = RandomValue.getInt(3,5);
+    int reportPostCount = RandomValue.getInt(3, 5);
 
     List<Member> members = IntStream.range(0, reportPostCount)
         .mapToObj(i -> createMember())
@@ -126,7 +126,8 @@ class ReportPostRepositoryTest extends MyBatisTest {
           assertThat(getReportPosts.get(i).nickname()).isEqualTo(members.get(i).getNickname());
           assertThat(getReportPosts.get(i).profile()).isEqualTo(members.get(i).getProfile());
           assertThat(getReportPosts.get(i).reason()).isEqualTo(reportPosts.get(i).getReason());
-          assertThat(getReportPosts.get(i).reportDate().withNano(0)).isEqualTo(reportPosts.get(i).getCreatedAt().withNano(0));
+          assertThat(getReportPosts.get(i).reportDate().withNano(0)).isEqualTo(
+              reportPosts.get(i).getCreatedAt().withNano(0));
         });
   }
 

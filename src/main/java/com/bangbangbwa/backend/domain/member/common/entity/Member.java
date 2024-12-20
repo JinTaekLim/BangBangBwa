@@ -3,9 +3,10 @@ package com.bangbangbwa.backend.domain.member.common.entity;
 import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
-import com.bangbangbwa.backend.domain.sns.common.entity.Post;
+import com.bangbangbwa.backend.domain.post.common.entity.Post;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -72,5 +73,21 @@ public class Member {
 
   public void updateRole(Role role) {
     this.role = role;
+  }
+
+  public void updateInfo(String nickname, String selfIntroduction) {
+    boolean isChanged = false;
+    if (!this.nickname.equals(nickname)) {
+      this.nickname = nickname;
+      isChanged = true;
+    }
+    if (Objects.isNull(this.selfIntroduction) || !this.selfIntroduction.equals(selfIntroduction)) {
+      this.selfIntroduction = selfIntroduction;
+      isChanged = true;
+    }
+    if (isChanged) {
+      this.updatedId = SELF;
+      this.updatedAt = LocalDateTime.now();
+    }
   }
 }

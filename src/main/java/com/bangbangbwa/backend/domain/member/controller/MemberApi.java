@@ -9,7 +9,7 @@ import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
 import com.bangbangbwa.backend.domain.member.common.dto.SummaryDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
-import com.bangbangbwa.backend.domain.token.common.TokenDto;
+import com.bangbangbwa.backend.domain.token.common.dto.ReissueTokenDto;
 import com.bangbangbwa.backend.global.annotation.swagger.ApiResponse200;
 import com.bangbangbwa.backend.global.annotation.swagger.ApiResponse500;
 import com.bangbangbwa.backend.global.response.ApiResponse;
@@ -173,7 +173,7 @@ public interface MemberApi {
           responseCode = "200", description = "OK",
           content = @Content(
               mediaType = "application/json",
-              schema = @Schema(implementation = TokenDto.class)
+              schema = @Schema(implementation = ReissueTokenDto.Response.class)
           )
       ),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(
@@ -198,7 +198,7 @@ public interface MemberApi {
           )
       )
   })
-  ApiResponse<TokenDto> reissueToken(
+  ApiResponse<ReissueTokenDto.Response> reissueToken(
       @RequestParam String refreshToken
   );
 

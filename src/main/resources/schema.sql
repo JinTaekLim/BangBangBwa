@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS post_view_streamer;
 DROP TABLE IF EXISTS report_comments;
 DROP TABLE IF EXISTS report_posts;
 DROP TABLE IF EXISTS streamers_tags;
@@ -15,6 +16,7 @@ DROP TABLE IF EXISTS tags;
 DROP TABLE IF EXISTS banners;
 DROP TABLE IF EXISTS platforms;
 DROP TABLE IF EXISTS follow;
+
 
 CREATE TABLE members
 (
@@ -86,6 +88,7 @@ CREATE TABLE posts
     title      VARCHAR(100) COMMENT '제목',
     content    VARCHAR(4000) COMMENT '내용',
     pinned     BOOLEAN       COMMENT '고정 여부',
+    media_type VARCHAR(10)  COMMENT '미디어 타입',
     created_at DATETIME     NOT NULL COMMENT '생성 일시',
     created_id VARCHAR(255) NOT NULL COMMENT '생성자',
     updated_at DATETIME NULL COMMENT '수정 일시(null)',
@@ -114,6 +117,7 @@ CREATE TABLE comments
     post_id    BIGINT       NOT NULL COMMENT '게시물_ID',
     member_id  BIGINT       NOT NULL COMMENT '작성자_ID',
     content    VARCHAR(500) NOT NULL COMMENT '내용',
+    reply_comment VARCHAR(500) NULL COMMENT '답변',
     created_at DATETIME     NOT NULL COMMENT '생성 일시',
     created_id VARCHAR(255) NOT NULL COMMENT '생성자',
     updated_at DATETIME NULL COMMENT '수정 일시(null)',
@@ -219,4 +223,14 @@ CREATE TABLE report_comments (
     updated_at      DATETIME                            COMMENT '수정일시',
     updated_id      VARCHAR(255)                        COMMENT '수정자',
     FOREIGN KEY (comment_id) REFERENCES comments (id)
+);
+
+CREATE TABLE post_view_streamer(
+    id              BIGINT AUTO_INCREMENT PRIMARY KEY   COMMENT '게시물 신고 ID',
+    post_id         BIGINT              NOT NULL        COMMENT '게시물 ID',
+    streamer_id     BIGINT              NOT NULL        COMMENT '방송인 ID',
+    created_at      DATETIME            NOT NULL        COMMENT '생성일시',
+    FOREIGN KEY (post_id) REFERENCES posts (id),
+    FOREIGN KEY (streamer_id) REFERENCES streamers (id),
+    CONSTRAINT unique_post_view_streamer UNIQUE (post_id, streamer_id)
 );

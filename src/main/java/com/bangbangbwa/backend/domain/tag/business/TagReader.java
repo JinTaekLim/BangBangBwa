@@ -27,4 +27,8 @@ public class TagReader {
   public List<TagDto> findByMemberId(Long memberId) {
     return tagRepository.findByMemberId(memberId);
   }
+
+  public List<TagDto> findByStreamerId(Long streamerId) {
+    return tagRepository.findByStreamerId(streamerId);
+  }
 }

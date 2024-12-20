@@ -31,4 +31,8 @@ public class TagRepository {
   public List<TagDto> findByMemberId(Long memberId) {
     return mysql.selectList("TagMapper.findByMemberId", memberId);
   }
+
+  public List<TagDto> findByStreamerId(Long streamerId) {
+    return mysql.selectList("TagMapper.findByStreamerId", streamerId);
+  }
 }

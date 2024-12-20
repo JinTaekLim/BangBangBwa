@@ -61,12 +61,6 @@ VALUES ('GOOGLE', '55555', 'user@example.com',
 --              LIMIT 100
 --      ) numbers;
 
-INSERT INTO platforms (name, image_url)
-VALUES ('Twitch', 'https://example.com/images/twitch.png'),
-       ('YouTube', 'https://example.com/images/youtube.png'),
-       ('SOOP', 'https://example.com/images/afreeca.png'),
-       ('Chzzk', 'https://example.com/images/chzzk.png');
-
 INSERT INTO tags (name, created_at, created_id)
 VALUES ('게임', now(), '1'),
        ('음악', now(), '1'),
@@ -184,3 +178,11 @@ VALUES (1, 'MEMBER', 'DRAFT', '게시글 제목', '게시글 내용', NOW(), 'ad
 INSERT INTO comments
 (post_id, member_id, content, created_at, created_id, updated_at, updated_id, deleted_at)
 VALUES (1, 1, '댓글댓글댓글입니다.', NOW(), 'admin', NULL, NULL, NULL);
+
+INSERT INTO platforms(name, image_url)
+VALUES ('SOOP',
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScX1LPXCReSk442f41pcXYWTwG4gtiF_hbTD6m3sTIEjxJin9u5o2nZjiWeYZY6iELxw&usqp=CAU'),
+       ('CHZZK',
+        'https://img.etnews.com/news/article/2024/08/02/news-p.v1.20240802.2ae504fb2dd245329d64586f38a8b1ba_P1.jpg'),
+       ('YOUTUBE',
+        'https://yt3.googleusercontent.com/phyigngHB_ILjVeVUjRK_1iyynHvSx_Zg6W9h6VutjUHpkJnhIi5_WtdbUNvoDuMIQD6JbUTQ9I=s900-c-k-c0x00ffffff-no-rj');

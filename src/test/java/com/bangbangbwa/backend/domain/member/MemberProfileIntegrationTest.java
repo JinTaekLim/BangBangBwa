@@ -14,11 +14,12 @@ import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import com.bangbangbwa.backend.domain.promotion.common.entity.Streamer;
 import com.bangbangbwa.backend.domain.promotion.repository.StreamerRepository;
-import com.bangbangbwa.backend.domain.streamer.repository.StreamerTagRepository;
 import com.bangbangbwa.backend.domain.tag.common.entity.Tag;
+import com.bangbangbwa.backend.domain.tag.repository.MemberTagRepository;
+import com.bangbangbwa.backend.domain.tag.repository.StreamerTagRepository;
 import com.bangbangbwa.backend.domain.tag.repository.TagRepository;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
-import com.bangbangbwa.backend.domain.token.common.TokenDto;
+import com.bangbangbwa.backend.domain.token.common.dto.TokenDto;
 import com.bangbangbwa.backend.global.test.IntegrationTest;
 import com.bangbangbwa.backend.global.util.randomValue.RandomString;
 import com.bangbangbwa.backend.global.util.randomValue.RandomValue;
@@ -46,10 +47,13 @@ class MemberProfileIntegrationTest extends IntegrationTest {
   private TagRepository tagRepository;
 
   @Autowired
-  private StreamerTagRepository streamerTagRepository;
+  private TokenProvider tokenProvider;
 
   @Autowired
-  private TokenProvider tokenProvider;
+  private MemberTagRepository memberTagRepository;
+
+  @Autowired
+  private StreamerTagRepository streamerTagRepository;
 
   private Member testMember() {
     Member member = Member.builder()
@@ -107,7 +111,7 @@ class MemberProfileIntegrationTest extends IntegrationTest {
     for (int i = 0; i < tagCount; i++) {
       Tag tag = testTag(member.getId());
       tagRepository.save(tag);
-      memberRepository.save(member, tag);
+      memberTagRepository.save(member.getId(), tag.getId());
       tags.add(tag.getName());
     }
 
@@ -153,7 +157,7 @@ class MemberProfileIntegrationTest extends IntegrationTest {
     for (int i = 0; i < tagCount; i++) {
       Tag tag = testTag(member.getId());
       tagRepository.save(tag);
-      streamerTagRepository.save(streamer.getId(), tag);
+      streamerTagRepository.save(streamer.getId(), tag.getId());
       tags.add(tag.getName());
     }
 
@@ -267,7 +271,7 @@ class MemberProfileIntegrationTest extends IntegrationTest {
     for (int i = 0; i < tagCount; i++) {
       Tag tag = testTag(member2.getId());
       tagRepository.save(tag);
-      streamerTagRepository.save(streamer.getId(), tag);
+      streamerTagRepository.save(streamer.getId(), tag.getId());
       tags.add(tag.getName());
     }
 
@@ -317,7 +321,7 @@ class MemberProfileIntegrationTest extends IntegrationTest {
     for (int i = 0; i < tagCount; i++) {
       Tag tag = testTag(member2.getId());
       tagRepository.save(tag);
-      memberRepository.save(member2, tag);
+      memberTagRepository.save(member2.getId(), tag.getId());
       tags.add(tag.getName());
     }
 
@@ -363,7 +367,7 @@ class MemberProfileIntegrationTest extends IntegrationTest {
     for (int i = 0; i < tagCount; i++) {
       Tag tag = testTag(member2.getId());
       tagRepository.save(tag);
-      memberRepository.save(member2, tag);
+      memberTagRepository.save(member2.getId(), tag.getId());
       tags.add(tag.getName());
     }
 
@@ -404,7 +408,7 @@ class MemberProfileIntegrationTest extends IntegrationTest {
     for (int i = 0; i < tagCount; i++) {
       Tag tag = testTag(member.getId());
       tagRepository.save(tag);
-      memberRepository.save(member, tag);
+      memberTagRepository.save(member.getId(), tag.getId());
       tags.add(tag.getName());
     }
 
@@ -447,7 +451,7 @@ class MemberProfileIntegrationTest extends IntegrationTest {
     for (int i = 0; i < tagCount; i++) {
       Tag tag = testTag(member.getId());
       tagRepository.save(tag);
-      streamerTagRepository.save(streamer.getId(), tag);
+      streamerTagRepository.save(streamer.getId(), tag.getId());
       tags.add(tag.getName());
     }
 

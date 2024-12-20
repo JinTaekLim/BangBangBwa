@@ -5,21 +5,43 @@ import com.bangbangbwa.backend.domain.member.business.MemberReader;
 import com.bangbangbwa.backend.domain.member.business.MemberValidator;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.member.common.enums.Role;
-import com.bangbangbwa.backend.domain.sns.business.*;
-import com.bangbangbwa.backend.domain.sns.common.dto.*;
-import com.bangbangbwa.backend.domain.sns.common.entity.*;
-import com.bangbangbwa.backend.domain.sns.common.enums.PostType;
+import com.bangbangbwa.backend.domain.post.business.PostCreator;
+import com.bangbangbwa.backend.domain.post.business.PostGenerator;
+import com.bangbangbwa.backend.domain.post.business.PostProvider;
+import com.bangbangbwa.backend.domain.post.business.PostReader;
+import com.bangbangbwa.backend.domain.post.business.PostValidator;
+import com.bangbangbwa.backend.domain.post.common.dto.CreatePostDto;
+import com.bangbangbwa.backend.domain.post.common.dto.GetLatestPostsDto;
+import com.bangbangbwa.backend.domain.post.common.dto.GetPostDetailsDto;
+import com.bangbangbwa.backend.domain.post.common.entity.Post;
+import com.bangbangbwa.backend.domain.post.common.entity.PostVisibilityMember;
+import com.bangbangbwa.backend.domain.post.common.enums.PostType;
+import com.bangbangbwa.backend.domain.sns.business.CommentCreator;
+import com.bangbangbwa.backend.domain.sns.business.CommentGenerator;
+import com.bangbangbwa.backend.domain.sns.business.PostVisibilityMemberCreator;
+import com.bangbangbwa.backend.domain.sns.business.PostVisibilityMemberGenerator;
+import com.bangbangbwa.backend.domain.sns.business.ReaderPostCreator;
+import com.bangbangbwa.backend.domain.sns.business.ReaderPostReader;
+import com.bangbangbwa.backend.domain.sns.business.ReportCommentCreator;
+import com.bangbangbwa.backend.domain.sns.business.ReportCommentGenerator;
+import com.bangbangbwa.backend.domain.sns.business.ReportPostCreator;
+import com.bangbangbwa.backend.domain.sns.business.ReportPostGenerator;
+import com.bangbangbwa.backend.domain.sns.business.ReportValidator;
+import com.bangbangbwa.backend.domain.sns.common.dto.CreateCommentDto;
+import com.bangbangbwa.backend.domain.sns.common.dto.ReportCommentDto;
+import com.bangbangbwa.backend.domain.sns.common.dto.ReportPostDto;
+import com.bangbangbwa.backend.domain.sns.common.entity.Comment;
+import com.bangbangbwa.backend.domain.sns.common.entity.ReportComment;
+import com.bangbangbwa.backend.domain.sns.common.entity.ReportPost;
 import com.bangbangbwa.backend.domain.sns.common.enums.VisibilityType;
 import com.bangbangbwa.backend.domain.streamer.common.business.DailyMessageReader;
 import com.bangbangbwa.backend.domain.streamer.common.entity.DailyMessage;
 import com.bangbangbwa.backend.global.util.S3Manager;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -44,7 +66,6 @@ public class SnsService {
   private final S3Manager s3Manager;
   private final CommentGenerator commentGenerator;
   private final CommentCreator commentCreator;
-  private final PostTypeProvider postTypeProvider;
   private final ReportValidator reportValidator;
   private final ReportPostCreator reportPostCreator;
   private final ReportPostGenerator reportPostGenerator;
@@ -54,34 +75,6 @@ public class SnsService {
   private final ReaderPostReader readerPostReader;
   private final ReaderPostCreator readerPostCreator;
 
-  // 게시글 저장 전, content에서 url을 추출 후 redis 값 삭제하는 과정 필요
-  @Transactional
-  public Post createPost(CreatePostDto.Request request) {
-    Member member = memberProvider.getCurrentMember();
-    PostType postType = request.postType();
-    memberValidator.validateRole(member.getRole(), postType);
-
-    Post post = postGenerator.generate(request, member);
-    postCreator.save(post);
-
-    VisibilityType type = postValidator.validateMembers(
-        request.publicMembers(),
-        request.privateMembers()
-    );
-
-    if (type != null) {
-      List<Long> memberList = (type == VisibilityType.PRIVATE) ?
-          request.privateMembers() : request.publicMembers();
-
-      List<PostVisibilityMember> postVisibilityMember = postVisibilityMemberGenerator.generate(
-          post, type, memberList
-      );
-
-      postVisibilityMemberCreator.saveList(postVisibilityMember);
-    }
-
-    return post;
-  }
 
   public String uploadPostMedia(MultipartFile file) {
     return s3Manager.upload(file);
@@ -103,36 +96,30 @@ public class SnsService {
   public GetPostDetailsDto.Response getPostDetails(Long postId) {
     Long memberId = memberProvider.getCurrentMemberIdOrNull();
     GetPostDetailsDto.Response response = postReader.getPostDetails(postId, memberId);
-    if (memberId != null) readerPostCreator.addReadPost(memberId, response.postId());
+    if (memberId != null) {
+      readerPostCreator.addReadPost(memberId, response.postId());
+    }
     return response;
-  }
-
-  // note. streamer 계정이 조회했을 때의 작업 필요
-  public List<Post> getPostList() {
-    Role role = memberProvider.getCurrentRole();
-    PostType postType = postTypeProvider.getInversePostTypeForRole(role);
-
-    if (role == Role.GUEST || role == Role.STREAMER) {return postProvider.getRandomPost(postType);}
-    Long memberId = memberProvider.getCurrentMemberId();
-    Set<String> readPostIds = readerPostReader.findAllReadPostsByMemberId(memberId);
-    return postProvider.getMemberPersonalizedPosts(memberId, readPostIds);
   }
 
   public List<GetLatestPostsDto.Response> getLatestPosts(PostType postType) {
     Set<String> readerPostList = new HashSet<>();
     Long memberId = memberProvider.getCurrentMemberIdOrNull();
-    if (memberId != null) readerPostList = readerPostReader.findAllReadPostsByMemberId(memberId);
+    if (memberId != null) {
+      readerPostList = readerPostReader.findAllReadPostsByMemberId(memberId);
+    }
 
-    List<GetLatestPostsDto> getLatestPostsDto = postReader.findPostsWithinLast24Hours(postType, readerPostList);
+    List<GetLatestPostsDto> getLatestPostsDto = postReader.findPostsWithinLast24Hours(postType,
+        readerPostList);
     List<Long> memberIds = getLatestPostsDto.stream()
-            .map(GetLatestPostsDto::getMemberId)
-            .toList();
+        .map(GetLatestPostsDto::getMemberId)
+        .toList();
 
     List<DailyMessage> dailyMessageList = dailyMessageReader.findByIds(memberIds);
 
-      return IntStream.range(0, getLatestPostsDto.size())
-              .mapToObj(i -> getLatestPostsDto.get(i).toResponse(dailyMessageList.get(i)))
-              .collect(Collectors.toList());
+    return IntStream.range(0, getLatestPostsDto.size())
+        .mapToObj(i -> getLatestPostsDto.get(i).toResponse(dailyMessageList.get(i)))
+        .collect(Collectors.toList());
   }
 
   public void reportPost(ReportPostDto.Request request) {
