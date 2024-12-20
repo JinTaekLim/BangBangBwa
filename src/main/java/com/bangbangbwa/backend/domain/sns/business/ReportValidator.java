@@ -1,5 +1,6 @@
 package com.bangbangbwa.backend.domain.sns.business;
 
+import com.bangbangbwa.backend.domain.post.business.ReportPostReader;
 import com.bangbangbwa.backend.domain.sns.exception.DuplicateReportException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

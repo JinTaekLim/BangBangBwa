@@ -1,4 +1,4 @@
-package com.bangbangbwa.backend.domain.sns.business;
+package com.bangbangbwa.backend.domain.post.business;
 
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.post.common.entity.Post;
@@ -27,5 +27,9 @@ public class PostUpdater {
 
   public void updateForDeletion(Post post) {
     postRepository.updatePost(post);
+  }
+
+  public void deletePost(Long postId) {
+    postRepository.deletePost(postId);
   }
 }

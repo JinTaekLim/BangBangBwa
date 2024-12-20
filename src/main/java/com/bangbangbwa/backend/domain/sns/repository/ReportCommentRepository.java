@@ -1,7 +1,7 @@
 package com.bangbangbwa.backend.domain.sns.repository;
 
 import com.bangbangbwa.backend.domain.sns.common.entity.ReportComment;
-import com.bangbangbwa.backend.domain.sns.common.enums.ReportStatus;
+import com.bangbangbwa.backend.domain.post.common.enums.ReportStatus;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;

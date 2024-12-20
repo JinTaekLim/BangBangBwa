@@ -1,6 +1,6 @@
-package com.bangbangbwa.backend.domain.sns.business;
+package com.bangbangbwa.backend.domain.post.business;
 
-import com.bangbangbwa.backend.domain.sns.common.entity.ReportPost;
+import com.bangbangbwa.backend.domain.post.common.entity.ReportPost;
 import com.bangbangbwa.backend.domain.sns.repository.ReportPostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

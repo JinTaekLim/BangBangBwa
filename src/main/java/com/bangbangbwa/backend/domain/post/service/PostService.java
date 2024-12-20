@@ -24,7 +24,7 @@ import com.bangbangbwa.backend.domain.post.common.enums.MediaType;
 import com.bangbangbwa.backend.domain.post.common.enums.PostType;
 import com.bangbangbwa.backend.domain.promotion.business.StreamerReader;
 import com.bangbangbwa.backend.domain.promotion.common.entity.Streamer;
-import com.bangbangbwa.backend.domain.sns.business.PostUpdater;
+import com.bangbangbwa.backend.domain.post.business.PostUpdater;
 import com.bangbangbwa.backend.domain.sns.business.ReaderPostCreator;
 import com.bangbangbwa.backend.domain.sns.business.ReaderPostReader;
 import com.bangbangbwa.backend.domain.streamer.common.business.DailyMessageReader;

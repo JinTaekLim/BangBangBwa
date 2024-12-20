@@ -7,6 +7,7 @@ import com.bangbangbwa.backend.domain.admin.common.dto.GetPendingMembers.GetPend
 import com.bangbangbwa.backend.domain.admin.common.dto.GetReportedPostsDto;
 import com.bangbangbwa.backend.domain.admin.common.dto.GetReportedPostsDto.GetReportedPostsResponse;
 import com.bangbangbwa.backend.domain.admin.common.dto.GetReportedPostsDto.Response;
+import com.bangbangbwa.backend.domain.admin.common.dto.ResolveReportedPostDto;
 import com.bangbangbwa.backend.domain.admin.service.AdminService;
 import com.bangbangbwa.backend.domain.streamer.common.entity.PendingStreamer;
 import com.bangbangbwa.backend.domain.streamer.common.mapper.PendingStreamerMapper;
@@ -32,7 +33,7 @@ public class AdminController {
   @PreAuthorize("hasAuthority('ADMIN')")
   public ApiResponse<ApproveStreamerDto.Response> updatePendingStatus(
       @RequestBody @Valid ApproveStreamerDto.Request request
-  ){
+  ) {
     PendingStreamer pendingStreamer = adminService.updatePendingStatus(request);
     ApproveStreamerDto.Response response = PendingStreamerMapper
         .INSTANCE
@@ -55,5 +56,13 @@ public class AdminController {
     List<GetReportedPostsResponse> posts = adminService.getReportedPosts();
     GetReportedPostsDto.Response response = new Response(posts);
     return ApiResponse.ok(response);
+  }
+
+  @PostMapping("/resolveReportedPost")
+  @PreAuthorize("hasAuthority('ADMIN')")
+  public ApiResponse<?> resolveReportedPost(
+      @Valid @RequestBody ResolveReportedPostDto.Request request) {
+    adminService.resolveReportedPost(request);
+    return ApiResponse.ok();
   }
 }

@@ -3,6 +3,7 @@ package com.bangbangbwa.backend.domain.admin.controller;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import com.bangbangbwa.backend.domain.admin.common.dto.GetReportedPostsDto;
+import com.bangbangbwa.backend.domain.admin.common.dto.ResolveReportedPostDto;
 import com.bangbangbwa.backend.domain.member.common.dto.PromoteStreamerDto.Request;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.member.common.enums.Role;
@@ -11,7 +12,8 @@ import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import com.bangbangbwa.backend.domain.post.common.entity.Post;
 import com.bangbangbwa.backend.domain.post.common.enums.PostType;
-import com.bangbangbwa.backend.domain.sns.common.entity.ReportPost;
+import com.bangbangbwa.backend.domain.post.common.entity.ReportPost;
+import com.bangbangbwa.backend.domain.post.common.enums.ReportStatus;
 import com.bangbangbwa.backend.domain.sns.repository.PostRepository;
 import com.bangbangbwa.backend.domain.sns.repository.ReportPostRepository;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
@@ -163,5 +165,45 @@ class AdminTest extends IntegrationTest {
       assertThat(apiResponse.getData().posts().get(i).reportDate().withNano(0)).isEqualTo(
           reportPosts.get(i).getCreatedAt().withNano(0));
     });
+  }
+
+  @Test()
+  void resolveReportedPost() {
+    // given
+    Member admin = createMember();
+    admin.updateRole(Role.ADMIN);
+    TokenDto tokenDto = tokenProvider.getToken(admin);
+
+    PostType postType = RandomValue.getRandomEnum(PostType.class);
+
+    Post post = createPost(postType, admin);
+    ReportPost reportPost = createReportPost(post, admin);
+    ReportStatus reportStatus = RandomValue.getRandomEnum(ReportStatus.class);
+    ResolveReportedPostDto.Request req = new ResolveReportedPostDto.Request(
+        reportPost.getId(), reportStatus
+    );
+
+    String url = "http://localhost:" + port + "/api/v1/admin/resolveReportedPost";
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(tokenDto.getAccessToken());
+    HttpEntity<ResolveReportedPostDto.Request> requestEntity = new HttpEntity<>(req, headers);
+
+    // when
+    ResponseEntity<String> responseEntity = restTemplate.postForEntity(
+        url,
+        requestEntity,
+        String.class
+    );
+
+    ApiResponse<?> apiResponse = gson.fromJson(
+        responseEntity.getBody(),
+        new TypeToken<ApiResponse<?>>() {
+        }.getType()
+    );
+
+    // then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
   }
 }

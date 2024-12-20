@@ -1,6 +1,6 @@
 package com.bangbangbwa.backend.domain.sns.common.entity;
 
-import com.bangbangbwa.backend.domain.sns.common.enums.ReportStatus;
+import com.bangbangbwa.backend.domain.post.common.enums.ReportStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

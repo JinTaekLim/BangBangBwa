@@ -198,6 +198,15 @@
     LIMIT #{size}
   </select>
 
+  <update id="deletePost" parameterType="map">
+    UPDATE posts
+    SET
+    status = 'DELETED',
+    deleted_at = #{deletedAt}
+    WHERE id = #{postId}
+  </update>
+
+
   <select id="getMyPostInfo" parameterType="Long"
     resultType="com.bangbangbwa.backend.domain.post.common.dto.MyPostDto$MyPostResponsePostInfo">
     SELECT

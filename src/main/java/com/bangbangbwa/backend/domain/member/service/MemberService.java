@@ -28,7 +28,7 @@ import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.post.business.PostReader;
 import com.bangbangbwa.backend.domain.post.business.PostValidator;
 import com.bangbangbwa.backend.domain.promotion.business.StreamerReader;
-import com.bangbangbwa.backend.domain.sns.business.PostUpdater;
+import com.bangbangbwa.backend.domain.post.business.PostUpdater;
 import com.bangbangbwa.backend.domain.tag.business.TagRelation;
 import com.bangbangbwa.backend.domain.tag.business.TagUpdater;
 import com.bangbangbwa.backend.domain.tag.common.dto.TagDto;
