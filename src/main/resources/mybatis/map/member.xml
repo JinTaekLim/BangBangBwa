@@ -149,6 +149,7 @@
     SET
     nickname = #{nickname},
     profile = #{profile},
+    wallpaper = #{wallpaper},
     self_introduction = #{selfIntroduction},
     updated_id = #{updatedId},
     updated_at = #{updatedAt}

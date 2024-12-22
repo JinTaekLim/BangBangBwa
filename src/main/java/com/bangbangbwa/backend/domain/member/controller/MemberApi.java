@@ -6,6 +6,7 @@ import com.bangbangbwa.backend.domain.member.common.dto.MemberLoginDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberNicknameDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberUpdateDto;
+import com.bangbangbwa.backend.domain.member.common.dto.MemberWallpaperDto;
 import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
 import com.bangbangbwa.backend.domain.member.common.dto.SummaryDto;
@@ -330,4 +331,35 @@ public interface MemberApi {
       MultipartFile file,
       MemberUpdateDto.Request request
   );
+
+  @Operation(
+      summary = "마이페이지 > 배경 화면 등록/수정",
+      description = " 배경 화면을 등록/수정 합니다.",
+      tags = {"MemberAPI"},
+      responses = {
+          @io.swagger.v3.oas.annotations.responses.ApiResponse(
+              responseCode = "200",
+              description = "OK",
+              content = @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = MemberWallpaperDto.Response.class)
+              )
+          ),
+      }
+  )
+  @ApiResponse401
+  @ApiResponse403
+  ApiResponse<MemberWallpaperDto.Response> updateWallpaper(
+      MultipartFile file
+  );
+
+  @Operation(
+      summary = "마이페이지 > 배경 화면 제거",
+      description = " 배경 화면을 제거 합니다.",
+      tags = {"MemberAPI"}
+  )
+  @ApiResponse200
+  @ApiResponse401
+  @ApiResponse403
+  ApiResponse<Null> deleteWallpaper();
 }

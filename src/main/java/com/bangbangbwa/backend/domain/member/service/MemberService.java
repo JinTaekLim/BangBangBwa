@@ -16,6 +16,8 @@ import com.bangbangbwa.backend.domain.member.common.dto.FollowDto.FollowResponse
 import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto.FollowerResponse;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberUpdateDto.Request;
+import com.bangbangbwa.backend.domain.member.common.dto.MemberWallpaperDto;
+import com.bangbangbwa.backend.domain.member.common.dto.MemberWallpaperDto.Response;
 import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
 import com.bangbangbwa.backend.domain.member.common.dto.SummaryDto;
@@ -26,9 +28,9 @@ import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.post.business.PostReader;
+import com.bangbangbwa.backend.domain.post.business.PostUpdater;
 import com.bangbangbwa.backend.domain.post.business.PostValidator;
 import com.bangbangbwa.backend.domain.promotion.business.StreamerReader;
-import com.bangbangbwa.backend.domain.post.business.PostUpdater;
 import com.bangbangbwa.backend.domain.tag.business.TagRelation;
 import com.bangbangbwa.backend.domain.tag.business.TagUpdater;
 import com.bangbangbwa.backend.domain.tag.common.dto.TagDto;
@@ -190,6 +192,20 @@ public class MemberService {
 
     // 프로필 DTO 변환
     return memberReader.getProfile(new ProfileDto(member.getId(), member.getId()));
+  }
+
+  public MemberWallpaperDto.Response updateWallpaper(MultipartFile file) {
+    Member member = memberReader.findById(memberProvider.getCurrentMemberId());
+    String wallpaper = s3Manager.upload(file);
+    member.updateWallpaper(wallpaper);
+    memberUpdater.updateMember(member);
+    return new Response(wallpaper);
+  }
+
+  public void deleteWallpaper() {
+    Member member = memberReader.findById(memberProvider.getCurrentMemberId());
+    member.deleteWallpaper();
+    memberUpdater.updateMember(member);
   }
 
   public void memberTagRelation(Member member, List<TagDto> tagList) {
