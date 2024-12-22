@@ -28,6 +28,7 @@ public class Member {
   private String email;
   private String nickname;
   private String profile;
+  private String wallpaper;
   private Role role;
   private LocalDateTime deletedAt;
   private String createdId;
@@ -86,8 +87,22 @@ public class Member {
       isChanged = true;
     }
     if (isChanged) {
-      this.updatedId = SELF;
-      this.updatedAt = LocalDateTime.now();
+      setUpdateData();
     }
+  }
+
+  public void updateWallpaper(String wallpaper) {
+    this.wallpaper = wallpaper;
+    setUpdateData();
+  }
+
+  public void deleteWallpaper() {
+    this.wallpaper = null;
+    setUpdateData();
+  }
+
+  private void setUpdateData() {
+    this.updatedId = SELF;
+    this.updatedAt = LocalDateTime.now();
   }
 }

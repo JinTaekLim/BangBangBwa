@@ -13,6 +13,7 @@ import com.bangbangbwa.backend.domain.member.common.dto.MemberLoginDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberNicknameDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberUpdateDto;
+import com.bangbangbwa.backend.domain.member.common.dto.MemberWallpaperDto;
 import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
 import com.bangbangbwa.backend.domain.member.common.dto.PromoteStreamerDto;
@@ -44,6 +45,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils.Null;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -232,5 +234,21 @@ public class MemberController implements MemberApi {
     ProfileDto infoDto = memberService.updateMember(tagList, request, file);
     ProfileDto.Response response = ProfileMapper.INSTANCE.dtoToResponse(infoDto);
     return ApiResponse.ok(response);
+  }
+
+  @PutMapping(value = "/wallpaper", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+  @PreAuthorize("hasAuthority('MEMBER')")
+  public ApiResponse<MemberWallpaperDto.Response> updateWallpaper(
+      @RequestPart(value = "file") MultipartFile file
+  ) {
+    MemberWallpaperDto.Response response = memberService.updateWallpaper(file);
+    return ApiResponse.ok(response);
+  }
+
+  @DeleteMapping("/wallpaper")
+  @PreAuthorize("hasAuthority('MEMBER')")
+  public ApiResponse<Null> deleteWallpaper() {
+    memberService.deleteWallpaper();
+    return ApiResponse.ok();
   }
 }
