@@ -5,12 +5,15 @@ import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberLoginDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberNicknameDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
+import com.bangbangbwa.backend.domain.member.common.dto.MemberUpdateDto;
 import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
 import com.bangbangbwa.backend.domain.member.common.dto.SummaryDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
 import com.bangbangbwa.backend.domain.token.common.dto.ReissueTokenDto;
 import com.bangbangbwa.backend.global.annotation.swagger.ApiResponse200;
+import com.bangbangbwa.backend.global.annotation.swagger.ApiResponse401;
+import com.bangbangbwa.backend.global.annotation.swagger.ApiResponse403;
 import com.bangbangbwa.backend.global.annotation.swagger.ApiResponse500;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -305,4 +308,26 @@ public interface MemberApi {
   )
   ApiResponse<FollowerDto.Response> getFollowers(Long memberId);
 
+
+  @Operation(
+      summary = "마이페이지 > 회원 정보 수정",
+      description = "회원 정보를 수정 합니다.(프로필 이미지, 닉네임, 자기소개, 관심 태그 or 방송 태그",
+      tags = {"MemberAPI"},
+      responses = {
+          @io.swagger.v3.oas.annotations.responses.ApiResponse(
+              responseCode = "200",
+              description = "OK",
+              content = @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ProfileDto.Response.class)
+              )
+          ),
+      }
+  )
+  @ApiResponse401
+  @ApiResponse403
+  ApiResponse<ProfileDto.Response> updateMember(
+      MultipartFile file,
+      MemberUpdateDto.Request request
+  );
 }
