@@ -1,9 +1,6 @@
 package com.bangbangbwa.backend.domain.member.controller;
 
 import com.bangbangbwa.backend.domain.member.common.dto.CommentDto;
-import com.bangbangbwa.backend.domain.member.common.dto.CommentDto.CommentResponse;
-import com.bangbangbwa.backend.domain.member.common.dto.CommentDto.CommentResponseCommentInfo;
-import com.bangbangbwa.backend.domain.member.common.dto.CommentDto.CommentResponsePostInfo;
 import com.bangbangbwa.backend.domain.member.common.dto.CommentDto.Response;
 import com.bangbangbwa.backend.domain.member.common.dto.FollowDto;
 import com.bangbangbwa.backend.domain.member.common.dto.FollowDto.FollowResponse;
@@ -39,7 +36,6 @@ import com.bangbangbwa.backend.domain.token.service.TokenService;
 import com.bangbangbwa.backend.global.annotation.authentication.PermitAll;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import jakarta.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils.Null;
@@ -158,39 +154,11 @@ public class MemberController implements MemberApi {
     return ApiResponse.ok(response);
   }
 
-  @GetMapping("/comments/{memberId}")
-  @PermitAll()
-  public ApiResponse<Response> getComments(@PathVariable("memberId") Long memberId) {
-    List<CommentResponse> commentResponses = new ArrayList<>();
-    CommentResponsePostInfo postInfo;
-    CommentResponseCommentInfo commentInfo;
-
-    postInfo = new CommentResponsePostInfo(1L, "제목입니다1", memberId, "전정국",
-        "https://images.khan.co.kr/article/2024/03/05/news-p.v1.20240305.9dc707937ff0483e9f91ee16c87312dd_P1.jpg",
-        true, true);
-    commentInfo = new CommentResponseCommentInfo(1L, "댓글입니다1", 1L, "답글입니다1");
-    commentResponses.add(new CommentResponse(postInfo, commentInfo));
-
-    postInfo = new CommentResponsePostInfo(2L, "제목입니다2", memberId, "전정국",
-        "https://images.khan.co.kr/article/2024/03/05/news-p.v1.20240305.9dc707937ff0483e9f91ee16c87312dd_P1.jpg",
-        true, false);
-    commentInfo = new CommentResponseCommentInfo(2L, "댓글입니다2", 2L, "답글입니다2");
-    commentResponses.add(new CommentResponse(postInfo, commentInfo));
-
-    postInfo = new CommentResponsePostInfo(3L, "제목입니다3", memberId, "전정국",
-        "https://images.khan.co.kr/article/2024/03/05/news-p.v1.20240305.9dc707937ff0483e9f91ee16c87312dd_P1.jpg",
-        false, true);
-    commentInfo = new CommentResponseCommentInfo(3L, "댓글입니다3", 3L, "답글입니다3");
-    commentResponses.add(new CommentResponse(postInfo, commentInfo));
-
-    postInfo = new CommentResponsePostInfo(4L, "제목입니다4", memberId, "전정국",
-        "https://images.khan.co.kr/article/2024/03/05/news-p.v1.20240305.9dc707937ff0483e9f91ee16c87312dd_P1.jpg",
-        false, false);
-    commentInfo = new CommentResponseCommentInfo(4L, "댓글입니다4", 4L, "답글입니다4");
-    commentResponses.add(new CommentResponse(postInfo, commentInfo));
-
-    CommentDto.Response response = new CommentDto.Response(commentResponses);
-
+  @GetMapping("/comments")
+  @PreAuthorize("hasAuthority('MEMBER')")
+  public ApiResponse<Response> getComments() {
+    List<CommentDto.CommentResponse> commentList = memberService.getComments();
+    CommentDto.Response response = new CommentDto.Response(commentList);
     return ApiResponse.ok(response);
   }
 

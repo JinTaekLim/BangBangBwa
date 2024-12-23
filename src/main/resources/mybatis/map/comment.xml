@@ -34,8 +34,79 @@
     ORDER BY c.created_at DESC
   </select>
 
-  <select id="findCommentListByMemberId" parameterType="Long"
-    resultType="com.bangbangbwa.backend.domain.member.common.dto.CommentDto$CommentResponse">
+  <resultMap id="myCommentResponseMap"
+    type="com.bangbangbwa.backend.domain.comment.common.dto.MyCommentDto">
+    <!--    <constructor>-->
+    <!--      <arg-->
+    <!--        javaType="com.bangbangbwa.backend.domain.member.common.dto.CommentDto$CommentResponsePostInfo"-->
+    <!--        column="postInfo"/>-->
+    <!--      <arg-->
+    <!--        javaType="com.bangbangbwa.backend.domain.member.common.dto.CommentDto$CommentResponseCommentInfo"-->
+    <!--        column="commentInfo"/>-->
+    <!--    </constructor>-->
+    <association property="postInfo" resultMap="myCommentPostInfoMap"/>
+    <association property="commentInfo" resultMap="myCommentCommentInfoMap"/>
+    <!--    <association property="postInfo"-->
+    <!--      javaType="com.bangbangbwa.backend.domain.member.common.dto.CommentDto$CommentResponsePostInfo">-->
+    <!--      <id property="postId" column="postId"/>-->
+    <!--      <result property="title" column="title"/>-->
+    <!--      <result property="memberId" column="memberId"/>-->
+    <!--      <result property="memberNickname" column="memberNickname"/>-->
+    <!--      <result property="memberImageUrl" column="memberProfile"/>-->
+    <!--      <result property="hasImage" column="hasImage"/>-->
+    <!--      <result property="hasVideo" column="hasVideo"/>-->
+    <!--    </association>-->
+    <!--    <association property="commentInfo"-->
+    <!--      javaType="com.bangbangbwa.backend.domain.member.common.dto.CommentDto$CommentResponseCommentInfo">-->
+    <!--      <id property="commentId" column="commentId"/>-->
+    <!--      <result property="content" column="content"/>-->
+    <!--      <result property="replyContent" column="replyContent"/>-->
+    <!--    </association>-->
+  </resultMap>
+
+  <resultMap id="myCommentPostInfoMap"
+    type="com.bangbangbwa.backend.domain.comment.common.dto.MyCommentDto$MyCommentPostInfo">
+    <id property="postId" column="postId"/>
+    <result property="title" column="title"/>
+    <result property="memberId" column="memberId"/>
+    <result property="memberNickname" column="memberNickname"/>
+    <result property="memberImageUrl" column="memberProfile"/>
+    <result property="hasImage" column="hasImage"/>
+    <result property="hasVideo" column="hasVideo"/>
+  </resultMap>
+
+  <resultMap id="myCommentCommentInfoMap"
+    type="com.bangbangbwa.backend.domain.comment.common.dto.MyCommentDto$MyCommentCommentInfo">
+    <id property="commentId" column="commentId"/>
+    <result property="content" column="content"/>
+    <result property="replyContent" column="replyContent"/>
+  </resultMap>
+
+  <select id="findMyCommentList" parameterType="Long" resultMap="myCommentResponseMap">
+    SELECT
+    p.member_id as memberId,
+    p.id as postId,
+    p.title as title,
+    m.nickname as memberNickname,
+    m.profile as memberProfile,
+    CASE
+    WHEN p.media_type IN ('PHOTO', 'BOTH') THEN true
+    ELSE false
+    END as hasImage,
+    CASE
+    WHEN p.media_type IN ('VIDEO', 'BOTH') THEN true
+    ELSE false
+    END as hasVideo,
+    c.id as commentId,
+    c.content as content,
+    c.reply_comment as replyContent
+    FROM comments c
+    INNER JOIN posts p ON c.post_id = p.id
+    INNER JOIN members m ON p.member_id = m.id
+    WHERE c.member_id = #{memberId}
+    AND c.deleted_at IS NULL
+    AND p.deleted_at IS NULL
+    ORDER BY c.created_at DESC
   </select>
 
   <update id="updateForAddReply" parameterType="comment">

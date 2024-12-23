@@ -4,9 +4,7 @@ import com.bangbangbwa.backend.domain.comment.business.CommentReader;
 import com.bangbangbwa.backend.domain.comment.business.CommentUpdater;
 import com.bangbangbwa.backend.domain.comment.common.dto.AddCommentReplyDto;
 import com.bangbangbwa.backend.domain.member.business.MemberProvider;
-import com.bangbangbwa.backend.domain.member.common.dto.CommentDto.CommentResponse;
 import com.bangbangbwa.backend.domain.sns.common.entity.Comment;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,11 +23,5 @@ public class CommentService {
     Comment comment = commentReader.findById(commentId);
     comment.updateReplyComment(replyMessage);
     commentUpdater.updateForAddReply(comment);
-  }
-
-  // TODO : xml 파일 추가 구현 예정.
-  public List<CommentResponse> myPageCommentList() {
-    Long memberId = memberProvider.getCurrentMemberId();
-    return commentReader.findCommentListByMemberId(memberId);
   }
 }

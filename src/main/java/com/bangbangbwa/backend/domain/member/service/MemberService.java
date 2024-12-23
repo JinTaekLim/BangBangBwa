@@ -1,6 +1,6 @@
 package com.bangbangbwa.backend.domain.member.service;
 
-import com.bangbangbwa.backend.domain.comment.common.dto.MyPostCommentDto;
+import com.bangbangbwa.backend.domain.comment.business.CommentReader;
 import com.bangbangbwa.backend.domain.member.business.FollowCreator;
 import com.bangbangbwa.backend.domain.member.business.FollowDeleter;
 import com.bangbangbwa.backend.domain.member.business.FollowGenerator;
@@ -12,6 +12,7 @@ import com.bangbangbwa.backend.domain.member.business.MemberReader;
 import com.bangbangbwa.backend.domain.member.business.MemberUpdater;
 import com.bangbangbwa.backend.domain.member.business.MemberValidator;
 import com.bangbangbwa.backend.domain.member.business.NicknameProvider;
+import com.bangbangbwa.backend.domain.member.common.dto.CommentDto.CommentResponse;
 import com.bangbangbwa.backend.domain.member.common.dto.FollowDto.FollowResponse;
 import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto.FollowerResponse;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
@@ -68,6 +69,7 @@ public class MemberService {
   private final S3Manager s3Manager;
   private final TagRelation tagRelation;
   private final TagUpdater tagUpdater;
+  private final CommentReader commentReader;
 
   @Transactional
   public TokenDto signup(
@@ -132,9 +134,9 @@ public class MemberService {
     return postReader.findPostsByMemberId(memberId);
   }
 
-  public MyPostCommentDto getComments(Long memberId) {
-    memberReader.findById(memberId);
-    return null;
+  public List<CommentResponse> getComments() {
+    Long memberId = memberProvider.getCurrentMemberId();
+    return commentReader.getMyComments(memberId);
   }
 
   public List<FollowerResponse> getFollowers(Long memberId) {
