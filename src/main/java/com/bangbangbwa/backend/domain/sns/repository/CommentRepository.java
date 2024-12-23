@@ -1,6 +1,6 @@
 package com.bangbangbwa.backend.domain.sns.repository;
 
-import com.bangbangbwa.backend.domain.member.common.dto.CommentDto.CommentResponse;
+import com.bangbangbwa.backend.domain.comment.common.dto.MyCommentDto;
 import com.bangbangbwa.backend.domain.post.common.dto.MyPostDto.MyPostResponseCommentInfo;
 import com.bangbangbwa.backend.domain.sns.common.entity.Comment;
 import java.util.List;
@@ -31,7 +31,7 @@ public class CommentRepository {
     return mysql.selectList("CommentMapper.findCommentListByPostId", postId);
   }
 
-  public List<CommentResponse> findCommentListByMemberId(Long memberId) {
-    return mysql.selectList("CommentMapper.findCommentListByMemberId", memberId);
+  public List<MyCommentDto> findMyCommentList(Long memberId) {
+    return mysql.selectList("CommentMapper.findMyCommentList", memberId);
   }
 }

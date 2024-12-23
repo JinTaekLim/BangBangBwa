@@ -66,7 +66,7 @@ class MemberControllerTest extends ControllerTest {
 
   @Test
   void getComments() throws Exception {
-    mvc.perform(get("/api/v1/members/comments/1"))
+    mvc.perform(get("/api/v1/members/comments"))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.code").value(HttpStatus.OK.name()))

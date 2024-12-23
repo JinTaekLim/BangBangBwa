@@ -290,7 +290,7 @@ public interface MemberApi {
           ),
       }
   )
-  ApiResponse<CommentDto.Response> getComments(Long memberId);
+  ApiResponse<CommentDto.Response> getComments();
 
   @Operation(
       tags = {"MemberAPI"},
