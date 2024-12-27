@@ -147,10 +147,13 @@
   <update id="updateMember">
     UPDATE members
     SET
+    email = #{email},
     nickname = #{nickname},
     profile = #{profile},
-    wallpaper = #{wallpaper},
     self_introduction = #{selfIntroduction},
+    wallpaper = #{wallpaper},
+    role = #{role},
+    deleted_at = #{deletedAt},
     updated_id = #{updatedId},
     updated_at = #{updatedAt}
     WHERE id = #{id}

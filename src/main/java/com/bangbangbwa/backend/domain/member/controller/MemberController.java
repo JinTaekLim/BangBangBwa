@@ -219,4 +219,11 @@ public class MemberController implements MemberApi {
     memberService.deleteWallpaper();
     return ApiResponse.ok();
   }
+
+  @DeleteMapping
+  @PreAuthorize("hasAuthority('MEMBER')")
+  public ApiResponse<Null> withdraw() {
+    memberService.withdraw();
+    return ApiResponse.ok();
+  }
 }

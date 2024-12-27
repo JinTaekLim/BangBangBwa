@@ -135,5 +135,9 @@ public class PostRepository {
   public MyPostResponsePostInfo getMyPostInfo(Long postId) {
     return mysql.selectOne("PostMapper.getMyPostInfo", postId);
   }
+
+  public void deleteByWithdraw(Long memberId) {
+    mysql.delete("PostMapper.deletePostByWithdraw", memberId);
+  }
 }
 

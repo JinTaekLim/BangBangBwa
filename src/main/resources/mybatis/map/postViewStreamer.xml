@@ -28,4 +28,9 @@
     WHERE post_id = #{postId}
     )
   </select>
+
+  <delete id="deleteByStreamerId" parameterType="Long">
+    DELETE FROM post_view_streamer
+    WHERE streamer_id = #{streamerId}
+  </delete>
 </mapper>

@@ -101,6 +101,17 @@ public class Member {
     setUpdateData();
   }
 
+  public void withdraw() {
+    this.email = "*".repeat(email.length());
+    this.nickname = "*".repeat(nickname.length());
+    this.profile = "*".repeat(profile.length());
+    this.selfIntroduction = "*".repeat(selfIntroduction.length());
+    this.wallpaper = "*".repeat(wallpaper.length());
+    this.role = null;
+    setUpdateData();
+    this.deletedAt = this.updatedAt;
+  }
+
   private void setUpdateData() {
     this.updatedId = SELF;
     this.updatedAt = LocalDateTime.now();

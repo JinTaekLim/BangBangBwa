@@ -28,13 +28,17 @@ import com.bangbangbwa.backend.domain.member.common.entity.Follow;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
 import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
+import com.bangbangbwa.backend.domain.post.business.PostDeleter;
 import com.bangbangbwa.backend.domain.post.business.PostReader;
 import com.bangbangbwa.backend.domain.post.business.PostUpdater;
 import com.bangbangbwa.backend.domain.post.business.PostValidator;
+import com.bangbangbwa.backend.domain.post.service.PostService;
+import com.bangbangbwa.backend.domain.promotion.business.StreamerDeleter;
 import com.bangbangbwa.backend.domain.promotion.business.StreamerReader;
 import com.bangbangbwa.backend.domain.tag.business.TagRelation;
 import com.bangbangbwa.backend.domain.tag.business.TagUpdater;
 import com.bangbangbwa.backend.domain.tag.common.dto.TagDto;
+import com.bangbangbwa.backend.domain.tag.repository.MemberTagRepository;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
 import com.bangbangbwa.backend.domain.token.common.dto.TokenDto;
 import com.bangbangbwa.backend.global.util.S3Manager;
@@ -70,6 +74,10 @@ public class MemberService {
   private final TagRelation tagRelation;
   private final TagUpdater tagUpdater;
   private final CommentReader commentReader;
+  private final PostService postService;
+  private final MemberTagRepository memberTagRepository;
+  private final PostDeleter postDeleter;
+  private final StreamerDeleter streamerDeleter;
 
   @Transactional
   public TokenDto signup(
@@ -212,5 +220,14 @@ public class MemberService {
 
   public void memberTagRelation(Member member, List<TagDto> tagList) {
     tagRelation.relation(member, tagList);
+  }
+
+  public void withdraw() {
+    Long memberId = memberProvider.getCurrentMemberId();
+    streamerDeleter.deleteByWithdraw(memberId);
+    postDeleter.deleteByWithdraw(memberId);
+    Member member = memberReader.findById(memberId);
+    member.withdraw();
+    memberUpdater.updateMember(member);
   }
 }
