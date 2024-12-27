@@ -20,4 +20,8 @@ public class PostViewStreamerRepository {
   public List<MyPostResponseReadStreamerInfo> findStreamersByPostId(Long postId) {
     return mysql.selectList("PostViewStreamerMapper.findStreamersByPostId", postId);
   }
+
+  public void deleteByStreamerId(Long streamerId) {
+    mysql.delete("PostViewStreamerMapper.deleteByStreamerId", streamerId);
+  }
 }

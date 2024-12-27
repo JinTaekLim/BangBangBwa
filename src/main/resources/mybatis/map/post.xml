@@ -220,4 +220,9 @@
     INNER JOIN members m ON p.member_id = m.id
     WHERE p.id = #{postId}
   </select>
+
+  <delete id="deletePostByWithdraw" parameterType="Long">
+    DELETE FROM posts
+    WHERE member_id = #{memberId}
+  </delete>
 </mapper>

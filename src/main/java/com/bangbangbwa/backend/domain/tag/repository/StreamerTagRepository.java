@@ -33,4 +33,8 @@ public class StreamerTagRepository {
     params.put("tagIdList", tagIdList);
     mysql.delete("StreamerTagMapper.deleteList", params);
   }
+
+  public void deleteByStreamerId(Long streamerId) {
+    mysql.delete("StreamerTagMapper.deleteByStreamerId", streamerId);
+  }
 }

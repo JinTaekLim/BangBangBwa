@@ -362,4 +362,14 @@ public interface MemberApi {
   @ApiResponse401
   @ApiResponse403
   ApiResponse<Null> deleteWallpaper();
+
+  @Operation(
+      summary = "회원탈퇴",
+      description = "회원탈퇴 처리 합니다.",
+      tags = {"MemberAPI"}
+  )
+  @ApiResponse200
+  @ApiResponse401
+  @ApiResponse403
+  ApiResponse<Null> withdraw();
 }
