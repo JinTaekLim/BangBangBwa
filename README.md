@@ -1,10 +1,12 @@
 # BangBangBwa
 > 방송 커뮤니티 플랫폼 WEB 사이트
-2024.10 ~ 2024.12
-FE 2, BE 3, Designer 1
-> 
-API : https://bangbangbwa.kro.kr/api/swagger-ui/index.html
-WEB : https://dev-bangbangbwa.netlify.app/
+
+> 2024.10 ~ 2024.12
+
+> FE 2, BE 3, Designer 1
+
+- API : https://bangbangbwa.kro.kr/api/swagger-ui/index.html
+- WEB : https://dev-bangbangbwa.netlify.app/
 
 ## Tech Stack
 - Backend
