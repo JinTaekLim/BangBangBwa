@@ -2,36 +2,35 @@ package com.bangbangbwa.backend.global.test;
 
 import jakarta.annotation.PostConstruct;
 import java.util.List;
-import org.apache.ibatis.session.SqlSession;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class DatabaseCleaner {
 
-  private final SqlSession sqlSession;
+  private final JdbcTemplate jdbcTemplate;
   private List<String> tableNames;
 
-  public DatabaseCleaner(final SqlSession sqlSession) {
-    this.sqlSession = sqlSession;
+  public DatabaseCleaner(final JdbcTemplate jdbcTemplate) {
+    this.jdbcTemplate = jdbcTemplate;
   }
 
   @PostConstruct
   public void init() {
-//    this.tableNames = sqlSession.selectList("DatabaseCleaner.getTableNames");
+    tableNames = jdbcTemplate.queryForList(
+        "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'PUBLIC'",
+        String.class);
+
+    this.execute();
   }
 
-  //TODO: truncate 적용 필요
   @Transactional
   public void execute() {
-//    // 외래 키 무결성 제약 조건을 임시로 비활성화
-//    sqlSession.update("DatabaseCleaner.setForeignKeyChecks", 0);
-//
-//    for (String tableName : tableNames) {
-//      sqlSession.update("DatabaseCleaner.truncateTable", tableName);
-//    }
-//
-//    // 외래 키 무결성 제약 조건을 다시 활성화
-//    sqlSession.update("DatabaseCleaner.setForeignKeyChecks", 1);
+    jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY FALSE");
+    for (String tableName : tableNames) {
+      jdbcTemplate.execute("TRUNCATE TABLE " + tableName);
+    }
+    jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY TRUE");
   }
 }

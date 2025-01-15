@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ReportPostMapper">
+
+  <insert id="save" parameterType="reportPost" keyProperty="id">
+    INSERT INTO report_posts (status, post_id, reason, created_at, created_id)
+    VALUES (#{status}, #{postId}, #{reason}, #{createdAt}, #{createdId})
+  </insert>
+
+  <select id="findByPostIdAndCreatedIdAndStatus" parameterType="reportPost" resultType="reportPost">
+    SELECT * FROM report_posts WHERE post_id = #{postId} AND created_id = #{createdId} AND status = #{status}
+  </select>
+
+  <select id="findAllPendingReports" resultType="com.bangbangbwa.backend.domain.admin.common.dto.GetReportedPostsDto$GetReportedPostsResponse">
+    SELECT
+    r.id AS reportPostId,
+    p.id AS postId,
+    m.id AS writerId,
+    m.nickname AS nickname,
+    m.profile AS profile,
+    r.reason AS reason,
+    r.created_at AS reportDate
+    FROM
+    report_posts r INNER JOIN posts p ON r.post_id = p.id
+    INNER JOIN members m ON p.member_id = m.id
+    WHERE r.status = 'PENDING'
+  </select>
+
+  <select id="findById" parameterType="Long" resultType="ReportPost">
+    SELECT * FROM report_posts WHERE id = #{id}
+  </select>
+
+  <update id="updateStatus" parameterType="ReportPost">
+    UPDATE report_posts
+    SET
+    status = #{status},
+    updated_id = #{updatedId},
+    updated_at = #{updatedAt}
+    WHERE id = #{id}
+  </update>
+</mapper>

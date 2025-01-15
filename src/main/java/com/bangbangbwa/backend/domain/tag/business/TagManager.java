@@ -25,7 +25,6 @@ public class TagManager {
   private Tag mapTagStringToTag(String tagName, String createdId) {
     return Tag.builder()
         .name(tagName)
-        .createdAt(LocalDateTime.now())
         .createdId(createdId)
         .build();
   }

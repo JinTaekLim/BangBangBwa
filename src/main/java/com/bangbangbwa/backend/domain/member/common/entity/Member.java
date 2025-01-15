@@ -1,12 +1,12 @@
 package com.bangbangbwa.backend.domain.member.common.entity;
 
-import com.bangbangbwa.backend.domain.member.common.enums.Interest;
 import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
-import com.bangbangbwa.backend.domain.sns.common.entity.Post;
+import com.bangbangbwa.backend.domain.post.common.entity.Post;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,6 +28,7 @@ public class Member {
   private String email;
   private String nickname;
   private String profile;
+  private String wallpaper;
   private Role role;
   private LocalDateTime deletedAt;
   private String createdId;
@@ -35,24 +36,30 @@ public class Member {
   private String updatedId;
   private LocalDateTime updatedAt;
   private String selfIntroduction;
-  private List<Interest> interests;
   private List<Post> posts;
-  private List<Follower> followers;
-  private List<Follower> followings;
+  private List<Follow> followers;
+  private List<Follow> followings;
+  private boolean usageAgree;
+  private boolean personalAgree;
+  private boolean withdrawalAgree;
 
   @Builder
   public Member(
-      String nickname
+      String nickname,
+      String selfIntroduction,
+      boolean usageAgree,
+      boolean personalAgree,
+      boolean withdrawalAgree
   ) {
     this.nickname = nickname;
+    this.selfIntroduction = selfIntroduction;
+    this.usageAgree = usageAgree;
+    this.personalAgree = personalAgree;
+    this.withdrawalAgree = withdrawalAgree;
     this.role = Role.MEMBER;
-
     LocalDateTime now = LocalDateTime.now();
-
-    this.createdAt = now;
-    this.updatedAt = now;
     this.createdId = SELF;
-    this.updatedId = SELF;
+    this.createdAt = now;
   }
 
   public void addOAuthInfo(OAuthInfoDto oAuthInfo) {
@@ -63,5 +70,50 @@ public class Member {
 
   public void updateProfile(String profile) {
     this.profile = profile;
+  }
+
+  public void updateRole(Role role) {
+    this.role = role;
+  }
+
+  public void updateInfo(String nickname, String selfIntroduction) {
+    boolean isChanged = false;
+    if (!this.nickname.equals(nickname)) {
+      this.nickname = nickname;
+      isChanged = true;
+    }
+    if (Objects.isNull(this.selfIntroduction) || !this.selfIntroduction.equals(selfIntroduction)) {
+      this.selfIntroduction = selfIntroduction;
+      isChanged = true;
+    }
+    if (isChanged) {
+      setUpdateData();
+    }
+  }
+
+  public void updateWallpaper(String wallpaper) {
+    this.wallpaper = wallpaper;
+    setUpdateData();
+  }
+
+  public void deleteWallpaper() {
+    this.wallpaper = null;
+    setUpdateData();
+  }
+
+  public void withdraw() {
+    this.email = "*".repeat(email.length());
+    this.nickname = "*".repeat(nickname.length());
+    this.profile = "*".repeat(profile.length());
+    this.selfIntroduction = "*".repeat(selfIntroduction.length());
+    this.wallpaper = "*".repeat(wallpaper.length());
+    this.role = null;
+    setUpdateData();
+    this.deletedAt = this.updatedAt;
+  }
+
+  private void setUpdateData() {
+    this.updatedId = SELF;
+    this.updatedAt = LocalDateTime.now();
   }
 }

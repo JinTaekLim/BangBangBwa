@@ -1,22 +1,49 @@
 package com.bangbangbwa.backend.domain.member.service;
 
+import com.bangbangbwa.backend.domain.comment.business.CommentReader;
+import com.bangbangbwa.backend.domain.member.business.FollowCreator;
+import com.bangbangbwa.backend.domain.member.business.FollowDeleter;
+import com.bangbangbwa.backend.domain.member.business.FollowGenerator;
+import com.bangbangbwa.backend.domain.member.business.FollowReader;
 import com.bangbangbwa.backend.domain.member.business.MemberCreator;
 import com.bangbangbwa.backend.domain.member.business.MemberGenerator;
 import com.bangbangbwa.backend.domain.member.business.MemberProvider;
 import com.bangbangbwa.backend.domain.member.business.MemberReader;
+import com.bangbangbwa.backend.domain.member.business.MemberUpdater;
 import com.bangbangbwa.backend.domain.member.business.MemberValidator;
 import com.bangbangbwa.backend.domain.member.business.NicknameProvider;
-import com.bangbangbwa.backend.domain.member.common.dto.CommentDto;
-import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto;
+import com.bangbangbwa.backend.domain.member.common.dto.CommentDto.CommentResponse;
+import com.bangbangbwa.backend.domain.member.common.dto.FollowDto.FollowResponse;
+import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto.FollowerResponse;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
+import com.bangbangbwa.backend.domain.member.common.dto.MemberUpdateDto.Request;
+import com.bangbangbwa.backend.domain.member.common.dto.MemberWallpaperDto;
+import com.bangbangbwa.backend.domain.member.common.dto.MemberWallpaperDto.Response;
 import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
 import com.bangbangbwa.backend.domain.member.common.dto.SummaryDto;
+import com.bangbangbwa.backend.domain.member.common.dto.ToggleFollowDto;
+import com.bangbangbwa.backend.domain.member.common.dto.TogglePostPinDto;
+import com.bangbangbwa.backend.domain.member.common.entity.Follow;
 import com.bangbangbwa.backend.domain.member.common.entity.Member;
+import com.bangbangbwa.backend.domain.member.common.enums.Role;
 import com.bangbangbwa.backend.domain.oauth.common.dto.OAuthInfoDto;
+import com.bangbangbwa.backend.domain.post.business.PostDeleter;
+import com.bangbangbwa.backend.domain.post.business.PostReader;
+import com.bangbangbwa.backend.domain.post.business.PostUpdater;
+import com.bangbangbwa.backend.domain.post.business.PostValidator;
+import com.bangbangbwa.backend.domain.post.service.PostService;
+import com.bangbangbwa.backend.domain.promotion.business.StreamerDeleter;
+import com.bangbangbwa.backend.domain.promotion.business.StreamerReader;
+import com.bangbangbwa.backend.domain.tag.business.TagRelation;
+import com.bangbangbwa.backend.domain.tag.business.TagUpdater;
+import com.bangbangbwa.backend.domain.tag.common.dto.TagDto;
+import com.bangbangbwa.backend.domain.tag.repository.MemberTagRepository;
 import com.bangbangbwa.backend.domain.token.business.TokenProvider;
-import com.bangbangbwa.backend.domain.token.common.TokenDto;
+import com.bangbangbwa.backend.domain.token.common.dto.TokenDto;
+import com.bangbangbwa.backend.global.util.S3Manager;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,11 +61,36 @@ public class MemberService {
   private final TokenProvider tokenProvider;
   private final NicknameProvider nicknameProvider;
   private final MemberProvider memberProvider;
+  private final StreamerReader streamerReader;
+  private final FollowReader followReader;
+  private final PostReader postReader;
+  private final FollowGenerator followGenerator;
+  private final FollowCreator followCreator;
+  private final FollowDeleter followDeleter;
+  private final PostValidator postValidator;
+  private final PostUpdater postUpdater;
+  private final MemberUpdater memberUpdater;
+  private final S3Manager s3Manager;
+  private final TagRelation tagRelation;
+  private final TagUpdater tagUpdater;
+  private final CommentReader commentReader;
+  private final PostService postService;
+  private final MemberTagRepository memberTagRepository;
+  private final PostDeleter postDeleter;
+  private final StreamerDeleter streamerDeleter;
 
   @Transactional
-  public TokenDto signup(OAuthInfoDto oAuthInfo, MemberSignupDto.Request request,
-      MultipartFile profileFile) {
-    Member member = memberGenerator.generate(oAuthInfo, request, profileFile);
+  public TokenDto signup(
+      OAuthInfoDto oAuthInfo,
+      MemberSignupDto.Request request,
+      MultipartFile profileFile
+  ) {
+    memberValidator.validateUniqueMember(oAuthInfo);
+    Member member = memberGenerator.generate(oAuthInfo, request);
+    if (Objects.nonNull(profileFile)) {
+      String profileImage = s3Manager.upload(profileFile);
+      member.updateProfile(profileImage);
+    }
     memberCreator.save(member);
     return tokenProvider.getToken(member);
   }
@@ -52,41 +104,130 @@ public class MemberService {
     memberValidator.validateNicknameDuplication(nickname);
   }
 
-  public Set<String> serveRandomNicknames(Integer count) {
-    return nicknameProvider.provideRandomNicknames(count);
+  public String serveRandomNickname() {
+    Set<String> nicknames = nicknameProvider.provideRandomNicknames(1);
+    if (nicknames.iterator().hasNext()) {
+      return nicknames.iterator().next();
+    }
+    return null;
   }
 
-  public Boolean isMyMemberId(String memberId) {
-    try {
-      Long myMemberId = memberProvider.getCurrentMemberId();
-      return Long.valueOf(memberId).equals(myMemberId);
-    } catch (Exception e) {
-      return false;
-    }
+  public Boolean isMyMemberId(Long memberId) {
+    return memberValidator.isMyMemberId(memberId);
   }
 
   public ProfileDto getProfile(Long memberId) {
-    memberReader.findById(memberId);
-    return null;
+    Long currentMemberId = memberProvider.getCurrentMemberIdOrNull();
+    ProfileDto profileDto = new ProfileDto(memberId, currentMemberId);
+    return memberReader.getProfile(profileDto);
   }
 
   public SummaryDto getSummary(Long memberId) {
-    memberReader.findById(memberId);
-    return null;
+    Long currentMemberId = memberProvider.getCurrentMemberIdOrNull();
+    SummaryDto request = new SummaryDto(memberId, currentMemberId);
+
+    SummaryDto summaryDto = memberReader.getSummary(request);
+
+    if (Objects.equals(memberProvider.getCurrentRoleOrNull(), Role.STREAMER)) {
+      summaryDto.setPlatforms(streamerReader.findStreamerPlatforms(memberId));
+    }
+
+    if (!Objects.equals(memberId, currentMemberId)) {
+      memberValidator.removeData(summaryDto);
+    }
+    return summaryDto;
   }
 
   public List<PostDto> getPosts(Long memberId) {
-    memberReader.findById(memberId);
-    return null;
+    return postReader.findPostsByMemberId(memberId);
   }
 
-  public CommentDto getComments(Long memberId) {
-    memberReader.findById(memberId);
-    return null;
+  public List<CommentResponse> getComments() {
+    Long memberId = memberProvider.getCurrentMemberId();
+    return commentReader.getMyComments(memberId);
   }
 
-  public List<FollowerDto> getFollowers(Long memberId) {
-    memberReader.findById(memberId);
-    return null;
+  public List<FollowerResponse> getFollowers(Long memberId) {
+    return followReader.findFollowersByMemberId(memberId);
+  }
+
+  public List<FollowResponse> getFollows(Long memberId) {
+    return followReader.findFollowsByMemberId(memberId);
+  }
+
+  public void toggleFollow(ToggleFollowDto.Request req) {
+    Long memberId = memberProvider.getCurrentMemberId();
+    Follow follow = followGenerator.generate(req, memberId);
+    if (req.isFollow()) {
+      followCreator.save(follow);
+    } else {
+      followDeleter.deleteByFollowerIdAndFollowId(memberId, req.memberId());
+    }
+  }
+
+  public void togglePostPin(TogglePostPinDto.Request req) {
+    Long memberId = memberProvider.getCurrentMemberId();
+    postValidator.validatePostWriter(req.postId(), memberId);
+    if (req.pinned()) {
+      postValidator.validatePostPinLimit(memberId);
+    }
+    postUpdater.updatePostPin(req.postId(), req.pinned());
+  }
+
+  @Transactional
+  public ProfileDto updateMember(
+      List<TagDto> tagList,
+      Request request,
+      MultipartFile file
+  ) {
+    Member member = memberReader.findById(memberProvider.getCurrentMemberId());
+
+    // 프로필 갱신
+    if (file != null) {
+      String newProfile = s3Manager.upload(file);
+      member.updateProfile(newProfile);
+    }
+
+    // 회원 정보 갱신 - 닉네임 중복여부 처리
+    String newNickname = request.nickname();
+    String newSelfIntroduction = request.selfIntroduction();
+    if (!member.getNickname().equals(newNickname)) {
+      memberValidator.validateNicknameDuplication(newNickname);
+    }
+    member.updateInfo(newNickname, newSelfIntroduction);
+    memberUpdater.updateMember(member);
+
+    // 태그목록 갱신 - 일반회원/스트리머 구분하여 변경.
+    tagUpdater.updateTagRelations(member, tagList);
+
+    // 프로필 DTO 변환
+    return memberReader.getProfile(new ProfileDto(member.getId(), member.getId()));
+  }
+
+  public MemberWallpaperDto.Response updateWallpaper(MultipartFile file) {
+    Member member = memberReader.findById(memberProvider.getCurrentMemberId());
+    String wallpaper = s3Manager.upload(file);
+    member.updateWallpaper(wallpaper);
+    memberUpdater.updateMember(member);
+    return new Response(wallpaper);
+  }
+
+  public void deleteWallpaper() {
+    Member member = memberReader.findById(memberProvider.getCurrentMemberId());
+    member.deleteWallpaper();
+    memberUpdater.updateMember(member);
+  }
+
+  public void memberTagRelation(Member member, List<TagDto> tagList) {
+    tagRelation.relation(member, tagList);
+  }
+
+  public void withdraw() {
+    Long memberId = memberProvider.getCurrentMemberId();
+    streamerDeleter.deleteByWithdraw(memberId);
+    postDeleter.deleteByWithdraw(memberId);
+    Member member = memberReader.findById(memberId);
+    member.withdraw();
+    memberUpdater.updateMember(member);
   }
 }

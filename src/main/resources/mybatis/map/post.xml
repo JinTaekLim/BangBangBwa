@@ -5,12 +5,224 @@
 <mapper namespace="PostMapper">
 
   <insert id="save" parameterType="Post" keyProperty="id" useGeneratedKeys="true">
-    INSERT INTO posts (post_type, member_id, title, content, created_id, created_at)
-    VALUES (#{postType}, #{memberId}, #{title}, #{content}, #{createdId}, #{createdAt})
+    INSERT INTO posts (post_type, member_id, title, content, status, media_type, created_id,
+    created_at)
+    VALUES (#{postType}, #{memberId}, #{title}, #{content}, #{status}, #{mediaType}, #{createdId},
+    #{createdAt})
   </insert>
 
   <select id="findById" parameterType="Long" resultType="post">
     SELECT * FROM posts WHERE id = #{id};
   </select>
 
+  <select id="findPostsByPostTypeWithLimit" parameterType="map" resultType="post">
+    SELECT * FROM posts WHERE post_type = #{postType} LIMIT #{size};
+  </select>
+
+
+  <resultMap id="GetLatestPostsDtoMap"
+    type="com.bangbangbwa.backend.domain.post.common.dto.GetLatestPostsDto">
+    <result property="memberId" column="memberId"/>
+    <result property="profileUrl" column="profileUrl"/>
+    <result property="postIdList" column="postIdList"/>
+  </resultMap>
+
+  <select id="findPostsWithinLast24Hours" parameterType="PostType" resultMap="GetLatestPostsDtoMap">
+    SELECT
+    m.id AS memberId,
+    m.profile AS profileUrl,
+    GROUP_CONCAT(p.id ORDER BY p.created_at DESC) AS postIdList
+    FROM
+    posts p
+    JOIN
+    members m ON p.member_id = m.id
+    WHERE
+    p.created_at >= NOW() - INTERVAL '1' DAY
+    AND p.post_type = #{postType}
+    <foreach item="postId" collection="readerPostList" open="AND p.id NOT IN (" close=")"
+      separator=",">
+      #{postId}
+    </foreach>
+    GROUP BY
+    m.id, m.profile
+    ORDER BY
+    MAX(p.created_at) DESC;
+  </select>
+
+
+  <select id="getPostDetails" parameterType="map"
+    resultType="com.bangbangbwa.backend.domain.post.common.dto.GetPostDetailsDto$Response">
+    SELECT
+    p.id AS postId,
+    p.member_id AS writerId,
+    p.title AS title,
+    p.content,
+    m.profile AS profileUrl,
+    m.nickname,
+    c.content AS comment,
+    CASE
+    WHEN f.follower_id IS NOT NULL THEN true
+    ELSE false
+    END AS isFollowed
+    FROM posts p
+    LEFT JOIN members m ON p.member_id = m.id
+    LEFT JOIN comments c ON c.post_id = p.id AND c.member_id = #{memberId}
+    LEFT JOIN follow f ON f.follower_id = #{memberId} AND f.followee_id = p.member_id
+    WHERE p.id = #{postId}
+  </select>
+
+
+  <select id="findByPostTypeAndRandomPostsExcludingReadIds" parameterType="map" resultType="post">
+    SELECT *
+    FROM posts
+    WHERE post_type = #{postType}
+    <if test="readPostIds != null and readPostIds.size() > 0">
+      AND id NOT IN
+      <foreach item="id" collection="readPostIds" open="(" separator="," close=")">
+        #{id}
+      </foreach>
+    </if>
+    ORDER BY RAND()
+    LIMIT #{limit}
+  </select>
+
+
+  <select id="findPostsByFollowedStreamerExcludingReadIds" parameterType="map" resultType="post">
+    SELECT p.*
+    FROM posts p
+    WHERE p.post_type = 'STREAMER'
+    AND p.member_id IN (
+    SELECT s.member_id
+    FROM streamers s
+    WHERE s.id IN (
+    SELECT st.streamer_id
+    FROM streamers_tags st
+    WHERE st.tag_id IN (
+    SELECT mt.tag_id
+    FROM members_tags mt
+    WHERE mt.member_id = #{memberId}
+    )
+    )
+    )
+    <if test="readPostIds != null and readPostIds.size() > 0">
+      AND p.id NOT IN
+      <foreach item="id" collection="readPostIds" open="(" separator="," close=")">
+        #{id}
+      </foreach>
+    </if>
+    LIMIT #{limit}
+  </select>
+
+
+  <select id="findPostsByFollowStreamerExcludingReadIds" parameterType="map" resultType="Post">
+    SELECT p.*
+    FROM posts p
+    WHERE p.post_type = 'STREAMER'
+    AND p.member_id IN (
+    SELECT f.followee_id
+    FROM follow f
+    WHERE f.follower_id = #{memberId}
+    )
+    <if test="readPostIds != null and readPostIds.size() > 0">
+      AND p.id NOT IN
+      <foreach item="id" collection="readPostIds" open="(" separator="," close=")">
+        #{id}
+      </foreach>
+    </if>
+    LIMIT #{limit}
+  </select>
+
+
+  <select id="findPostsByMemberId" parameterType="Long"
+    resultType="com.bangbangbwa.backend.domain.member.common.dto.PostDto">
+    SELECT
+    p.id AS postId,
+    p.pinned AS isPinned,
+    p.title,
+    p.created_at AS createdDate
+    FROM posts p
+    WHERE p.member_id = #{memberId}
+  </select>
+
+  <select id="findPostByIdAndMemberId" parameterType="map" resultType="post">
+    SELECT * FROM posts WHERE id = #{postId} AND member_id = #{memberId}
+  </select>
+
+  <update id="updatePostPin" parameterType="map">
+    UPDATE posts
+    SET pinned = #{pinned}
+    WHERE id = #{postId}
+  </update>
+
+  <select id="findPinnedPostsByMemberId" parameterType="Long" resultType="post">
+    SELECT * FROM posts WHERE member_id = #{memberId} AND pinned = true
+  </select>
+
+  <update id="updatePost" parameterType="com.bangbangbwa.backend.domain.post.common.entity.Post">
+    UPDATE posts
+    SET
+    post_type = #{postType},
+    status = #{status},
+    title = #{title},
+    content = #{content},
+    deleted_at = #{deletedAt}
+    WHERE id = #{id}
+  </update>
+
+
+  <select id="findPostsByFollowerExcludingRead" parameterType="map" resultType="Post">
+    SELECT p.*
+    FROM posts p
+    WHERE p.post_type = 'MEMBER'
+    AND p.member_id IN (
+    SELECT f.follower_id
+    FROM follow f
+    WHERE f.followee_id = #{memberId}
+    )
+    <if test="readPostIds != null and readPostIds.size() > 0">
+      AND p.id NOT IN
+      <foreach item="id" collection="readPostIds" open="(" separator="," close=")">
+        #{id}
+      </foreach>
+    </if>
+    LIMIT #{limit}
+  </select>
+
+
+  <select id="findPublicPostsByPostTypeWithLimit" parameterType="map" resultType="Post">
+    SELECT p.*
+    FROM posts p
+    LEFT JOIN posts_visibility_member pvm ON p.id = pvm.post_id
+    WHERE p.post_type = #{postType}
+    AND pvm.post_id IS NULL
+    LIMIT #{size}
+  </select>
+
+  <update id="deletePost" parameterType="map">
+    UPDATE posts
+    SET
+    status = 'DELETED',
+    deleted_at = #{deletedAt}
+    WHERE id = #{postId}
+  </update>
+
+
+  <select id="getMyPostInfo" parameterType="Long"
+    resultType="com.bangbangbwa.backend.domain.post.common.dto.MyPostDto$MyPostResponsePostInfo">
+    SELECT
+    p.id AS postId,
+    m.id AS postMemberId,
+    m.profile AS postMemberProfile,
+    m.nickname AS postMemberNickname,
+    p.title AS postTitle,
+    p.content AS postContent
+    FROM posts p
+    INNER JOIN members m ON p.member_id = m.id
+    WHERE p.id = #{postId}
+  </select>
+
+  <delete id="deletePostByWithdraw" parameterType="Long">
+    DELETE FROM posts
+    WHERE member_id = #{memberId}
+  </delete>
 </mapper>

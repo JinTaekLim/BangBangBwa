@@ -5,12 +5,16 @@ import com.bangbangbwa.backend.domain.member.common.dto.FollowerDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberLoginDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberNicknameDto;
 import com.bangbangbwa.backend.domain.member.common.dto.MemberSignupDto;
+import com.bangbangbwa.backend.domain.member.common.dto.MemberUpdateDto;
+import com.bangbangbwa.backend.domain.member.common.dto.MemberWallpaperDto;
 import com.bangbangbwa.backend.domain.member.common.dto.PostDto;
 import com.bangbangbwa.backend.domain.member.common.dto.ProfileDto;
 import com.bangbangbwa.backend.domain.member.common.dto.SummaryDto;
 import com.bangbangbwa.backend.domain.oauth.common.enums.SnsType;
-import com.bangbangbwa.backend.domain.token.common.TokenDto;
+import com.bangbangbwa.backend.domain.token.common.dto.ReissueTokenDto;
 import com.bangbangbwa.backend.global.annotation.swagger.ApiResponse200;
+import com.bangbangbwa.backend.global.annotation.swagger.ApiResponse401;
+import com.bangbangbwa.backend.global.annotation.swagger.ApiResponse403;
 import com.bangbangbwa.backend.global.annotation.swagger.ApiResponse500;
 import com.bangbangbwa.backend.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,7 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 @ApiResponse500
 public interface MemberApi {
 
-  @Operation(summary = "회원가입", tags = {"MemberAPI"})
+  @Operation(summary = "회원가입", tags = {"MemberAPI"}, description = "회원가입을 수행합니다.")
   @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(
           responseCode = "200", description = "OK",
@@ -55,8 +59,11 @@ public interface MemberApi {
                           "data" : [
                             "oAuthToken : oAuth 토큰을 입력해주세요.",
                             "nickname : 닉네임을 입력해주세요.",
-                            "nickname : 최대 12자 이하로 입력해주세요.",
-                            "nickname : 한글,영문,숫자, 특수문자('(',')','-','_')만 사용 가능합니다."
+                            "nickname : 최대 14자 이하로 입력해주세요.",
+                            "nickname : 한글,영문,숫자, 특수문자('(',')','-','_')만 사용 가능합니다.",
+                            "usageAgree : 이용 약관 동의 여부 확인 바랍니다." ,
+                            "personalAgree : 개인 정보 수집 및 저장 동의 여부 확인 바랍니다.",
+                            "withdrawalAgree : 회원 탈퇴 시 처리 방안 동의 여부 확인 바랍니다."
                           ]
                           }
                           """)
@@ -70,7 +77,7 @@ public interface MemberApi {
       @RequestBody MemberSignupDto.Request request
   );
 
-  @Operation(summary = "로그인", tags = {"MemberAPI"})
+  @Operation(summary = "로그인", tags = {"MemberAPI"}, description = "로그인을 수행합니다.")
   @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(
           responseCode = "200", description = "OK",
@@ -161,8 +168,7 @@ public interface MemberApi {
           )
       }
   )
-  ApiResponse<MemberNicknameDto.Response> randomNicknames(@Parameter int count);
-
+  ApiResponse<MemberNicknameDto.Response> randomNicknames();
 
 
   @Operation(summary = "토큰 재발급", tags = {"MemberAPI"})
@@ -171,7 +177,7 @@ public interface MemberApi {
           responseCode = "200", description = "OK",
           content = @Content(
               mediaType = "application/json",
-              schema = @Schema(implementation = TokenDto.class)
+              schema = @Schema(implementation = ReissueTokenDto.Response.class)
           )
       ),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(
@@ -183,40 +189,40 @@ public interface MemberApi {
               examples = {
                   @ExampleObject(
                       value = """
-                      {
-                      "code": "BAD_REQUEST",
-                      "message": "유효하지 않은 토큰입니다.",
-                      "data" : [
-                        "refreshToken 토큰을 입력해주세요."
-                      ]
-                      }
-                      """
+                          {
+                          "code": "BAD_REQUEST",
+                          "message": "유효하지 않은 토큰입니다.",
+                          "data" : [
+                            "refreshToken 토큰을 입력해주세요."
+                          ]
+                          }
+                          """
                   )
               }
           )
       )
   })
-  ApiResponse<TokenDto> reissueToken(
+  ApiResponse<ReissueTokenDto.Response> reissueToken(
       @RequestParam String refreshToken
   );
 
   @Operation(
-    tags = {"MemberAPI"},
-    summary = "마이페이지 > memberId 일치여부 조회",
-    description = "현재 사용자와 memberId가 일치하는지 조회합니다." +
-            "\n비로그인 사용자일 경우에는 false를 리턴합니다.",
-    responses = {
-        @io.swagger.v3.oas.annotations.responses.ApiResponse(
-            responseCode = "200",
-            description = "OK",
-            content = @Content(
-                mediaType = MediaType.APPLICATION_JSON_VALUE,
-                schema = @Schema(implementation = Boolean.class)
-            )
-        ),
-    }
+      tags = {"MemberAPI"},
+      summary = "마이페이지 > memberId 일치여부 조회",
+      description = "현재 사용자와 memberId가 일치하는지 조회합니다." +
+          "\n비로그인 사용자일 경우에는 false를 리턴합니다.",
+      responses = {
+          @io.swagger.v3.oas.annotations.responses.ApiResponse(
+              responseCode = "200",
+              description = "OK",
+              content = @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = Boolean.class)
+              )
+          ),
+      }
   )
-  ApiResponse<Boolean> isMyMemberId(String memberId);
+  ApiResponse<Boolean> isMyMemberId(Long memberId);
 
   @Operation(
       tags = {"MemberAPI"},
@@ -233,7 +239,7 @@ public interface MemberApi {
           ),
       }
   )
-  ApiResponse<ProfileDto.Response> getProfile(String memberId);
+  ApiResponse<ProfileDto.Response> getProfile(Long memberId);
 
   @Operation(
       tags = {"MemberAPI"},
@@ -250,7 +256,7 @@ public interface MemberApi {
           ),
       }
   )
-  ApiResponse<SummaryDto.Response> getSummary(String memberId);
+  ApiResponse<SummaryDto.Response> getSummary(Long memberId);
 
   @Operation(
       tags = {"MemberAPI"},
@@ -267,7 +273,7 @@ public interface MemberApi {
           ),
       }
   )
-  ApiResponse<PostDto.Response> getPosts(String memberId);
+  ApiResponse<PostDto.Response> getPosts(Long memberId);
 
   @Operation(
       tags = {"MemberAPI"},
@@ -284,7 +290,7 @@ public interface MemberApi {
           ),
       }
   )
-  ApiResponse<CommentDto.Response> getComments(String memberId);
+  ApiResponse<CommentDto.Response> getComments();
 
   @Operation(
       tags = {"MemberAPI"},
@@ -301,6 +307,69 @@ public interface MemberApi {
           ),
       }
   )
-  ApiResponse<FollowerDto.Response> getFollowers(String memberId);
+  ApiResponse<FollowerDto.Response> getFollowers(Long memberId);
 
+
+  @Operation(
+      summary = "마이페이지 > 회원 정보 수정",
+      description = "회원 정보를 수정 합니다.(프로필 이미지, 닉네임, 자기소개, 관심 태그 or 방송 태그",
+      tags = {"MemberAPI"},
+      responses = {
+          @io.swagger.v3.oas.annotations.responses.ApiResponse(
+              responseCode = "200",
+              description = "OK",
+              content = @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ProfileDto.Response.class)
+              )
+          ),
+      }
+  )
+  @ApiResponse401
+  @ApiResponse403
+  ApiResponse<ProfileDto.Response> updateMember(
+      MultipartFile file,
+      MemberUpdateDto.Request request
+  );
+
+  @Operation(
+      summary = "마이페이지 > 배경 화면 등록/수정",
+      description = " 배경 화면을 등록/수정 합니다.",
+      tags = {"MemberAPI"},
+      responses = {
+          @io.swagger.v3.oas.annotations.responses.ApiResponse(
+              responseCode = "200",
+              description = "OK",
+              content = @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = MemberWallpaperDto.Response.class)
+              )
+          ),
+      }
+  )
+  @ApiResponse401
+  @ApiResponse403
+  ApiResponse<MemberWallpaperDto.Response> updateWallpaper(
+      MultipartFile file
+  );
+
+  @Operation(
+      summary = "마이페이지 > 배경 화면 제거",
+      description = " 배경 화면을 제거 합니다.",
+      tags = {"MemberAPI"}
+  )
+  @ApiResponse200
+  @ApiResponse401
+  @ApiResponse403
+  ApiResponse<Null> deleteWallpaper();
+
+  @Operation(
+      summary = "회원탈퇴",
+      description = "회원탈퇴 처리 합니다.",
+      tags = {"MemberAPI"}
+  )
+  @ApiResponse200
+  @ApiResponse401
+  @ApiResponse403
+  ApiResponse<Null> withdraw();
 }
