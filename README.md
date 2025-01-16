@@ -22,3 +22,6 @@
 ![image](https://github.com/user-attachments/assets/7d983fcc-694b-4582-9cd8-ac255359c40e)
 ![image](https://github.com/user-attachments/assets/c0a29a91-caea-4ec5-9588-cfc08c9b56f9)
 ![image](https://github.com/user-attachments/assets/d1816327-e98d-47c1-9b20-a7ffd86d6774)
+
+## 게시글 플로우차트
+![게시글 플로우차트 drawio](https://github.com/user-attachments/assets/e0c82770-55ed-4d25-97fe-aa1348b15698)
