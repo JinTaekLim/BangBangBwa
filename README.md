@@ -18,6 +18,10 @@
 ## 아키텍처
 ![BangBangBwa-Architecture drawio](https://github.com/user-attachments/assets/366d3b25-bc1e-4c58-8284-d9039b6b75c9)
 
+![BangBangBwa-Layered](https://github.com/user-attachments/assets/ca5637f7-86bb-46ea-8ffd-8822dd33c4b8)
+
+
+
 ## 게시글 플로우차트
 ![게시글 플로우차트 drawio](https://github.com/user-attachments/assets/e0c82770-55ed-4d25-97fe-aa1348b15698)
 
